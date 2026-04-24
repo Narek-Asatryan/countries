@@ -1,296 +1,531 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meridian Lite | Country Intelligence Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{--bg:#0a0b0f;--surface:#14151c;--surface2:#1e1f2a;--text:#f0ede8;--text-light:#9a9595;--gold:#c8a84b;--gold-light:#e2c97a;--border:rgba(255,255,255,0.07);--radius:12px;--radius-lg:20px;--transition:all 0.2s ease;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
-.app{max-width:1400px;margin:0 auto;padding:0 20px;}
-/* Header */
-.header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
-.logo{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--gold),var(--gold-light));background-clip:text;-webkit-background-clip:text;color:transparent;}
-.logo i{font-size:22px;margin-right:6px;}
-.search-box{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:40px;padding:8px 16px;width:280px;}
-.search-box i{color:var(--text-light);margin-right:8px;}
-.search-box input{background:none;border:none;outline:none;color:var(--text);width:100%;font-size:13px;}
-.nav-links{display:flex;gap:8px;flex-wrap:wrap;}
-.nav-btn{padding:8px 16px;border:none;background:transparent;border-radius:40px;cursor:pointer;color:var(--text-light);font-weight:500;transition:var(--transition);}
-.nav-btn.active,.nav-btn:hover{background:var(--gold);color:#0a0b0f;}
-.hero{background:linear-gradient(135deg,var(--surface),var(--surface2));border-radius:24px;padding:32px;margin:24px 0;text-align:center;border:1px solid var(--border);}
-.hero h1{font-size:28px;margin-bottom:8px;background:linear-gradient(135deg,var(--gold),var(--gold-light));background-clip:text;-webkit-background-clip:text;color:transparent;}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin:24px 0;}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center;}
-.stat-value{font-size:28px;font-weight:800;color:var(--gold);}
-.filter-bar{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0;align-items:center;}
-.filter-chip{padding:6px 14px;border-radius:40px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;transition:var(--transition);}
-.filter-chip.active,.filter-chip:hover{background:var(--gold);color:#0a0b0f;border-color:var(--gold);}
-.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:24px 0;}
-.country-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:var(--transition);}
-.country-card:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
-.flag{width:100%;height:140px;object-fit:cover;background:var(--surface2);}
-.card-body{padding:16px;}
-.country-name{font-weight:700;font-size:16px;display:flex;justify-content:space-between;margin-bottom:8px;}
-.detail-page{max-width:900px;margin:24px auto;background:var(--surface);border-radius:24px;padding:28px;border:1px solid var(--border);}
-.back-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:40px;cursor:pointer;margin-bottom:20px;color:var(--text);}
-.detail-header{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px;}
-.detail-flag{width:240px;border-radius:12px;border:1px solid var(--border);}
-.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:20px 0;}
-.info-card{background:var(--surface2);border-radius:12px;padding:16px;border:1px solid var(--border);}
-.info-card h3{font-size:13px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;}
-.fun-fact{background:linear-gradient(135deg,rgba(200,168,75,0.1),rgba(200,168,75,0.05));border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:16px;margin:16px 0;}
-.pagination{display:flex;justify-content:center;gap:8px;margin:24px 0;flex-wrap:wrap;}
-.page-btn{padding:6px 12px;border:1px solid var(--border);background:var(--surface);border-radius:8px;cursor:pointer;}
-.page-btn.active,.page-btn:hover{background:var(--gold);color:#0a0b0f;}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--surface2);border:1px solid var(--gold);border-radius:12px;padding:12px 20px;z-index:1000;animation:slideIn 0.3s ease;}
-@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
-.loading{text-align:center;padding:60px;}
-.spinner{width:40px;height:40px;border:3px solid var(--surface2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-footer{text-align:center;padding:24px;border-top:1px solid var(--border);margin-top:32px;color:var(--text-light);font-size:12px;}
-@media(max-width:768px){.header{flex-direction:column;}.search-box{width:100%;}.detail-header{flex-direction:column;}.detail-flag{width:100%;}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meridian — Country Intelligence Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        :root {
+          --ink: #0a0b0f;
+          --ink-2: #14151c;
+          --ink-3: #1e1f2a;
+          --ink-4: #2a2b3a;
+          --mist: #f2f1ed;
+          --mist-2: #e8e6e0;
+          --mist-3: #d4d1c8;
+          --gold: #c8a84b;
+          --gold-light: #e2c97a;
+          --gold-dark: #a07830;
+          --jade: #3db87a;
+          --coral: #e85d4a;
+          --sky: #4a9eff;
+          --violet: #8b6fff;
+          --text-primary: #f0ede8;
+          --text-secondary: #9a9595;
+          --text-muted: #5a5660;
+          --border: rgba(255,255,255,0.07);
+          --border-gold: rgba(200,168,75,0.25);
+          --glow-gold: 0 0 40px rgba(200,168,75,0.15);
+          --glow-jade: 0 0 40px rgba(61,184,122,0.15);
+          --radius-sm: 8px;
+          --radius-md: 14px;
+          --radius-lg: 20px;
+          --radius-xl: 28px;
+          --font-display: 'Syne', sans-serif;
+          --font-body: 'DM Sans', sans-serif;
+          --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          --sidebar-w: 240px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); background: var(--ink); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; font-size: 14px; line-height: 1.6; }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--ink-2); }
+        ::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+
+        /* Utillity Classes added for improved data display */
+        .text-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+
+        .app-shell { display: grid; grid-template-columns: var(--sidebar-w) 1fr; grid-template-rows: auto 1fr; min-height: 100vh; }
+        
+        .sidebar { grid-row: 1 / 3; background: var(--ink-2); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; z-index: 100; }
+        .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .logo-mark { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; }
+        .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; box-shadow: 0 4px 16px rgba(200,168,75,0.3); color: var(--ink); font-weight: 800;}
+        .logo-text { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.02em; color: var(--text-primary); }
+        .logo-tag { font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); font-weight: 600; margin-top: -2px; }
+        
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); font-weight: 600; padding: 0 12px; margin: 16px 0 6px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition); color: var(--text-secondary); font-size: 13.5px; font-weight: 500; position: relative; margin-bottom: 2px; border: 1px solid transparent; user-select: none; }
+        .nav-item:hover { background: var(--ink-3); color: var(--text-primary); }
+        .nav-item.active { background: linear-gradient(135deg, rgba(200,168,75,0.12), rgba(200,168,75,0.06)); color: var(--gold-light); border-color: var(--border-gold); }
+        .nav-item.active .nav-icon { color: var(--gold); }
+        .nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+        .nav-badge { margin-left: auto; background: var(--gold); color: var(--ink); font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; min-width: 20px; text-align: center; }
+        
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--border); flex-shrink: 0; }
+        .data-source-badge { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--ink-3); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--jade); box-shadow: 0 0 8px var(--jade); flex-shrink: 0; animation: pulse-dot 2s ease infinite; }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .status-text { font-size: 11px; color: var(--text-secondary); line-height: 1.3; }
+        .status-text strong { display: block; color: var(--jade); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+
+        .topbar { background: var(--ink-2); border-bottom: 1px solid var(--border); padding: 0 28px; height: 60px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 90; }
+        .topbar-search { flex: 1; max-width: 440px; position: relative; }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; pointer-events: none; }
+        .search-input { width: 100%; background: var(--ink-3); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 9px 14px 9px 38px; color: var(--text-primary); font-family: var(--font-body); font-size: 13.5px; transition: var(--transition); outline: none; }
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-input:focus { border-color: var(--border-gold); background: var(--ink-4); box-shadow: 0 0 0 3px rgba(200,168,75,0.08); }
+        .search-kbd { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: var(--ink-4); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 10px; color: var(--text-muted); font-family: monospace; pointer-events: none; }
+        
+        .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+        .topbar-btn { background: var(--ink-3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 14px; color: var(--text-secondary); font-family: var(--font-body); font-size: 12.5px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; font-weight: 500; }
+        .topbar-btn:hover { background: var(--ink-4); color: var(--text-primary); border-color: rgba(255,255,255,0.12); }
+        .topbar-btn.primary { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--ink); border-color: transparent; font-weight: 600; }
+        .topbar-btn.primary:hover { background: linear-gradient(135deg, var(--gold-light), var(--gold)); box-shadow: 0 4px 16px rgba(200,168,75,0.3); }
+        .compare-count { background: var(--ink); border-radius: 99px; width: 16px; height: 16px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--text-primary);}
+
+        .main-content { overflow-y: auto; background: var(--ink); width: 100%;}
+        .page { display: none; animation: fadeUp 0.35s ease; }
+        .page.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .page-inner { padding: 28px; max-width: 1400px; margin: 0 auto; }
+        .page-header { margin-bottom: 28px; }
+        .page-eyebrow { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold); font-weight: 600; margin-bottom: 6px; }
+        .page-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; line-height: 1.2; }
+        .page-subtitle { color: var(--text-secondary); font-size: 13.5px; margin-top: 6px; max-width: 600px; }
+
+        .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; align-items: center; }
+        .filter-select { background: var(--ink-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text-primary); font-family: var(--font-body); font-size: 12.5px; cursor: pointer; outline: none; transition: var(--transition); }
+        .filter-select:focus { border-color: var(--border-gold); }
+        .filter-chip { padding: 6px 14px; border-radius: 99px; border: 1px solid var(--border); background: var(--ink-2); color: var(--text-secondary); font-size: 12px; cursor: pointer; transition: var(--transition); font-weight: 500; white-space: nowrap; user-select: none; }
+        .filter-chip:hover { border-color: var(--border-gold); color: var(--text-primary); }
+        .filter-chip.active { background: linear-gradient(135deg, rgba(200,168,75,0.15), rgba(200,168,75,0.08)); border-color: var(--gold); color: var(--gold-light); }
+        .filter-divider { width: 1px; height: 20px; background: var(--border); }
+        .sort-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+        .results-count { margin-left: auto; font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        .kpi-card { background: var(--ink-2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; position: relative; overflow: hidden; transition: var(--transition); }
+        .kpi-card:hover { border-color: var(--border-gold); }
+        .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--kpi-color, var(--gold)); border-radius: 2px 2px 0 0; }
+        .kpi-icon { font-size: 22px; margin-bottom: 12px; display: block; }
+        .kpi-value { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
+        .kpi-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; }
+        .kpi-sub { font-size: 11.5px; color: var(--text-secondary); margin-top: 8px; }
+
+        .ai-insight-card { background: linear-gradient(135deg, rgba(139,111,255,0.08) 0%, rgba(74,158,255,0.08) 100%); border: 1px solid rgba(139,111,255,0.2); border-radius: var(--radius-lg); padding: 20px; position: relative; overflow: hidden; margin-bottom: 28px; }
+        .ai-insight-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(139,111,255,0.15), transparent 70%); pointer-events: none; }
+        .ai-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .ai-badge { display: flex; align-items: center; gap: 6px; background: rgba(139,111,255,0.15); border: 1px solid rgba(139,111,255,0.3); border-radius: 99px; padding: 4px 12px; font-size: 10.5px; font-weight: 700; color: #b8a4ff; text-transform: uppercase; letter-spacing: 0.1em; }
+        .ai-dot { width: 6px; height: 6px; border-radius: 50%; background: #8b6fff; animation: pulse-dot 1.5s ease infinite; }
+        .ai-text { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+        .chart-card { background: var(--ink-2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px; transition: var(--transition); }
+        .chart-card:hover { border-color: rgba(255,255,255,0.1); }
+        .chart-card.full-width { grid-column: 1 / -1; }
+        .chart-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+        .chart-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); }
+        .chart-subtitle { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; }
+        .chart-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; background: rgba(200,168,75,0.1); border: 1px solid var(--border-gold); padding: 3px 8px; border-radius: 99px; }
+        .chart-wrap { position: relative; height: 220px; width: 100%;}
+
+        .country-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+        .country-card { background: var(--ink-2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: var(--transition); position: relative; }
+        .country-card:hover { border-color: var(--border-gold); transform: translateY(-3px); box-shadow: var(--glow-gold), 0 16px 40px rgba(0,0,0,0.4); }
+        .card-flag-wrap { position: relative; height: 130px; overflow: hidden; background: var(--ink-3); }
+        .card-flag { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; display: block; }
+        .country-card:hover .card-flag { transform: scale(1.06); }
+        .card-region-tag { position: absolute; top: 10px; left: 10px; background: rgba(10,11,15,0.75); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 99px; padding: 3px 10px; font-size: 10px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+        .card-body { padding: 14px 16px; }
+        .card-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; line-height: 1.2; }
+        .card-official { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+        .card-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .card-stat { background: var(--ink-3); border-radius: var(--radius-sm); padding: 8px 10px; border: 1px solid var(--border); }
+        .card-stat-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 600; margin-bottom: 2px; }
+        .card-stat-value { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+        .skeleton-card { background: var(--ink-2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+        .skeleton { background: linear-gradient(90deg, var(--ink-3) 0%, var(--ink-4) 50%, var(--ink-3) 100%); background-size: 200% 100%; animation: shimmer 1.5s ease infinite; border-radius: 6px; }
+        @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+        .skel-flag { height: 130px; border-radius: 0; }
+        .skel-body { padding: 14px 16px; }
+        .skel-name { height: 18px; width: 60%; margin-bottom: 8px; }
+        .skel-sub { height: 12px; width: 40%; margin-bottom: 14px; }
+        .skel-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .skel-stat { height: 44px; }
+        
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
 
-<div class="app">
-  <div class="header">
-    <div class="logo"><i class="fas fa-globe"></i> Meridian</div>
-    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Search country..."></div>
-    <div class="nav-links">
-      <button class="nav-btn active" data-page="home">🏠 Home</button>
-      <button class="nav-btn" data-page="favorites">❤️ Favorites</button>
-      <button class="nav-btn" data-page="about">ℹ️ About</button>
-    </div>
-  </div>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <a href="#" class="logo-mark">
+                <div class="logo-icon">M</div>
+                <div>
+                    <div class="logo-text">Meridian</div>
+                    <div class="logo-tag">Intelligence</div>
+                </div>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Platform</div>
+            <div class="nav-item active">
+                <span class="nav-icon">⊞</span>
+                Dashboard
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">🌍</span>
+                Directory
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">◱</span>
+                Compare Engine
+                <span class="nav-badge">2</span>
+            </div>
+            
+            <div class="nav-section-label">Analysis</div>
+            <div class="nav-item">
+                <span class="nav-icon">📈</span>
+                Economic Pulse
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">🛡️</span>
+                Geopolitical Risk
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">🎮</span>
+                Geo-Quiz
+            </div>
+        </nav>
 
-  <div id="mainContent"></div>
-  <footer>🌍 50+ countries | Real-time data | Optimized for speed</footer>
+        <div class="sidebar-footer">
+            <div class="data-source-badge">
+                <div class="status-dot"></div>
+                <div class="status-text">
+                    <strong>API Status</strong>
+                    Live Data Connected
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Search countries, regions, or metrics...">
+                <kbd class="search-kbd">⌘ K</kbd>
+            </div>
+            
+            <div class="topbar-actions">
+                <button class="topbar-btn">
+                    <span>☆</span> Saved
+                </button>
+                <button class="topbar-btn primary">
+                    Generate Report
+                </button>
+            </div>
+        </header>
+
+        <div class="page active">
+            <div class="page-inner">
+                
+                <header class="page-header">
+                    <div class="page-eyebrow">Global Overview</div>
+                    <h1 class="page-title">Intelligence Dashboard</h1>
+                    <p class="page-subtitle">Real-time macro indicators and AI-driven insights across 195 nations.</p>
+                </header>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card" style="--kpi-color: var(--sky);">
+                        <span class="kpi-icon">🌍</span>
+                        <div class="kpi-value tabular-nums">195</div>
+                        <div class="kpi-label">Tracked Nations</div>
+                        <div class="kpi-sub">+2 Territories added this week</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color: var(--jade);">
+                        <span class="kpi-icon">📈</span>
+                        <div class="kpi-value tabular-nums">$105.4T</div>
+                        <div class="kpi-label">Global GDP Est.</div>
+                        <div class="kpi-sub">↑ 2.8% YOY Growth</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color: var(--coral);">
+                        <span class="kpi-icon">⚠️</span>
+                        <div class="kpi-value tabular-nums">14</div>
+                        <div class="kpi-label">High Risk Zones</div>
+                        <div class="kpi-sub">Based on current stability index</div>
+                    </div>
+                    <div class="kpi-card" style="--kpi-color: var(--gold);">
+                        <span class="kpi-icon">⚡</span>
+                        <div class="kpi-value tabular-nums">84%</div>
+                        <div class="kpi-label">Data Confidence</div>
+                        <div class="kpi-sub">Aggregated from World Bank & IMF</div>
+                    </div>
+                </div>
+
+                <div class="ai-insight-card">
+                    <div class="ai-header">
+                        <div class="ai-badge">
+                            <div class="ai-dot"></div>
+                            Meridian AI Insight
+                        </div>
+                    </div>
+                    <p class="ai-text">
+                        Emerging markets in Southeast Asia are showing a localized acceleration in digital infrastructure investment, bypassing traditional logistics constraints. Vietnam and Indonesia are currently flagging as high-probability targets for tech-sector FDI in Q3.
+                    </p>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card full-width">
+                        <div class="chart-header">
+                            <div>
+                                <h3 class="chart-title">Global Economic Density</h3>
+                                <p class="chart-subtitle">GDP Distribution by Top Regions (Trillions USD)</p>
+                            </div>
+                            <span class="chart-tag">Live</span>
+                        </div>
+                        <div class="chart-wrap">
+                            <canvas id="gdpChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <span class="sort-label">Quick Filters:</span>
+                    <button class="filter-chip active">All Regions</button>
+                    <button class="filter-chip">G20</button>
+                    <button class="filter-chip">Emerging Markets</button>
+                    <div class="filter-divider"></div>
+                    <select class="filter-select">
+                        <option>Sort by GDP (High to Low)</option>
+                        <option>Sort by Population</option>
+                        <option>Sort Alphabetically</option>
+                    </select>
+                    <span class="results-count">Showing Top Results</span>
+                </div>
+
+                <div class="country-grid" id="data-grid">
+                    <div class="skeleton-card skel-item">
+                        <div class="skeleton skel-flag"></div>
+                        <div class="skel-body">
+                            <div class="skeleton skel-name"></div>
+                            <div class="skeleton skel-sub"></div>
+                            <div class="skel-stats">
+                                <div class="skeleton skel-stat"></div>
+                                <div class="skeleton skel-stat"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-card skel-item">
+                        <div class="skeleton skel-flag"></div>
+                        <div class="skel-body">
+                            <div class="skeleton skel-name"></div>
+                            <div class="skeleton skel-sub"></div>
+                            <div class="skel-stats">
+                                <div class="skeleton skel-stat"></div>
+                                <div class="skeleton skel-stat"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-card skel-item">
+                        <div class="skeleton skel-flag"></div>
+                        <div class="skel-body">
+                            <div class="skeleton skel-name"></div>
+                            <div class="skeleton skel-sub"></div>
+                            <div class="skel-stats">
+                                <div class="skeleton skel-stat"></div>
+                                <div class="skeleton skel-stat"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-card skel-item">
+                        <div class="skeleton skel-flag"></div>
+                        <div class="skel-body">
+                            <div class="skeleton skel-name"></div>
+                            <div class="skeleton skel-sub"></div>
+                            <div class="skel-stats">
+                                <div class="skeleton skel-stat"></div>
+                                <div class="skeleton skel-stat"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="country-card real-data hidden">
+                        <div class="card-flag-wrap">
+                            <img src="https://flagcdn.com/w640/us.png" alt="USA Flag" class="card-flag">
+                            <div class="card-region-tag">North America</div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-name text-truncate">United States</h3>
+                            <div class="card-official text-truncate">United States of America</div>
+                            <div class="card-stats">
+                                <div class="card-stat">
+                                    <div class="card-stat-label">Population</div>
+                                    <div class="card-stat-value tabular-nums">331.4M</div>
+                                </div>
+                                <div class="card-stat">
+                                    <div class="card-stat-label">GDP</div>
+                                    <div class="card-stat-value tabular-nums">$23.0T</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="country-card real-data hidden">
+                        <div class="card-flag-wrap">
+                            <img src="https://flagcdn.com/w640/cn.png" alt="China Flag" class="card-flag">
+                            <div class="card-region-tag">Asia</div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-name text-truncate">China</h3>
+                            <div class="card-official text-truncate">People's Republic of China</div>
+                            <div class="card-stats">
+                                <div class="card-stat">
+                                    <div class="card-stat-label">Population</div>
+                                    <div class="card-stat-value tabular-nums">1.41B</div>
+                                </div>
+                                <div class="card-stat">
+                                    <div class="card-stat-label">GDP</div>
+                                    <div class="card-stat-value tabular-nums">$17.7T</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="country-card real-data hidden">
+                        <div class="card-flag-wrap">
+                            <img src="https://flagcdn.com/w640/jp.png" alt="Japan Flag" class="card-flag">
+                            <div class="card-region-tag">Asia</div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-name text-truncate">Japan</h3>
+                            <div class="card-official text-truncate">Nippon-koku</div>
+                            <div class="card-stats">
+                                <div class="card-stat">
+                                    <div class="card-stat-label">Population</div>
+                                    <div class="card-stat-value tabular-nums">125.8M</div>
+                                </div>
+                                <div class="card-stat">
+                                    <div class="card-stat-label">GDP</div>
+                                    <div class="card-stat-value tabular-nums">$4.9T</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="country-card real-data hidden">
+                        <div class="card-flag-wrap">
+                            <img src="https://flagcdn.com/w640/de.png" alt="Germany Flag" class="card-flag">
+                            <div class="card-region-tag">Europe</div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-name text-truncate">Germany</h3>
+                            <div class="card-official text-truncate">Federal Republic of Germany</div>
+                            <div class="card-stats">
+                                <div class="card-stat">
+                                    <div class="card-stat-label">Population</div>
+                                    <div class="card-stat-value tabular-nums">83.2M</div>
+                                </div>
+                                <div class="card-stat">
+                                    <div class="card-stat-label">GDP</div>
+                                    <div class="card-stat-value tabular-nums">$4.2T</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
 
 <script>
-// ============================================
-// OPTIMIZED DATA - 50 MAJOR COUNTRIES
-// ============================================
-const COUNTRIES_DATA = [
-  {cca3:"USA",name:"United States",official:"United States of America",flag:"https://flagcdn.com/80x60/us.png",population:331900000,region:"Americas",capital:"Washington D.C.",area:9833520,languages:["English"],currency:"USD",timezones:["UTC-5 to UTC-10"]},
-  {cca3:"CHN",name:"China",official:"People's Republic of China",flag:"https://flagcdn.com/80x60/cn.png",population:1444216000,region:"Asia",capital:"Beijing",area:9596961,languages:["Mandarin"],currency:"CNY",timezones:["UTC+8"]},
-  {cca3:"IND",name:"India",official:"Republic of India",flag:"https://flagcdn.com/80x60/in.png",population:1380004385,region:"Asia",capital:"New Delhi",area:3287263,languages:["Hindi","English"],currency:"INR",timezones:["UTC+5:30"]},
-  {cca3:"JPN",name:"Japan",official:"Japan",flag:"https://flagcdn.com/80x60/jp.png",population:125800000,region:"Asia",capital:"Tokyo",area:377975,languages:["Japanese"],currency:"JPY",timezones:["UTC+9"]},
-  {cca3:"DEU",name:"Germany",official:"Federal Republic of Germany",flag:"https://flagcdn.com/80x60/de.png",population:83200000,region:"Europe",capital:"Berlin",area:357022,languages:["German"],currency:"EUR",timezones:["UTC+1"]},
-  {cca3:"FRA",name:"France",official:"French Republic",flag:"https://flagcdn.com/80x60/fr.png",population:67390000,region:"Europe",capital:"Paris",area:551695,languages:["French"],currency:"EUR",timezones:["UTC+1"]},
-  {cca3:"GBR",name:"United Kingdom",official:"United Kingdom",flag:"https://flagcdn.com/80x60/gb.png",population:67886000,region:"Europe",capital:"London",area:242495,languages:["English"],currency:"GBP",timezones:["UTC+0"]},
-  {cca3:"BRA",name:"Brazil",official:"Federative Republic of Brazil",flag:"https://flagcdn.com/80x60/br.png",population:213993437,region:"Americas",capital:"Brasília",area:8515767,languages:["Portuguese"],currency:"BRL",timezones:["UTC-2 to UTC-5"]},
-  {cca3:"AUS",name:"Australia",official:"Commonwealth of Australia",flag:"https://flagcdn.com/80x60/au.png",population:25788000,region:"Oceania",capital:"Canberra",area:7692024,languages:["English"],currency:"AUD",timezones:["UTC+8 to UTC+10"]},
-  {cca3:"CAN",name:"Canada",official:"Canada",flag:"https://flagcdn.com/80x60/ca.png",population:38250000,region:"Americas",capital:"Ottawa",area:9984670,languages:["English","French"],currency:"CAD",timezones:["UTC-3:30 to UTC-8"]},
-  {cca3:"RUS",name:"Russia",official:"Russian Federation",flag:"https://flagcdn.com/80x60/ru.png",population:144104000,region:"Europe/Asia",capital:"Moscow",area:17098246,languages:["Russian"],currency:"RUB",timezones:["UTC+2 to UTC+12"]},
-  {cca3:"MEX",name:"Mexico",official:"United Mexican States",flag:"https://flagcdn.com/80x60/mx.png",population:128932753,region:"Americas",capital:"Mexico City",area:1964375,languages:["Spanish"],currency:"MXN",timezones:["UTC-6 to UTC-8"]},
-  {cca3:"IDN",name:"Indonesia",official:"Republic of Indonesia",flag:"https://flagcdn.com/80x60/id.png",population:273523615,region:"Asia",capital:"Jakarta",area:1904569,languages:["Indonesian"],currency:"IDR",timezones:["UTC+7 to UTC+9"]},
-  {cca3:"PAK",name:"Pakistan",official:"Islamic Republic of Pakistan",flag:"https://flagcdn.com/80x60/pk.png",population:220892340,region:"Asia",capital:"Islamabad",area:881913,languages:["Urdu","English"],currency:"PKR",timezones:["UTC+5"]},
-  {cca3:"NGA",name:"Nigeria",official:"Federal Republic of Nigeria",flag:"https://flagcdn.com/80x60/ng.png",population:206139589,region:"Africa",capital:"Abuja",area:923768,languages:["English"],currency:"NGN",timezones:["UTC+1"]},
-  {cca3:"BGD",name:"Bangladesh",official:"People's Republic of Bangladesh",flag:"https://flagcdn.com/80x60/bd.png",population:164689383,region:"Asia",capital:"Dhaka",area:147570,languages:["Bengali"],currency:"BDT",timezones:["UTC+6"]},
-  {cca3:"ITA",name:"Italy",official:"Italian Republic",flag:"https://flagcdn.com/80x60/it.png",population:60360000,region:"Europe",capital:"Rome",area:301340,languages:["Italian"],currency:"EUR",timezones:["UTC+1"]},
-  {cca3:"ESP",name:"Spain",official:"Kingdom of Spain",flag:"https://flagcdn.com/80x60/es.png",population:47351567,region:"Europe",capital:"Madrid",area:505992,languages:["Spanish"],currency:"EUR",timezones:["UTC+1"]},
-  {cca3:"KOR",name:"South Korea",official:"Republic of Korea",flag:"https://flagcdn.com/80x60/kr.png",population:51780579,region:"Asia",capital:"Seoul",area:100210,languages:["Korean"],currency:"KRW",timezones:["UTC+9"]},
-  {cca3:"TUR",name:"Turkey",official:"Republic of Turkey",flag:"https://flagcdn.com/80x60/tr.png",population:84339067,region:"Asia",capital:"Ankara",area:783562,languages:["Turkish"],currency:"TRY",timezones:["UTC+3"]},
-  {cca3:"ZAF",name:"South Africa",official:"Republic of South Africa",flag:"https://flagcdn.com/80x60/za.png",population:59308690,region:"Africa",capital:"Pretoria",area:1221037,languages:["Zulu","Xhosa","Afrikaans","English"],currency:"ZAR",timezones:["UTC+2"]},
-  {cca3:"ARG",name:"Argentina",official:"Argentine Republic",flag:"https://flagcdn.com/80x60/ar.png",population:45195777,region:"Americas",capital:"Buenos Aires",area:2780400,languages:["Spanish"],currency:"ARS",timezones:["UTC-3"]},
-  {cca3:"EGY",name:"Egypt",official:"Arab Republic of Egypt",flag:"https://flagcdn.com/80x60/eg.png",population:102334404,region:"Africa",capital:"Cairo",area:1002450,languages:["Arabic"],currency:"EGP",timezones:["UTC+2"]},
-  {cca3:"SAU",name:"Saudi Arabia",official:"Kingdom of Saudi Arabia",flag:"https://flagcdn.com/80x60/sa.png",population:34813871,region:"Asia",capital:"Riyadh",area:2149690,languages:["Arabic"],currency:"SAR",timezones:["UTC+3"]},
-  {cca3:"IRN",name:"Iran",official:"Islamic Republic of Iran",flag:"https://flagcdn.com/80x60/ir.png",population:83992949,region:"Asia",capital:"Tehran",area:1648195,languages:["Persian"],currency:"IRR",timezones:["UTC+3:30"]},
-  {cca3:"THA",name:"Thailand",official:"Kingdom of Thailand",flag:"https://flagcdn.com/80x60/th.png",population:69799978,region:"Asia",capital:"Bangkok",area:513120,languages:["Thai"],currency:"THB",timezones:["UTC+7"]},
-  {cca3:"POL",name:"Poland",official:"Republic of Poland",flag:"https://flagcdn.com/80x60/pl.png",population:37950802,region:"Europe",capital:"Warsaw",area:312679,languages:["Polish"],currency:"PLN",timezones:["UTC+1"]},
-  {cca3:"UKR",name:"Ukraine",official:"Ukraine",flag:"https://flagcdn.com/80x60/ua.png",population:43733762,region:"Europe",capital:"Kyiv",area:603500,languages:["Ukrainian"],currency:"UAH",timezones:["UTC+2"]},
-  {cca3:"MAR",name:"Morocco",official:"Kingdom of Morocco",flag:"https://flagcdn.com/80x60/ma.png",population:36910560,region:"Africa",capital:"Rabat",area:446550,languages:["Arabic","Berber"],currency:"MAD",timezones:["UTC+1"]},
-  {cca3:"KEN",name:"Kenya",official:"Republic of Kenya",flag:"https://flagcdn.com/80x60/ke.png",population:53771300,region:"Africa",capital:"Nairobi",area:580367,languages:["Swahili","English"],currency:"KES",timezones:["UTC+3"]},
-  {cca3:"VNM",name:"Vietnam",official:"Socialist Republic of Vietnam",flag:"https://flagcdn.com/80x60/vn.png",population:97338579,region:"Asia",capital:"Hanoi",area:331212,languages:["Vietnamese"],currency:"VND",timezones:["UTC+7"]},
-  {cca3:"PHL",name:"Philippines",official:"Republic of the Philippines",flag:"https://flagcdn.com/80x60/ph.png",population:109581078,region:"Asia",capital:"Manila",area:300000,languages:["Filipino","English"],currency:"PHP",timezones:["UTC+8"]},
-  {cca3:"COL",name:"Colombia",official:"Republic of Colombia",flag:"https://flagcdn.com/80x60/co.png",population:50882891,region:"Americas",capital:"Bogotá",area:1141748,languages:["Spanish"],currency:"COP",timezones:["UTC-5"]},
-  {cca3:"SWE",name:"Sweden",official:"Kingdom of Sweden",flag:"https://flagcdn.com/80x60/se.png",population:10099265,region:"Europe",capital:"Stockholm",area:450295,languages:["Swedish"],currency:"SEK",timezones:["UTC+1"]},
-  {cca3:"NLD",name:"Netherlands",official:"Kingdom of the Netherlands",flag:"https://flagcdn.com/80x60/nl.png",population:17411500,region:"Europe",capital:"Amsterdam",area:41543,languages:["Dutch"],currency:"EUR",timezones:["UTC+1"]},
-  {cca3:"CHE",name:"Switzerland",official:"Swiss Confederation",flag:"https://flagcdn.com/80x60/ch.png",population:8654622,region:"Europe",capital:"Bern",area:41284,languages:["German","French","Italian"],currency:"CHF",timezones:["UTC+1"]},
-  {cca3:"GRC",name:"Greece",official:"Hellenic Republic",flag:"https://flagcdn.com/80x60/gr.png",population:10423054,region:"Europe",capital:"Athens",area:131957,languages:["Greek"],currency:"EUR",timezones:["UTC+2"]},
-  {cca3:"PRT",name:"Portugal",official:"Portuguese Republic",flag:"https://flagcdn.com/80x60/pt.png",population:10196709,region:"Europe",capital:"Lisbon",area:92090,languages:["Portuguese"],currency:"EUR",timezones:["UTC+0"]},
-  {cca3:"NOR",name:"Norway",official:"Kingdom of Norway",flag:"https://flagcdn.com/80x60/no.png",population:5421241,region:"Europe",capital:"Oslo",area:323802,languages:["Norwegian"],currency:"NOK",timezones:["UTC+1"]},
-  {cca3:"DNK",name:"Denmark",official:"Kingdom of Denmark",flag:"https://flagcdn.com/80x60/dk.png",population:5831404,region:"Europe",capital:"Copenhagen",area:43094,languages:["Danish"],currency:"DKK",timezones:["UTC+1"]},
-  {cca3:"FIN",name:"Finland",official:"Republic of Finland",flag:"https://flagcdn.com/80x60/fi.png",population:5530719,region:"Europe",capital:"Helsinki",area:338424,languages:["Finnish","Swedish"],currency:"EUR",timezones:["UTC+2"]},
-  {cca3:"ISL",name:"Iceland",official:"Iceland",flag:"https://flagcdn.com/80x60/is.png",population:366425,region:"Europe",capital:"Reykjavik",area:103000,languages:["Icelandic"],currency:"ISK",timezones:["UTC+0"]},
-  {cca3:"NZL",name:"New Zealand",official:"New Zealand",flag:"https://flagcdn.com/80x60/nz.png",population:4822233,region:"Oceania",capital:"Wellington",area:268838,languages:["English","Maori"],currency:"NZD",timezones:["UTC+12"]},
-  {cca3:"CHL",name:"Chile",official:"Republic of Chile",flag:"https://flagcdn.com/80x60/cl.png",population:19116201,region:"Americas",capital:"Santiago",area:756102,languages:["Spanish"],currency:"CLP",timezones:["UTC-3"]},
-  {cca3:"PER",name:"Peru",official:"Republic of Peru",flag:"https://flagcdn.com/80x60/pe.png",population:32971854,region:"Americas",capital:"Lima",area:1285216,languages:["Spanish"],currency:"PEN",timezones:["UTC-5"]},
-  {cca3:"IRL",name:"Ireland",official:"Republic of Ireland",flag:"https://flagcdn.com/80x60/ie.png",population:4994724,region:"Europe",capital:"Dublin",area:70273,languages:["Irish","English"],currency:"EUR",timezones:["UTC+0"]},
-  {cca3:"AUT",name:"Austria",official:"Republic of Austria",flag:"https://flagcdn.com/80x60/at.png",population:9006398,region:"Europe",capital:"Vienna",area:83871,languages:["German"],currency:"EUR",timezones:["UTC+1"]},
-  {cca3:"HUN",name:"Hungary",official:"Hungary",flag:"https://flagcdn.com/80x60/hu.png",population:9660351,region:"Europe",capital:"Budapest",area:93028,languages:["Hungarian"],currency:"HUF",timezones:["UTC+1"]},
-  {cca3:"CZE",name:"Czech Republic",official:"Czech Republic",flag:"https://flagcdn.com/80x60/cz.png",population:10708981,region:"Europe",capital:"Prague",area:78867,languages:["Czech"],currency:"CZK",timezones:["UTC+1"]},
-  {cca3:"SGP",name:"Singapore",official:"Republic of Singapore",flag:"https://flagcdn.com/80x60/sg.png",population:5850342,region:"Asia",capital:"Singapore",area:728,languages:["English","Malay","Chinese","Tamil"],currency:"SGD",timezones:["UTC+8"]}
-];
+    // --- Chart.js Initialization ---
+    document.addEventListener("DOMContentLoaded", function() {
+        // Grab CSS variables to style the chart native to the Meridian theme
+        const style = getComputedStyle(document.body);
+        const colorGold = style.getPropertyValue('--gold').trim() || '#c8a84b';
+        const colorSky = style.getPropertyValue('--sky').trim() || '#4a9eff';
+        const colorJade = style.getPropertyValue('--jade').trim() || '#3db87a';
+        const colorCoral = style.getPropertyValue('--coral').trim() || '#e85d4a';
+        const colorInk4 = style.getPropertyValue('--ink-4').trim() || '#2a2b3a';
+        const colorTextMuted = style.getPropertyValue('--text-muted').trim() || '#5a5660';
 
-// ============================================
-// STATE MANAGEMENT
-// ============================================
-let allCountries = COUNTRIES_DATA;
-let filteredCountries = [...allCountries];
-let favorites = JSON.parse(localStorage.getItem('meridian_favs') || '[]');
-let currentPage = 1;
-let perPage = 12;
-let searchTerm = '';
-let currentView = 'home';
-let selectedCountry = null;
+        const ctx = document.getElementById('gdpChart').getContext('2d');
+        
+        // Gradient for the primary bar
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, colorGold);
+        gradient.addColorStop(1, 'rgba(200,168,75,0.1)');
 
-function toast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.innerHTML = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2500);
-}
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['North America', 'East Asia', 'Western Europe', 'South Asia', 'Middle East', 'South America'],
+                datasets: [{
+                    label: 'GDP in Trillions (USD)',
+                    data: [28.5, 25.2, 18.4, 4.1, 3.8, 3.2],
+                    backgroundColor: gradient,
+                    borderColor: colorGold,
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#14151c',
+                        titleFont: { family: 'Syne', size: 14 },
+                        bodyFont: { family: 'DM Sans', size: 13 },
+                        borderColor: colorGold,
+                        borderWidth: 1,
+                        padding: 12
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: colorInk4, drawBorder: false },
+                        ticks: { color: colorTextMuted, font: { family: 'DM Sans' } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: colorTextMuted, font: { family: 'DM Sans' } }
+                    }
+                }
+            }
+        });
 
-function saveFavs() { localStorage.setItem('meridian_favs', JSON.stringify(favorites)); }
+        // --- Skeleton to Data Loading Simulation ---
+        setTimeout(() => {
+            // Hide Skeletons
+            document.querySelectorAll('.skel-item').forEach(el => el.classList.add('hidden'));
+            // Show Real Data
+            document.querySelectorAll('.real-data').forEach(el => el.classList.remove('hidden'));
+        }, 1500); // 1.5 second delay to simulate network request
+    });
+</script>
 
-function toggleFav(cca3, e) {
-  if(e) e.stopPropagation();
-  if(favorites.includes(cca3)) { favorites = favorites.filter(f => f !== cca3); toast('Removed from favorites'); }
-  else { favorites.push(cca3); toast('Added to favorites ❤️'); }
-  saveFavs();
-  renderCurrentView();
-}
-
-function isFav(cca3) { return favorites.includes(cca3); }
-
-function formatPop(n) {
-  if(!n) return 'N/A';
-  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
-  if(n>=1e6) return (n/1e6).toFixed(1)+'M';
-  return n.toLocaleString();
-}
-
-function formatArea(n) {
-  if(!n) return 'N/A';
-  if(n>=1e6) return (n/1e6).toFixed(2)+'M km²';
-  if(n>=1e3) return (n/1e3).toFixed(1)+'K km²';
-  return n+' km²';
-}
-
-function buildCard(c) {
-  return `
-    <div class="country-card" onclick="showDetail('${c.cca3}')">
-      <img class="flag" src="${c.flag}" alt="${c.name}" loading="lazy">
-      <div class="card-body">
-        <div class="country-name">
-          ${c.name}
-          <i class="fas fa-heart" style="color:${isFav(c.cca3)?'#c8a84b':'#555'};cursor:pointer" onclick="toggleFav('${c.cca3}',event)"></i>
-        </div>
-        <div style="font-size:12px;color:var(--text-light);margin:4px 0">${c.capital || '—'}</div>
-        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px">
-          <span><i class="fas fa-users"></i> ${formatPop(c.population)}</span>
-          <span><i class="fas fa-map-marker-alt"></i> ${c.region}</span>
-        </div>
-      </div>
-    </div>`;
-}
-
-function renderHome() {
-  const start = (currentPage-1)*perPage;
-  const paginated = filteredCountries.slice(start, start+perPage);
-  const totalPages = Math.ceil(filteredCountries.length/perPage);
-  const totalPop = allCountries.reduce((s,c)=>s+(c.population||0),0);
-  
-  let html = `
-    <div class="hero">
-      <h1><i class="fas fa-chart-line"></i> Country Intelligence</h1>
-      <p>${allCountries.length} major nations | Real-time data | Optimized for speed</p>
-    </div>
-    <div class="stats">
-      <div class="stat-card"><div class="stat-value">${allCountries.length}</div><div>Countries</div></div>
-      <div class="stat-card"><div class="stat-value">${(totalPop/1e9).toFixed(2)}B</div><div>Population</div></div>
-      <div class="stat-card"><div class="stat-value">${favorites.length}</div><div>Favorites</div></div>
-    </div>
-    <div class="filter-bar">
-      <span class="filter-chip ${searchTerm===''?'active':''}" onclick="setRegion('all')">🌍 All</span>
-      <span class="filter-chip" onclick="setRegion('Americas')">🌎 Americas</span>
-      <span class="filter-chip" onclick="setRegion('Europe')">🌍 Europe</span>
-      <span class="filter-chip" onclick="setRegion('Asia')">🌏 Asia</span>
-      <span class="filter-chip" onclick="setRegion('Africa')">🌍 Africa</span>
-      <span class="filter-chip" onclick="setRegion('Oceania')">🌊 Oceania</span>
-      <select id="sortSelect" class="filter-chip" onchange="applySort()" style="background:var(--surface2)">
-        <option value="name">Sort: Name</option><option value="pop">Sort: Population</option><option value="area">Sort: Area</option>
-      </select>
-    </div>
-    <div class="country-grid" id="countryGrid"></div>
-    <div class="pagination" id="pagination"></div>
-  `;
-  document.getElementById('mainContent').innerHTML = html;
-  
-  const grid = document.getElementById('countryGrid');
-  if(paginated.length===0) grid.innerHTML = '<div style="text-align:center;padding:40px;">No countries found</div>';
-  else grid.innerHTML = paginated.map(buildCard).join('');
-  
-  if(totalPages>1){
-    let pgHtml = '';
-    for(let i=1;i<=Math.min(totalPages,8);i++){
-      pgHtml += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
-    }
-    document.getElementById('pagination').innerHTML = pgHtml;
-  }
-}
-
-function applySort() {
-  const sortBy = document.getElementById('sortSelect')?.value || 'name';
-  if(sortBy==='pop') filteredCountries.sort((a,b)=>(b.population||0)-(a.population||0));
-  else if(sortBy==='area') filteredCountries.sort((a,b)=>(b.area||0)-(a.area||0));
-  else filteredCountries.sort((a,b)=>a.name.localeCompare(b.name));
-  currentPage=1;
-  renderHome();
-}
-
-function setRegion(region) {
-  if(region==='all') filteredCountries = [...allCountries];
-  else filteredCountries = allCountries.filter(c=>c.region===region);
-  applySort();
-}
-
-function goPage(p){ currentPage=p; renderHome(); }
-
-function showDetail(cca3){
-  const c = allCountries.find(c=>c.cca3===cca3);
-  if(!c) return;
-  const funFacts = [
-    `${c.name} has a population density of ${(c.population/c.area).toFixed(1)} people per km²`,
-    `${c.name} uses ${c.currency} as its official currency`,
-    `The capital city ${c.capital} is a major cultural hub`,
-    `${c.name} is located in ${c.region}`,
-    `${c.languages.join(', ')} ${c.languages.length>1?'are spoken':'is spoken'} in ${c.name}`
-  ];
-  const randomFact = funFacts[Math.floor(Math.random()*funFacts.length)];
-  
-  const html = `
-    <div class="detail-page">
-      <button class="back-btn" onclick="renderHome()"><i class="fas fa-arrow-left"></i> Back</button>
-      <div class="detail-header">
-        <img class="detail-flag" src="${c.flag}" alt="${c.name}">
-        <div>
-          <h1>${c.name}</h1>
-          <p style="color:var(--text-light);margin:4px 0">${c.official}</p>
-          <div class="fun-fact"><i class="fas fa-lightbulb"></i> ${randomFact}</div>
-        </div>
-      </div>
-      <div class="info-grid">
-        <div class="info-card"><h3>📍 Geography</h3><div class="detail-fact-row">Region: ${c.region}</div><div class="detail-fact-row">Area: ${formatArea(c.area)}</div><div class="detail-fact-row">Capital: ${c.capital}</div></div>
-        <div class="info-card"><h3>👥 Demographics</h3><div class="detail-fact-row">Population: ${formatPop(c.population)}</div><div class="detail-fact-row">Density: ${(c.population/c.area).toFixed(1)}/km²</div><div class="detail-fact-row">Currency: ${c.currency}</div></div>
-        <div class="info-card"><h3>🗣️ Culture</h3><div class="detail-fact-row">Languages: ${c.languages.join(', ')}</div><div class="detail-fact-row">Timezones: ${c.timezones[0]}</div></div>
-      </div>
-      <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
-        <button class="back-btn" onclick="toggleFav('${c.cca3}');showDetail('${c.cca3}')"><i class="fas fa-heart"></i> ${isFav(c.cca3)?'Remove from Favorites':'Save to Favorites'}</button>
-        <button class="back-btn" onclick="window.open('https://en.wikipedia.org/wiki/${encodeURIComponent(c.name)}','_blank')"><i class="fab fa-wikipedia-w"></i> Wikipedia</button>
-      </div>
-    </div>`;
-  document.getElementById('mainContent').innerHTML = html;
-}
-
-function renderFavorites(){
-  const favCountries = allCountries.filter(c=>favorites.includes(c.cca3));
-  let html = `<div class="hero"><h1><i class="fas fa-heart"></i> Your Favorites</h1><p>${
+</body>
+</html>
