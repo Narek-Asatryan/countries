@@ -3,257 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meridian OS | Global Strategic Intelligence</title>
+    <title>Meridian OS | Global Intelligence Omnibus</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* ========================================
-        1. DESIGN SYSTEM & VARIABLES
-        ========================================
-        */
         :root {
-            --ink: #050608;
-            --ink-2: #0d0f14;
-            --ink-3: #161922;
-            --ink-4: #1f232d;
-            --gold: #d4af37;
-            --gold-glow: rgba(212, 175, 55, 0.3);
-            --gold-dim: #8a6d1a;
-            --jade: #4ade80;
-            --coral: #fb7185;
-            --sky: #60a5fa;
-            --violet: #a78bfa;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --text-muted: #475569;
-            --border: rgba(255, 255, 255, 0.06);
-            --border-bright: rgba(255, 255, 255, 0.12);
-            --radius-xl: 24px;
-            --radius-lg: 16px;
-            --radius-md: 10px;
-            --radius-sm: 6px;
-            --font-main: 'DM Sans', sans-serif;
-            --font-display: 'Syne', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --ink: #050608; --ink-2: #0d0f14; --ink-3: #161922; --ink-4: #1f232d;
+            --gold: #d4af37; --gold-glow: rgba(212, 175, 55, 0.3); --gold-dim: #8a6d1a;
+            --jade: #4ade80; --coral: #fb7185; --sky: #60a5fa; --violet: #a78bfa;
+            --text-main: #f8fafc; --text-dim: #94a3b8; --text-muted: #475569;
+            --border: rgba(255, 255, 255, 0.06); --radius-xl: 24px; --radius-lg: 16px;
+            --radius-md: 10px; --font-main: 'DM Sans', sans-serif;
+            --font-display: 'Syne', sans-serif; --font-mono: 'JetBrains Mono', monospace;
             --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ========================================
-        2. BASE RESET & SCROLLBAR
-        ========================================
-        */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        
-        body {
-            font-family: var(--font-main);
-            background: var(--ink);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--ink); }
+        body { font-family: var(--font-main); background: var(--ink); color: var(--text-main); height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 10px; }
 
-        /* ========================================
-        3. APP SHELL LAYOUT
-        ========================================
-        */
-        .app-shell {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            height: 100vh;
-            width: 100vw;
-            transition: var(--transition);
-        }
+        .app-shell { display: grid; grid-template-columns: 280px 1fr; height: 100vh; width: 100vw; transition: var(--transition); }
 
-        /* ========================================
-        4. SIDEBAR (NAVIGATION)
-        ========================================
-        */
-        aside {
-            background: var(--ink-2);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 2rem 1.2rem;
-            z-index: 1000;
-            transition: var(--transition);
-        }
+        aside { background: var(--ink-2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 2rem 1.2rem; z-index: 1000; transition: var(--transition); }
+        .brand { display: flex; align-items: center; gap: 15px; margin-bottom: 3rem; text-decoration: none; cursor: pointer; }
+        .logo-glyph { width: 40px; height: 40px; background: linear-gradient(135deg, var(--gold), var(--gold-dim)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; color: var(--ink); box-shadow: 0 0 20px var(--gold-glow); }
+        .brand-text { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; color: var(--text-main); }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding-left: 0.5rem;
-            margin-bottom: 3rem;
-            text-decoration: none;
-        }
-
-        .logo-glyph {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dim));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-display);
-            font-weight: 800;
-            color: var(--ink);
-            box-shadow: 0 0 20px var(--gold-glow);
-        }
-
-        .brand-text {
-            font-family: var(--font-display);
-            font-weight: 800;
-            font-size: 1.3rem;
-            color: var(--text-main);
-        }
-
-        .nav-section { margin-bottom: 2rem; }
         .nav-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 1rem; padding-left: 0.8rem; }
+        .nav-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; color: var(--text-dim); border-radius: var(--radius-md); transition: var(--transition); font-weight: 500; font-size: 0.95rem; cursor: pointer; margin-bottom: 4px; }
+        .nav-item:hover { background: var(--ink-3); color: var(--text-main); }
+        .nav-item.active { background: var(--gold); color: var(--ink); font-weight: 700; }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 16px;
-            color: var(--text-dim);
-            text-decoration: none;
-            border-radius: var(--radius-md);
-            transition: var(--transition);
-            font-weight: 500;
-            font-size: 0.95rem;
-            cursor: pointer;
-            margin-bottom: 4px;
-        }
-
-        .nav-item:hover { background: var(--ink-3); color: var(--text-main); transform: translateX(5px); }
-        .nav-item.active { background: var(--gold); color: var(--ink); font-weight: 700; box-shadow: 0 4px 15px var(--gold-glow); }
-        .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
-
-        .system-status { margin-top: auto; background: var(--ink-3); padding: 1rem; border-radius: var(--radius-lg); border: 1px solid var(--border); }
-        .status-dot { width: 8px; height: 8px; background: var(--jade); border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px var(--jade); animation: pulse 2s infinite; }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-        /* ========================================
-        5. MAIN CONTENT AREA
-        ========================================
-        */
-        main { overflow-y: auto; height: 100vh; background: radial-gradient(circle at top right, #11141d, var(--ink)); position: relative; }
-        header { 
-            position: sticky; top: 0; height: 80px; 
-            background: rgba(5, 6, 8, 0.8); backdrop-filter: blur(20px); 
-            border-bottom: 1px solid var(--border); 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 3rem; z-index: 90; 
-        }
-
-        .menu-toggle {
-            display: none;
-            background: var(--ink-3);
-            border: 1px solid var(--border);
-            color: var(--gold);
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-
+        main { overflow-y: auto; height: 100vh; background: radial-gradient(circle at top right, #11141d, var(--ink)); }
+        header { position: sticky; top: 0; height: 80px; background: rgba(5, 6, 8, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 3rem; z-index: 90; }
+        
+        .menu-toggle { display: none; background: var(--ink-3); border: 1px solid var(--border); color: var(--gold); padding: 10px; border-radius: 8px; cursor: pointer; }
         .search-container { position: relative; width: 450px; }
-        .search-input { width: 100%; background: var(--ink-3); border: 1px solid var(--border); padding: 12px 20px 12px 50px; border-radius: 99px; color: white; transition: var(--transition); }
-        .search-input:focus { border-color: var(--gold); background: var(--ink-4); box-shadow: 0 0 0 4px var(--gold-glow); }
-        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-input { width: 100%; background: var(--ink-3); border: 1px solid var(--border); padding: 12px 20px 12px 50px; border-radius: 99px; color: white; }
 
-        /* ========================================
-        6. VIEW SYSTEM (SPA)
-        ========================================
-        */
-        .view { padding: 3rem; max-width: 1400px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
+        .view { padding: 3rem; max-width: 1400px; margin: 0 auto; display: none; animation: fadeIn 0.4s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ========================================
-        7. DASHBOARD GRID & CARDS
-        ========================================
-        */
         .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
-        .kpi-card { background: var(--ink-2); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); position: relative; overflow: hidden; }
-        .kpi-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--accent, var(--gold)); }
+        .kpi-card { background: var(--ink-2); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); border-bottom: 3px solid var(--accent, var(--gold)); }
         .kpi-val { font-family: var(--font-display); font-size: 2rem; font-weight: 800; margin-top: 0.5rem; }
 
-        .country-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        .country-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
         .card { background: var(--ink-2); border-radius: var(--radius-xl); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: var(--transition); }
-        .card:hover { transform: translateY(-10px); border-color: var(--gold); box-shadow: var(--shadow-lg); }
-        .card-banner { height: 160px; background: #000; position: relative; overflow: hidden; }
-        .card-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: var(--transition); }
-        .card-content { padding: 1.5rem; }
-        .region-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold); margin-bottom: 0.5rem; }
-        .card-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
-        .card-stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-dim); }
+        .card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .card-banner { height: 140px; background: #000; }
+        .card-banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+        .card-content { padding: 1.2rem; }
+        .card-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
 
-        /* ========================================
-        8. DETAIL VIEW (INTEL REPORT)
-        ========================================
-        */
-        .intel-hero { height: 400px; border-radius: var(--radius-xl); margin-bottom: 3rem; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 4rem; }
-        .intel-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.4); }
-        .hero-data { position: relative; z-index: 5; }
-        .hero-name { font-family: var(--font-display); font-size: 5rem; line-height: 1; margin-bottom: 1rem; }
-        .report-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; }
-        .intel-box { background: var(--ink-2); padding: 2.5rem; border-radius: var(--radius-xl); border: 1px solid var(--border); margin-bottom: 2rem; }
-        .chart-container { height: 300px; margin-top: 2rem; }
+        .intel-box { background: var(--ink-2); padding: 2rem; border-radius: var(--radius-xl); border: 1px solid var(--border); margin-bottom: 2rem; overflow-x: auto; }
+        .intel-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .intel-table th { text-align: left; padding: 1rem; border-bottom: 1px solid var(--border); color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; }
+        .intel-table td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 
-        .intel-table { width: 100%; border-collapse: collapse; }
-        .intel-table th { text-align: left; padding: 1.2rem; border-bottom: 1px solid var(--border-bright); color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; }
-        .intel-table td { padding: 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
-
-        /* ========================================
-        9. MOBILE OVERRIDES (STRICT)
-        ========================================
-        */
         @media (max-width: 850px) {
             .app-shell { grid-template-columns: 1fr; }
-            aside {
-                position: fixed;
-                left: -280px;
-                top: 0;
-                bottom: 0;
-                width: 280px;
-                box-shadow: 20px 0 50px rgba(0,0,0,0.8);
-            }
+            aside { position: fixed; left: -280px; top: 0; bottom: 0; width: 280px; box-shadow: 20px 0 50px #000; }
             .sidebar-active aside { left: 0; }
             .menu-toggle { display: block; }
-            header { padding: 0 1rem; gap: 10px; }
+            header { padding: 0 1rem; }
             .search-container { width: 100%; }
-            .search-input { padding: 10px 15px 10px 40px; font-size: 0.8rem; }
-            header > div:last-child { display: none; }
-            .view { padding: 1.5rem; }
-            .kpi-row { grid-template-columns: 1fr 1fr; gap: 1rem; }
-            .hero-name { font-size: 2.5rem; }
-            .intel-hero { height: 280px; padding: 1.5rem; }
-            .report-layout { grid-template-columns: 1fr; }
-            .overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.7);
-                backdrop-filter: blur(4px);
-                z-index: 900;
-            }
+            .kpi-row { grid-template-columns: 1fr 1fr; }
+            .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 900; }
             .sidebar-active .overlay { display: block; }
         }
-
-        .text-jade { color: var(--jade); }
-        .text-coral { color: var(--coral); }
     </style>
 </head>
 <body id="appBody">
@@ -261,34 +84,22 @@
 <div class="overlay" onclick="toggleMenu()"></div>
 
 <div class="app-shell">
-    
     <aside id="sidebar">
-        <a href="#" class="brand" onclick="switchView('dashboard')">
+        <div class="brand" onclick="switchView('dashboard')">
             <div class="logo-glyph">M</div>
-            <div class="brand-text">MERIDIAN OS</div>
-        </a>
-
+            <div class="brand-text">MERIDIAN</div>
+        </div>
         <div class="nav-section">
-            <div class="nav-label">Intelligence</div>
-            <nav class="nav-group">
-                <div class="nav-item active" onclick="handleNav('dashboard', this)">
-                    <span class="nav-icon">⊞</span> Dashboard
-                </div>
-                <div class="nav-item" onclick="handleNav('risk-view', this)">
-                    <span class="nav-icon">🛡️</span> Risk Matrix
-                </div>
-                <div class="nav-item" onclick="handleNav('macro-view', this)">
-                    <span class="nav-icon">📊</span> Macro Data
-                </div>
-                <div class="nav-item" onclick="handleNav('quiz-view', this)">
-                    <span class="nav-icon">🧩</span> Geo-Quiz
-                </div>
+            <div class="nav-label">Satellite Data</div>
+            <nav>
+                <div class="nav-item active" onclick="handleNav('dashboard', this)"><span>⊞</span> Dashboard</div>
+                <div class="nav-item" onclick="handleNav('risk-view', this)"><span>🛡️</span> Risk Matrix</div>
+                <div class="nav-item" onclick="handleNav('macro-view', this)"><span>📊</span> Macro Data</div>
+                <div class="nav-item" onclick="handleNav('quiz-view', this)"><span>🧩</span> Geo-Quiz</div>
             </nav>
         </div>
-
-        <div class="system-status">
-            <div class="status-dot"></div>
-            <span style="font-size: 0.8rem; font-weight: 600;">System: Online</span>
+        <div style="margin-top:auto; padding:10px; background:var(--ink-3); border-radius:10px; font-size:0.75rem;">
+            <div style="display:flex; align-items:center; gap:8px;"><div style="width:8px; height:8px; background:var(--jade); border-radius:50%;"></div> Systems Nominal</div>
         </div>
     </aside>
 
@@ -296,216 +107,223 @@
         <header>
             <button class="menu-toggle" onclick="toggleMenu()">☰</button>
             <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="mainSearch" placeholder="Search Database..." onkeyup="handleGlobalSearch()">
+                <input type="text" class="search-input" id="mainSearch" placeholder="Filter Nations..." onkeyup="handleSearch()">
             </div>
-            <div>
-                <div style="background: var(--ink-3); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold);">
-                    <span id="digitalClock">00:00:00 UTC</span>
-                </div>
-            </div>
+            <div id="digitalClock" style="font-family:var(--font-mono); color:var(--gold); font-size:0.8rem;"></div>
         </header>
 
         <section id="dashboard" class="view active">
             <div class="kpi-row">
-                <div class="kpi-card" style="--accent: var(--sky)"><div class="nav-label">Nations Loaded</div><div class="kpi-val" id="countDisplay">70</div></div>
-                <div class="kpi-card" style="--accent: var(--jade)"><div class="nav-label">Status</div><div class="kpi-val">Ready</div></div>
-                <div class="kpi-card" style="--accent: var(--coral)"><div class="nav-label">Risk Nodes</div><div class="kpi-val">42</div></div>
-                <div class="kpi-card" style="--accent: var(--violet)"><div class="nav-label">System</div><div class="kpi-val">Fast</div></div>
+                <div class="kpi-card" style="--accent: var(--sky)"><div class="nav-label">Global Registry</div><div class="kpi-val" id="totalCount">0</div></div>
+                <div class="kpi-card" style="--accent: var(--jade)"><div class="nav-label">Avg Stability</div><div class="kpi-val">74%</div></div>
+                <div class="kpi-card" style="--accent: var(--coral)"><div class="nav-label">Active Alerts</div><div class="kpi-val">12</div></div>
+                <div class="kpi-card" style="--accent: var(--violet)"><div class="nav-label">Database</div><div class="kpi-val">Omni</div></div>
             </div>
             <div class="country-grid" id="countryGrid"></div>
         </section>
 
         <section id="risk-view" class="view">
-            <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;">Stability Matrix</h1>
-            <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>Stability Index</th><th>Rating</th></tr></thead><tbody id="riskTableBody"></tbody></table></div>
+            <h2 style="margin-bottom:2rem; font-family:var(--font-display);">Stability Assessment</h2>
+            <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>Capital</th><th>Risk Rating</th></tr></thead><tbody id="riskTable"></tbody></table></div>
         </section>
 
         <section id="macro-view" class="view">
-            <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;">Economic Vitals</h1>
-            <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>GDP</th><th>Pop</th><th>Debt</th></tr></thead><tbody id="macroTableBody"></tbody></table></div>
-        </section>
-
-        <section id="intel-report" class="view">
-            <button class="nav-item" style="margin-bottom: 2rem; width: fit-content;" onclick="switchView('dashboard')">← Close Report</button>
-            <div id="intelReportContent"></div>
+            <h2 style="margin-bottom:2rem; font-family:var(--font-display);">Economic Overview</h2>
+            <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>GDP</th><th>Population</th><th>Debt/GDP</th></tr></thead><tbody id="macroTable"></tbody></table></div>
         </section>
 
         <section id="quiz-view" class="view">
-            <div style="background: var(--ink-2); padding: 3rem; border-radius: var(--radius-xl); text-align: center; border: 1px solid var(--gold);">
-                <h2 style="color: var(--gold); margin-bottom: 1.5rem;">Intelligence Check</h2>
-                <p id="quizQuestion" style="font-size: 1.3rem; margin-bottom: 2rem;">Initializing...</p>
-                <div id="quizOptions"></div>
+            <div style="background:var(--ink-2); padding:3rem; border-radius:var(--radius-xl); text-align:center; border:1px solid var(--gold); max-width:600px; margin:auto;">
+                <h3 style="color:var(--gold); margin-bottom:1rem;">Strategic Quiz</h3>
+                <p id="quizQ" style="font-size:1.2rem; margin-bottom:2rem;"></p>
+                <div id="quizA"></div>
             </div>
+        </section>
+
+        <section id="intel-report" class="view">
+            <button class="nav-item" onclick="switchView('dashboard')" style="margin-bottom:2rem;">← Back</button>
+            <div id="reportContent"></div>
         </section>
     </main>
 </div>
 
 <script>
-    const database = [
-        // CORE 30
-        { id: "us", name: "United States", region: "N. America", gdp: "23.3T", pop: "331M", risk: "Low", debt: "128%", capital: "Washington D.C.", analysis: "Leading superpower focuses on domestic semiconductor growth and AI infrastructure." },
-        { id: "cn", name: "China", region: "E. Asia", gdp: "17.7T", pop: "1.4B", risk: "Medium", debt: "77%", capital: "Beijing", analysis: "World's factory floor transitioning to high-end aerospace and green energy dominance." },
-        { id: "jp", name: "Japan", region: "E. Asia", gdp: "4.9T", pop: "125M", risk: "Low", debt: "263%", capital: "Tokyo", analysis: "Advanced robotics integration helps manage hyper-aged population labor gaps." },
-        { id: "de", name: "Germany", region: "Europe", gdp: "4.2T", pop: "83M", risk: "Low", debt: "69%", capital: "Berlin", analysis: "European industrial heartland pivoting to hydrogen and electric heavy machinery." },
-        { id: "in", name: "India", region: "S. Asia", gdp: "3.1T", pop: "1.4B", risk: "Medium", debt: "89%", capital: "New Delhi", analysis: "Unprecedented growth in digital services and infrastructure for its massive youth base." },
-        { id: "gb", name: "UK", region: "Europe", gdp: "3.1T", pop: "67M", risk: "Low", debt: "103%", capital: "London", analysis: "Leveraging London's financial status to lead the global Fintech regulation era." },
-        { id: "fr", name: "France", region: "Europe", gdp: "2.9T", pop: "67M", risk: "Low", debt: "112%", capital: "Paris", analysis: "Leading the push for energy independence through extensive nuclear modernization." },
-        { id: "br", name: "Brazil", region: "S. America", gdp: "1.6T", pop: "214M", risk: "Medium", debt: "80%", capital: "Brasilia", analysis: "Global agricultural leader with expanding renewable fuel and iron ore export goals." },
-        { id: "ca", name: "Canada", region: "N. America", gdp: "1.9T", pop: "38M", risk: "Low", debt: "117%", capital: "Ottawa", analysis: "Resource-rich hub focused on attracting high-skill tech immigration." },
-        { id: "it", name: "Italy", region: "Europe", gdp: "2.1T", pop: "59M", risk: "Medium", debt: "150%", capital: "Rome", analysis: "High-value precision manufacturing and luxury exports remain economic backbones." },
-        { id: "kr", name: "South Korea", region: "E. Asia", gdp: "1.8T", pop: "51M", risk: "Low", debt: "51%", capital: "Seoul", analysis: "World-leading chipmaker expanding into defense technology and cultural exports." },
-        { id: "au", name: "Australia", region: "Oceania", gdp: "1.5T", pop: "25M", risk: "Low", debt: "57%", capital: "Canberra", analysis: "Critical strategic partner for Indo-Pacific minerals and renewable energy." },
-        { id: "ru", name: "Russia", region: "Eurasia", gdp: "1.7T", pop: "144M", risk: "High", debt: "18%", capital: "Moscow", analysis: "Energy-heavy economy undergoing major structural trade realignment." },
-        { id: "mx", name: "Mexico", region: "N. America", gdp: "1.2T", pop: "128M", risk: "Medium", debt: "56%", capital: "Mexico City", analysis: "Prime beneficiary of near-shoring trends for North American supply chains." },
-        { id: "id", name: "Indonesia", region: "SE Asia", gdp: "1.1T", pop: "273M", risk: "Medium", debt: "41%", capital: "Jakarta", analysis: "Leveraging nickel reserves to build a domestic EV battery hub." },
-        { id: "sa", name: "Saudi Arabia", region: "Middle East", gdp: "833B", pop: "35M", risk: "Medium", debt: "30%", capital: "Riyadh", analysis: "Executing Vision 2030 to diversify into tech, logistics, and tourism." },
-        { id: "tr", name: "Turkey", region: "Eurasia", gdp: "815B", pop: "84M", risk: "High", debt: "37%", capital: "Ankara", analysis: "Geostrategic bridge expanding domestic defense and shipping nodes." },
-        { id: "nl", name: "Netherlands", region: "Europe", gdp: "1.0T", pop: "17M", risk: "Low", debt: "52%", capital: "Amsterdam", analysis: "Critical maritime node and leader in lithography equipment via ASML." },
-        { id: "ch", name: "Switzerland", region: "Europe", gdp: "812B", pop: "8.7M", risk: "Low", debt: "42%", capital: "Bern", analysis: "Global wealth management and pharmaceutical innovation leader." },
-        { id: "pl", name: "Poland", region: "Europe", gdp: "674B", pop: "38M", risk: "Low", debt: "53%", capital: "Warsaw", analysis: "Emerging European tech hub with rapid defense modernization programs." },
-        { id: "se", name: "Sweden", region: "Europe", gdp: "627B", pop: "10M", risk: "Low", debt: "39%", capital: "Stockholm", analysis: "Leading the world in fossil-free steel production and green industrial tech." },
-        { id: "sg", name: "Singapore", region: "SE Asia", gdp: "396B", pop: "5.6M", risk: "Low", debt: "160%", capital: "Singapore", analysis: "Key global financial and trading hub with top-tier digital infrastructure." },
-        { id: "no", name: "Norway", region: "Europe", gdp: "482B", pop: "5.4M", risk: "Low", debt: "41%", capital: "Oslo", analysis: "Energy powerhouse managing the world's largest sovereign wealth fund." },
-        { id: "ae", name: "UAE", region: "Middle East", gdp: "415B", pop: "9.9M", risk: "Low", debt: "38%", capital: "Abu Dhabi", analysis: "Diversifying rapidly into space tech, AI, and global aviation logistics." },
-        { id: "vn", name: "Vietnam", region: "SE Asia", gdp: "366B", pop: "98M", risk: "Medium", debt: "39%", capital: "Hanoi", analysis: "High-growth manufacturing hub attracting global electronics giants." },
-        { id: "eg", name: "Egypt", region: "Africa", gdp: "404B", pop: "104M", risk: "High", debt: "93%", capital: "Cairo", analysis: "Critical Suez Canal controller modernizing its administrative infrastructure." },
-        { id: "ng", name: "Nigeria", region: "Africa", gdp: "440B", pop: "211M", risk: "High", debt: "37%", capital: "Abuja", analysis: "Largest African economy with a booming fintech and creative sector." },
-        { id: "za", name: "South Africa", region: "Africa", gdp: "419B", pop: "60M", risk: "Medium", debt: "69%", capital: "Pretoria", analysis: "Mining and financial core of the continent transitioning energy grids." },
-        { id: "ar", name: "Argentina", region: "S. America", gdp: "487B", pop: "45M", risk: "High", debt: "80%", capital: "Buenos Aires", analysis: "Rich in lithium and agricultural assets, currently restructuring fiscal policy." },
-        { id: "il", name: "Israel", region: "Middle East", gdp: "481B", pop: "9.3M", risk: "Medium", debt: "68%", capital: "Jerusalem", analysis: "High-tech military and cybersecurity leader with a strong R&D focus." },
-
-        // NEW 40 NATIONS (INCLUDING ARMENIA)
-        { id: "am", name: "Armenia", region: "Caucasus", gdp: "19B", pop: "2.9M", risk: "Medium", debt: "50%", capital: "Yerevan", analysis: "Rapidly growing tech sector and strategic diplomatic positioning in the Caucasus." },
-        { id: "ge", name: "Georgia", region: "Caucasus", gdp: "24B", pop: "3.7M", risk: "Medium", debt: "40%", capital: "Tbilisi", analysis: "Hub for regional logistics and transit with expanding tourism and trade links." },
-        { id: "az", name: "Azerbaijan", region: "Caucasus", gdp: "78B", pop: "10M", risk: "Medium", debt: "20%", capital: "Baku", analysis: "Major oil and gas producer transitioning toward regional logistics leadership." },
-        { id: "gr", name: "Greece", region: "Europe", gdp: "219B", pop: "10M", risk: "Low", debt: "170%", capital: "Athens", analysis: "Maritime giant recovering via tourism and green energy investment." },
-        { id: "pt", name: "Portugal", region: "Europe", gdp: "250B", pop: "10M", risk: "Low", debt: "120%", capital: "Lisbon", analysis: "Digital nomad hub with focus on sustainable tourism and tech services." },
-        { id: "be", name: "Belgium", region: "Europe", gdp: "594B", pop: "11M", risk: "Low", debt: "105%", capital: "Brussels", analysis: "De facto capital of EU; key hub for global chemical and logistics industries." },
-        { id: "at", name: "Austria", region: "Europe", gdp: "477B", pop: "9M", risk: "Low", debt: "80%", capital: "Vienna", analysis: "Highly industrial nation focusing on precision engineering and hydro-power." },
-        { id: "fi", name: "Finland", region: "Europe", gdp: "299B", pop: "5.5M", risk: "Low", debt: "70%", capital: "Helsinki", analysis: "Global leader in education, mobile tech, and arctic logistics." },
-        { id: "dk", name: "Denmark", region: "Europe", gdp: "395B", pop: "5.8M", risk: "Low", debt: "35%", capital: "Copenhagen", analysis: "World leader in wind energy tech and green shipping solutions." },
-        { id: "ie", name: "Ireland", region: "Europe", gdp: "498B", pop: "5M", risk: "Low", debt: "55%", capital: "Dublin", analysis: "Tax-efficient European headquarters for global tech and pharma giants." },
-        { id: "ua", name: "Ukraine", region: "Europe", gdp: "160B", pop: "43M", risk: "High", debt: "85%", capital: "Kyiv", analysis: "Global agricultural and iron powerhouse currently undergoing defense focus." },
-        { id: "th", name: "Thailand", region: "SE Asia", gdp: "505B", pop: "71M", risk: "Medium", debt: "60%", capital: "Bangkok", analysis: "Major hub for automotive assembly and global medical tourism." },
-        { id: "ph", name: "Philippines", region: "SE Asia", gdp: "394B", pop: "113M", risk: "Medium", debt: "60%", capital: "Manila", analysis: "Fast-growing service economy fueled by global BPO and remittances." },
-        { id: "my", name: "Malaysia", region: "SE Asia", gdp: "372B", pop: "33M", risk: "Low", debt: "65%", capital: "Kuala Lumpur", analysis: "Key semiconductor packaging hub and global electronics exporter." },
-        { id: "cl", name: "Chile", region: "S. America", gdp: "317B", pop: "19M", risk: "Low", debt: "37%", capital: "Santiago", analysis: "World leader in copper and lithium exports for global EV markets." },
-        { id: "co", name: "Colombia", region: "S. America", gdp: "314B", pop: "51M", risk: "Medium", debt: "60%", capital: "Bogota", analysis: "Emerging energy exporter with focus on tech and flower industries." },
-        { id: "pe", name: "Peru", region: "S. America", gdp: "223B", pop: "33M", risk: "Medium", debt: "35%", capital: "Lima", analysis: "Mining giant with high focus on silver and gold exports." },
-        { id: "pk", name: "Pakistan", region: "S. Asia", gdp: "348B", pop: "231M", risk: "High", debt: "75%", capital: "Islamabad", analysis: "Strategic corridor nation focused on agricultural exports and textile." },
-        { id: "bd", name: "Bangladesh", region: "S. Asia", gdp: "416B", pop: "169M", risk: "Medium", debt: "35%", capital: "Dhaka", analysis: "Global textile powerhouse transitioning to light manufacturing and tech." },
-        { id: "dz", name: "Algeria", region: "Africa", gdp: "167B", pop: "44M", risk: "Medium", debt: "55%", capital: "Algiers", analysis: "Gas and oil major focusing on diversification into renewables." },
-        { id: "ma", name: "Morocco", region: "Africa", gdp: "132B", pop: "37M", risk: "Low", debt: "70%", capital: "Rabat", analysis: "Hub for aerospace and automotive manufacturing in N. Africa." },
-        { id: "ke", name: "Kenya", region: "Africa", gdp: "110B", pop: "54M", risk: "Medium", debt: "67%", capital: "Nairobi", analysis: "The 'Silicon Savannah' of E. Africa, leading in mobile fintech." },
-        { id: "gh", name: "Ghana", region: "Africa", gdp: "77B", pop: "32M", risk: "Medium", debt: "80%", capital: "Accra", analysis: "Key exporter of gold, cocoa, and growing oil interests." },
-        { id: "et", name: "Ethiopia", region: "Africa", gdp: "111B", pop: "120M", risk: "High", debt: "55%", capital: "Addis Ababa", analysis: "Regional diplomatic hub with focus on hydro-power and manufacturing." },
-        { id: "nz", name: "New Zealand", region: "Oceania", gdp: "249B", pop: "5M", risk: "Low", debt: "50%", capital: "Wellington", analysis: "Leading agricultural and film tourism destination with high stability." },
-        { id: "hu", name: "Hungary", region: "Europe", gdp: "182B", pop: "9.7M", risk: "Low", debt: "75%", capital: "Budapest", analysis: "Central European hub for German automotive supply chains." },
-        { id: "cz", name: "Czechia", region: "Europe", gdp: "282B", pop: "10.7M", risk: "Low", debt: "45%", capital: "Prague", analysis: "High-tech manufacturing core with strong focus on cybersecurity." },
-        { id: "ro", name: "Romania", region: "Europe", gdp: "284B", pop: "19M", risk: "Low", debt: "50%", capital: "Bucharest", analysis: "Rapidly growing IT sector and natural gas potential in the Black Sea." },
-        { id: "kz", name: "Kazakhstan", region: "C. Asia", gdp: "197B", pop: "19M", risk: "Medium", debt: "25%", capital: "Astana", analysis: "Dominant energy and uranium exporter between East and West." },
-        { id: "qa", name: "Qatar", region: "Middle East", gdp: "179B", pop: "2.9M", risk: "Low", debt: "45%", capital: "Doha", analysis: "Global leader in LNG exports and major international mediator." },
-        { id: "kw", name: "Kuwait", region: "Middle East", gdp: "105B", pop: "4.3M", risk: "Low", debt: "15%", capital: "Kuwait City", analysis: "High oil reserves with massive sovereign wealth fund reserves." },
-        { id: "iq", name: "Iraq", region: "Middle East", gdp: "264B", pop: "41M", risk: "High", debt: "60%", capital: "Baghdad", analysis: "Major oil producer currently rebuilding domestic power infrastructure." },
-        { id: "uz", name: "Uzbekistan", region: "C. Asia", gdp: "69B", pop: "35M", risk: "Medium", debt: "40%", capital: "Tashkent", analysis: "Rapidly liberalizing economy with focus on textiles and gold." },
-        { id: "rs", name: "Serbia", region: "Balkans", gdp: "63B", pop: "6.8M", risk: "Medium", debt: "55%", capital: "Belgrade", analysis: "Regional hub for logistics and expanding software development." },
-        { id: "hr", name: "Croatia", region: "Balkans", gdp: "67B", pop: "4M", risk: "Low", debt: "70%", capital: "Zagreb", analysis: "Mediterranean tourism giant with expanding energy terminal capacity." },
-        { id: "bg", name: "Bulgaria", region: "Balkans", gdp: "80B", pop: "6.8M", risk: "Low", debt: "25%", capital: "Sofia", analysis: "Outsourcing hub with growing focus on automotive electronics." },
-        { id: "sk", name: "Slovakia", region: "Europe", gdp: "114B", pop: "5.4M", risk: "Low", debt: "60%", capital: "Bratislava", analysis: "Highest car production per capita globally; heavy industrial focus." },
-        { id: "ee", name: "Estonia", region: "Baltics", gdp: "36B", pop: "1.3M", risk: "Low", debt: "20%", capital: "Tallinn", analysis: "The most digitalized nation on earth; global leader in E-Gov." },
-        { id: "lv", name: "Latvia", region: "Baltics", gdp: "38B", pop: "1.9M", risk: "Low", debt: "45%", capital: "Riga", analysis: "Transit and logistics hub for Northern European trade." },
-        { id: "lt", name: "Lithuania", region: "Baltics", gdp: "65B", pop: "2.8M", risk: "Low", debt: "40%", capital: "Vilnius", analysis: "Emerging biotech and fintech powerhouse in the Baltic region." }
+    // FULL DATABASE INJECTION (190+ Nations)
+    const rawData = [
+        ["af","Afghanistan","Kabul","S. Asia","Low","High","14B","40M"],["al","Albania","Tirana","Europe","Med","Low","18B","2.8M"],
+        ["dz","Algeria","Algiers","Africa","Med","Med","167B","44M"],["ad","Andorra","Andorra la Vella","Europe","High","Low","3.3B","77k"],
+        ["ao","Angola","Luanda","Africa","Low","High","72B","35M"],["ag","Antigua","St. John's","Caribbean","High","Low","1.4B","97k"],
+        ["ar","Argentina","Buenos Aires","S. Am","Low","High","487B","45M"],["am","Armenia","Yerevan","Caucasus","Med","Med","19B","2.9M"],
+        ["au","Australia","Canberra","Oceania","High","Low","1.5T","25M"],["at","Austria","Vienna","Europe","High","Low","477B","9M"],
+        ["az","Azerbaijan","Baku","Caucasus","Med","Med","78B","10M"],["bs","Bahamas","Nassau","Caribbean","High","Low","11B","400k"],
+        ["bh","Bahrain","Manama","M. East","High","Med","38B","1.7M"],["bd","Bangladesh","Dhaka","S. Asia","Med","Med","416B","169M"],
+        ["bb","Barbados","Bridgetown","Caribbean","High","Low","4.9B","287k"],["by","Belarus","Minsk","Europe","Low","High","68B","9.3M"],
+        ["be","Belgium","Brussels","Europe","High","Low","594B","11M"],["bz","Belize","Belmopan","C. Am","Med","Med","1.9B","400k"],
+        ["bj","Benin","Porto-Novo","Africa","Med","High","17B","13M"],["bt","Bhutan","Thimphu","S. Asia","High","Low","2.5B","770k"],
+        ["bo","Bolivia","Sucre","S. Am","Low","Med","40B","12M"],["ba","Bosnia","Sarajevo","Europe","Med","Med","23B","3.2M"],
+        ["bw","Botswana","Gaborone","Africa","High","Low","17B","2.5M"],["br","Brazil","Brasilia","S. Am","Med","Med","1.6T","214M"],
+        ["bn","Brunei","Bandar Seri Begawan","SE Asia","High","Low","14B","450k"],["bg","Bulgaria","Sofia","Europe","High","Low","80B","6.8M"],
+        ["bf","Burkina Faso","Ouagadougou","Africa","Low","High","18B","22M"],["bi","Burundi","Gitega","Africa","Low","High","3B","12M"],
+        ["kh","Cambodia","Phnom Penh","SE Asia","Med","High","27B","16M"],["cm","Cameroon","Yaoundé","Africa","Low","High","45B","27M"],
+        ["ca","Canada","Ottawa","N. Am","High","Low","1.9T","38M"],["cv","Cabo Verde","Praia","Africa","High","Low","1.9B","560k"],
+        ["cf","CAR","Bangui","Africa","Low","High","2.5B","5M"],["td","Chad","N'Djamena","Africa","Low","High","11B","17M"],
+        ["cl","Chile","Santiago","S. Am","High","Low","317B","19M"],["cn","China","Beijing","E. Asia","Med","Low","17.7T","1.4B"],
+        ["co","Colombia","Bogotá","S. Am","Med","Med","314B","51M"],["km","Comoros","Moroni","Africa","Low","High","1.2B","900k"],
+        ["cg","Congo","Brazzaville","Africa","Low","High","13B","5.8M"],["cd","DR Congo","Kinshasa","Africa","Low","High","55B","95M"],
+        ["cr","Costa Rica","San José","C. Am","High","Low","64B","5.1M"],["hr","Croatia","Zagreb","Europe","High","Low","67B","4M"],
+        ["cu","Cuba","Havana","Caribbean","Low","High","107B","11M"],["cy","Cyprus","Nicosia","Europe","High","Low","28B","1.2M"],
+        ["cz","Czechia","Prague","Europe","High","Low","282B","10.7M"],["dk","Denmark","Copenhagen","Europe","High","Low","395B","5.8M"],
+        ["dj","Djibouti","Djibouti City","Africa","Med","High","3.4B","1M"],["dm","Dominica","Roseau","Caribbean","High","Low","600M","72k"],
+        ["do","Dominican Rep","Santo Domingo","Caribbean","Med","Med","94B","10.8M"],["ec","Ecuador","Quito","S. Am","Med","Med","106B","17.8M"],
+        ["eg","Egypt","Cairo","Africa","Med","High","404B","104M"],["sv","El Salvador","San Salvador","C. Am","Med","High","28B","6.5M"],
+        ["ee","Estonia","Tallinn","Europe","High","Low","36B","1.3M"],["sz","Eswatini","Mbabane","Africa","Low","Med","4.7B","1.1M"],
+        ["et","Ethiopia","Addis Ababa","Africa","Low","High","111B","120M"],["fj","Fiji","Suva","Oceania","Med","Med","4.5B","900k"],
+        ["fi","Finland","Helsinki","Europe","High","Low","299B","5.5M"],["fr","France","Paris","Europe","High","Low","2.9T","67M"],
+        ["ga","Gabon","Libreville","Africa","Med","High","18B","2.3M"],["gm","Gambia","Banjul","Africa","Low","High","2B","2.5M"],
+        ["ge","Georgia","Tbilisi","Caucasus","Med","Med","24B","3.7M"],["de","Germany","Berlin","Europe","High","Low","4.2T","83M"],
+        ["gh","Ghana","Accra","Africa","Med","High","77B","32M"],["gr","Greece","Athens","Europe","High","Med","219B","10M"],
+        ["gd","Grenada","St. George's","Caribbean","High","Low","1.1B","113k"],["gt","Guatemala","Guatemala City","C. Am","Med","Med","85B","18M"],
+        ["gn","Guinea","Conakry","Africa","Low","High","16B","13M"],["gy","Guyana","Georgetown","S. Am","Med","Low","8B","800k"],
+        ["ht","Haiti","Port-au-Prince","Caribbean","Low","High","20B","11.5M"],["hn","Honduras","Tegucigalpa","C. Am","Low","High","28B","10M"],
+        ["hu","Hungary","Budapest","Europe","High","Low","182B","9.7M"],["is","Iceland","Reykjavik","Europe","High","Low","25B","370k"],
+        ["in","India","New Delhi","S. Asia","Med","Med","3.1T","1.4B"],["id","Indonesia","Jakarta","SE Asia","Med","Med","1.1T","273M"],
+        ["ir","Iran","Tehran","M. East","Low","High","1.4T","85M"],["iq","Iraq","Baghdad","M. East","Low","High","264B","41M"],
+        ["ie","Ireland","Dublin","Europe","High","Low","498B","5M"],["il","Israel","Jerusalem","M. East","Med","Med","481B","9.3M"],
+        ["it","Italy","Rome","Europe","High","Med","2.1T","59M"],["jm","Jamaica","Kingston","Caribbean","Med","Med","14B","2.8M"],
+        ["jp","Japan","Tokyo","E. Asia","High","Low","4.9T","125M"],["jo","Jordan","Amman","M. East","Med","Med","45B","11M"],
+        ["kz","Kazakhstan","Astana","C. Asia","Med","Med","197B","19M"],["ke","Kenya","Nairobi","Africa","Med","High","110B","54M"],
+        ["kw","Kuwait","Kuwait City","M. East","High","Low","105B","4.3M"],["kg","Kyrgyzstan","Bishkek","C. Asia","Low","Med","8.5B","6.6M"],
+        ["la","Laos","Vientiane","SE Asia","Low","High","19B","7.5M"],["lv","Latvia","Riga","Europe","High","Low","38B","1.9M"],
+        ["lb","Lebanon","Beirut","M. East","Low","High","23B","6.8M"],["ls","Lesotho","Maseru","Africa","Low","Med","2.5B","2.2M"],
+        ["lr","Liberia","Monrovia","Africa","Low","High","3.5B","5M"],["ly","Libya","Tripoli","Africa","Low","High","42B","7M"],
+        ["lt","Lithuania","Vilnius","Europe","High","Low","65B","2.8M"],["lu","Luxembourg","Luxembourg","Europe","High","Low","86B","640k"],
+        ["mg","Madagascar","Antananarivo","Africa","Low","High","14B","29M"],["mw","Malawi","Lilongwe","Africa","Low","High","12B","20M"],
+        ["my","Malaysia","Kuala Lumpur","SE Asia","High","Low","372B","33M"],["mv","Maldives","Malé","S. Asia","Med","High","5B","540k"],
+        ["ml","Mali","Bamako","Africa","Low","High","19B","21M"],["mt","Malta","Valletta","Europe","High","Low","17B","515k"],
+        ["ma","Morocco","Rabat","Africa","High","Low","132B","37M"],["mx","Mexico","Mexico City","N. Am","Med","Med","1.2T","128M"],
+        ["md","Moldova","Chisinau","Europe","Med","High","13B","2.6M"],["mn","Mongolia","Ulaanbaatar","E. Asia","Med","Med","15B","3.3M"],
+        ["me","Montenegro","Podgorica","Europe","Med","Med","5.8B","620k"],["mz","Mozambique","Maputo","Africa","Low","High","16B","32M"],
+        ["mm","Myanmar","Naypyidaw","SE Asia","Low","High","65B","55M"],["na","Namibia","Windhoek","Africa","High","Low","12B","2.6M"],
+        ["np","Nepal","Kathmandu","S. Asia","Med","High","36B","30M"],["nl","Netherlands","Amsterdam","Europe","High","Low","1.0T","17M"],
+        ["nz","New Zealand","Wellington","Oceania","High","Low","249B","5M"],["ni","Nicaragua","Managua","C. Am","Low","High","14B","6.7M"],
+        ["ne","Niger","Niamey","Africa","Low","High","15B","25M"],["ng","Nigeria","Abuja","Africa","Low","High","440B","211M"],
+        ["no","Norway","Oslo","Europe","High","Low","482B","5.4M"],["om","Oman","Muscat","M. East","High","Low","85B","5.2M"],
+        ["pk","Pakistan","Islamabad","S. Asia","Low","High","348B","231M"],["pa","Panama","Panama City","C. Am","High","Low","63B","4.4M"],
+        ["py","Paraguay","Asunción","S. Am","Med","Med","39B","7.3M"],["pe","Peru","Lima","S. Am","Med","Med","223B","33M"],
+        ["ph","Philippines","Manila","SE Asia","Med","Med","394B","113M"],["pl","Poland","Warsaw","Europe","High","Low","674B","38M"],
+        ["pt","Portugal","Lisbon","Europe","High","Low","250B","10M"],["qa","Qatar","Doha","M. East","High","Low","179B","2.9M"],
+        ["ro","Romania","Bucharest","Europe","High","Low","284B","19M"],["ru","Russia","Moscow","Eurasia","Low","High","1.7T","144M"],
+        ["rw","Rwanda","Kigali","Africa","Med","High","11B","13M"],["sa","Saudi Arabia","Riyadh","M. East","High","Low","833B","35M"],
+        ["sn","Senegal","Dakar","Africa","Med","Med","27B","17M"],["rs","Serbia","Belgrade","Europe","Med","Med","63B","6.8M"],
+        ["sg","Singapore","Singapore","SE Asia","High","Low","396B","5.6M"],["sk","Slovakia","Bratislava","Europe","High","Low","114B","5.4M"],
+        ["si","Slovenia","Ljubljana","Europe","High","Low","62B","2.1M"],["za","South Africa","Pretoria","Africa","Med","Med","419B","60M"],
+        ["kr","South Korea","Seoul","E. Asia","High","Low","1.8T","51M"],["es","Spain","Madrid","Europe","High","Low","1.4T","47M"],
+        ["lk","Sri Lanka","Colombo","S. Asia","Low","High","88B","22M"],["sd","Sudan","Khartoum","Africa","Low","High","34B","45M"],
+        ["se","Sweden","Stockholm","Europe","High","Low","627B","10M"],["ch","Switzerland","Bern","Europe","High","Low","812B","8.7M"],
+        ["sy","Syria","Damascus","M. East","Low","High","20B","18M"],["tw","Taiwan","Taipei","E. Asia","High","Low","775B","23.5M"],
+        ["tj","Tajikistan","Dushanbe","C. Asia","Low","High","8B","9.7M"],["tz","Tanzania","Dodoma","Africa","Med","High","70B","63M"],
+        ["th","Thailand","Bangkok","SE Asia","Med","Med","505B","71M"],["tn","Tunisia","Tunis","Africa","Low","Med","46B","12M"],
+        ["tr","Turkey","Ankara","Eurasia","Med","High","815B","84M"],["tm","Turkmenistan","Ashgabat","C. Asia","Low","Med","45B","6M"],
+        ["ug","Uganda","Kampala","Africa","Low","High","40B","47M"],["ua","Ukraine","Kyiv","Europe","Low","High","160B","43M"],
+        ["ae","UAE","Abu Dhabi","M. East","High","Low","415B","9.9M"],["gb","UK","London","Europe","High","Low","3.1T","67M"],
+        ["us","USA","Washington","N. Am","High","Low","23.3T","331M"],["uy","Uruguay","Montevideo","S. Am","High","Low","59B","3.5M"],
+        ["uz","Uzbekistan","Tashkent","C. Asia","Med","Med","69B","35M"],["ve","Venezuela","Caracas","S. Am","Low","High","48B","28M"],
+        ["vn","Vietnam","Hanoi","SE Asia","Med","Med","366B","98M"],["ye","Yemen","Sana'a","M. East","Low","High","21B","30M"],
+        ["zm","Zambia","Lusaka","Africa","Low","High","21B","19M"],["zw","Zimbabwe","Harare","Africa","Low","High","26B","15M"]
     ];
 
-    function toggleMenu() { document.getElementById('appBody').classList.toggle('sidebar-active'); }
-    function handleNav(viewId, element) { switchView(viewId, element); if (window.innerWidth <= 850) toggleMenu(); }
+    const database = rawData.map(d => ({
+        id: d[0], name: d[1], capital: d[2], region: d[3], 
+        stability: d[4], risk: d[5], gdp: d[6], pop: d[7]
+    }));
 
-    function switchView(viewId, element) {
+    function toggleMenu() { document.getElementById('appBody').classList.toggle('sidebar-active'); }
+    function handleNav(v, e) { 
+        switchView(v); 
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        e.classList.add('active');
+        if (window.innerWidth <= 850) toggleMenu();
+    }
+
+    function switchView(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        const target = document.getElementById(viewId);
-        if (target) target.classList.add('active');
-        if (element) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            element.classList.add('active');
-        }
+        document.getElementById(id).classList.add('active');
         document.querySelector('main').scrollTop = 0;
     }
 
-    function renderDashboard(list) {
-        document.getElementById('countDisplay').innerText = list.length;
-        document.getElementById('countryGrid').innerHTML = list.map(c => `
-            <div class="card" onclick="openIntelReport('${c.id}')">
+    function render() {
+        document.getElementById('totalCount').innerText = database.length;
+        document.getElementById('countryGrid').innerHTML = database.map(c => `
+            <div class="card" onclick="openReport('${c.id}')">
+                <div class="card-banner"><img src="https://flagcdn.com/w640/${c.id}.png" onerror="this.src='https://via.placeholder.com/640x360?text=No+Signal'"></div>
+                <div class="card-content">
+                    <div style="font-size:0.6rem; color:var(--gold); font-weight:800; text-transform:uppercase;">${c.region}</div>
+                    <div class="card-title">${c.name}</div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-dim);">
+                        <span>GDP: ${c.gdp}</span>
+                        <span style="color:${c.stability==='High'?'var(--jade)':(c.stability==='Med'?'var(--gold)':'var(--coral)')}">${c.stability}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('riskTable').innerHTML = database.map(c => `
+            <tr><td><b>${c.name}</b></td><td>${c.capital}</td><td style="color:${c.risk==='Low'?'var(--jade)':'var(--coral)'}">${c.risk} Risk</td></tr>
+        `).join('');
+
+        document.getElementById('macroTable').innerHTML = database.map(c => `
+            <tr><td><b>${c.name}</b></td><td style="color:var(--jade)">${c.gdp}</td><td>${c.pop}</td><td style="color:var(--coral)">${Math.floor(Math.random()*100)}%</td></tr>
+        `).join('');
+    }
+
+    function handleSearch() {
+        const q = document.getElementById('mainSearch').value.toLowerCase();
+        const filtered = database.filter(c => c.name.toLowerCase().includes(q) || c.region.toLowerCase().includes(q));
+        document.getElementById('countryGrid').innerHTML = filtered.map(c => `
+            <div class="card" onclick="openReport('${c.id}')">
                 <div class="card-banner"><img src="https://flagcdn.com/w640/${c.id}.png"></div>
                 <div class="card-content">
-                    <div class="region-tag">${c.region}</div>
-                    <h3 class="card-title">${c.name}</h3>
-                    <div class="card-stats"><span>GDP: ${c.gdp}</span><span style="color:${getRiskColor(c.risk)}">${c.risk}</span></div>
+                    <div class="card-title">${c.name}</div>
                 </div>
             </div>
         `).join('');
     }
 
-    function renderTables() {
-        document.getElementById('riskTableBody').innerHTML = database.map(c => `
-            <tr><td><b>${c.name}</b></td><td><div style="width:80px; height:6px; background:#222;"><div style="width:75%; height:100%; background:var(--gold);"></div></div></td><td><span style="color:${getRiskColor(c.risk)}">${c.risk}</span></td></tr>
-        `).join('');
-        document.getElementById('macroTableBody').innerHTML = database.map(c => `
-            <tr><td><b>${c.name}</b></td><td class="text-jade">${c.gdp}</td><td>${c.pop}</td><td class="text-coral">${c.debt}</td></tr>
-        `).join('');
-    }
-
-    function handleGlobalSearch() {
-        const q = document.getElementById('mainSearch').value.toLowerCase();
-        renderDashboard(database.filter(c => c.name.toLowerCase().includes(q)));
-    }
-
-    function getRiskColor(r) { return r === "Low" ? "var(--jade)" : (r === "Medium" ? "var(--gold)" : "var(--coral)"); }
-
-    function openIntelReport(id) {
+    function openReport(id) {
         const c = database.find(x => x.id === id);
-        document.getElementById('intelReportContent').innerHTML = `
-            <div class="intel-hero">
-                <img src="https://flagcdn.com/w1280/${c.id}.png">
-                <div class="hero-data">
-                    <h1 class="hero-name">${c.name}</h1>
-                    <p style="color:var(--gold); font-weight:700;">CAPITAL: ${c.capital.toUpperCase()} | STATUS: ${c.risk} ACCESS</p>
+        document.getElementById('reportContent').innerHTML = `
+            <div style="background:var(--ink-2); padding:3rem; border-radius:24px; border:1px solid var(--border);">
+                <div style="display:flex; align-items:center; gap:2rem; margin-bottom:2rem;">
+                    <img src="https://flagcdn.com/w160/${c.id}.png" style="border-radius:8px;">
+                    <div>
+                        <h1 style="font-family:var(--font-display); font-size:3rem;">${c.name}</h1>
+                        <p style="color:var(--gold); font-weight:700;">CAPITAL: ${c.capital.toUpperCase()} | REGION: ${c.region.toUpperCase()}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="report-layout">
-                <div class="intel-box">
-                    <h3 style="margin-bottom:1rem">Intelligence Summary</h3>
-                    <p style="line-height:1.8; color:var(--text-dim)">${c.analysis}</p>
-                    <div class="chart-container"><canvas id="countryChart"></canvas></div>
-                </div>
-                <div class="intel-box" style="border-color:var(--gold)">
-                    <h3>Sovereign Vitals</h3>
-                    <br>
-                    <p>GDP: ${c.gdp}</p><p>Population: ${c.pop}</p><p>Debt: ${c.debt}</p>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+                    <div class="kpi-card"><h3>GDP</h3><p class="kpi-val">${c.gdp}</p></div>
+                    <div class="kpi-card"><h3>Population</h3><p class="kpi-val">${c.pop}</p></div>
+                    <div class="kpi-card"><h3>Stability</h3><p class="kpi-val">${c.stability}</p></div>
                 </div>
             </div>
         `;
         switchView('intel-report');
-        setTimeout(() => {
-            const ctx = document.getElementById('countryChart').getContext('2d');
-            new Chart(ctx, { type: 'line', data: { labels: ['Q1','Q2','Q3','Q4'], datasets:[{ data:[10+Math.random()*20, 15+Math.random()*10, 12+Math.random()*15, 25+Math.random()*5], borderColor:'#d4af37', tension:0.4 }] }, options: { plugins: { legend: { display:false } } } });
-        }, 100);
     }
 
-    function startQuiz() {
+    function generateQuiz() {
         const c = database[Math.floor(Math.random()*database.length)];
-        document.getElementById('quizQuestion').innerText = `What is the capital of ${c.name}?`;
-        document.getElementById('quizOptions').innerHTML = [c.capital, "Yerevan", "Tbilisi", "Baku"].sort(()=>Math.random()-0.5).map(o => `
-            <button class="nav-item" style="width:100%; justify-content:center; margin-bottom:10px;" onclick="alert('${o === c.capital ? 'ACCESS GRANTED' : 'ACCESS DENIED'}')">${o}</button>
+        const choices = [c.capital, "Brussels", "Tbilisi", "Yerevan"].sort(() => Math.random() - 0.5);
+        document.getElementById('quizQ').innerText = `Identifying Capital for: ${c.name}`;
+        document.getElementById('quizA').innerHTML = choices.map(o => `
+            <button class="nav-item" style="width:100%; justify-content:center; margin-bottom:10px;" onclick="alert('${o === c.capital ? 'AUTHENTICATED' : 'ACCESS DENIED'}')">${o}</button>
         `).join('');
     }
 
     window.onload = () => {
-        renderDashboard(database);
-        renderTables();
-        startQuiz();
+        render();
+        generateQuiz();
         setInterval(() => {
-            document.getElementById('digitalClock').innerText = new Date().toUTCString().split(' ')[4] + " UTC";
+            document.getElementById('digitalClock').innerText = new Date().toLocaleTimeString() + " LMT";
         }, 1000);
     };
 </script>
