@@ -1,375 +1,714 @@
-// App.js – Country Intelligence Dashboard
-// Requirements: React 18+, Chart.js, react-chartjs-2, axios
-// Install: npm install axios chart.js react-chartjs-2
-
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import axios from 'axios';
-import {
-  Chart as ChartJS,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
-
-// Register Chart.js components
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ArcElement);
-
-// ------------------------------
-// 1. Custom Hooks (State & Logic)
-// ------------------------------
-
-// Debounce hook for search
-function useDebounce(value, delay) {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const handler = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-  return debounced;
-}
-
-// LocalStorage persistence hook
-function useLocalStorage(key, initialValue) {
-  const [stored, setStored] = useState(() => {
-    try {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch {
-      return initialValue;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Country Intelligence Dashboard | 250+ Nations</title>
+  <!-- Google Fonts + Font Awesome 6 + Chart.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  });
-  const setValue = (value) => {
-    const toStore = value instanceof Function ? value(stored) : value;
-    setStored(toStore);
-    localStorage.setItem(key, JSON.stringify(toStore));
-  };
-  return [stored, setValue];
-}
 
-// ------------------------------
-// 2. Reusable UI Components
-// ------------------------------
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      transition: background 0.25s ease, color 0.2s ease;
+    }
 
-const CountryCard = ({ country, isFavorite, onToggleFavorite, onCompareToggle, isSelected }) => {
-  return (
-    <div className="country-card">
-      <img src={country.flags.svg} alt={country.name.common} className="flag" />
-      <div className="card-content">
-        <h3>{country.name.common}</h3>
-        <p><strong>Population:</strong> {country.population.toLocaleString()}</p>
-        <p><strong>Area:</strong> {country.area?.toLocaleString()} km²</p>
-        <p><strong>Region:</strong> {country.region}</p>
-      </div>
-      <div className="card-actions">
-        <button onClick={() => onToggleFavorite(country.cca3)} className={isFavorite ? 'fav active' : 'fav'}>
-          ❤️
-        </button>
-        <button onClick={() => onCompareToggle(country)} className={isSelected ? 'compare active' : 'compare'}>
-          📊 Compare
-        </button>
-      </div>
+    /* Light theme (default) */
+    :root {
+      --bg-body: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --border-light: #e2e8f0;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: #dbeafe;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --radius-card: 24px;
+      --transition: all 0.2s ease;
+    }
+
+    body.dark {
+      --bg-body: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-card: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-light: #334155;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-soft: #1e293b;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* header */
+    .app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      padding: 1rem 0;
+    }
+
+    .header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.7rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border-radius: 60px;
+      border: 1px solid var(--border-light);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .badge {
+      background: var(--accent-soft);
+      padding: 0.3rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      padding: 0.4rem;
+      border-radius: 50%;
+    }
+
+    .icon-btn:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    /* filter bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      align-items: center;
+    }
+
+    .filter-group {
+      background: var(--bg-surface);
+      padding: 0.5rem 1rem;
+      border-radius: 60px;
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-group label {
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+    select, .filter-group input {
+      background: var(--bg-surface);
+      border: none;
+      padding: 0.3rem;
+      border-radius: 30px;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    /* stats row */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 28px;
+      padding: 1rem 1.5rem;
+      flex: 1;
+      min-width: 150px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+    }
+
+    /* charts grid */
+    .charts-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .chart-box {
+      flex: 1;
+      background: var(--bg-card);
+      border-radius: 28px;
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* comparison section */
+    .comparison-section {
+      background: var(--bg-surface);
+      border-radius: 32px;
+      padding: 1.2rem;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+    }
+
+    .compare-table {
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .country-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.8rem;
+      margin: 2rem 0;
+    }
+
+    .country-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition: var(--transition);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .country-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+
+    .flag-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .card-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .btn-sm {
+      background: var(--bg-body);
+      border: 1px solid var(--border-light);
+      padding: 0.4rem 0.8rem;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+
+    .btn-sm:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .fav-active {
+      color: #f59e0b;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 2rem 0;
+    }
+
+    .page-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      padding: 0.5rem 1rem;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+
+    .page-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border-light);
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 1rem; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="container header-flex">
+    <div class="logo"><i class="fas fa-globe-americas"></i> Intel·liGence</div>
+    <div class="search-wrapper">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" class="search-input" placeholder="Fuzzy search any country...">
     </div>
-  );
-};
-
-const ComparisonTable = ({ selectedCountries, onRemove }) => {
-  if (selectedCountries.length === 0) return <p>Add countries to compare (max 4).</p>;
-  const metrics = ['Population', 'Area (km²)', 'Region', 'Capital', 'Timezones'];
-  return (
-    <div className="comparison-table">
-      <h3>Side‑by‑Side Comparison</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Metric</th>
-            {selectedCountries.map(c => (
-              <th key={c.cca3}>
-                <img src={c.flags.svg} width="30" alt={c.name.common} />
-                {c.name.common}
-                <button onClick={() => onRemove(c.cca3)}>✖</button>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {metrics.map(metric => (
-            <tr key={metric}>
-              <td><strong>{metric}</strong></td>
-              {selectedCountries.map(c => {
-                let value;
-                switch (metric) {
-                  case 'Population': value = c.population?.toLocaleString(); break;
-                  case 'Area (km²)': value = c.area?.toLocaleString(); break;
-                  case 'Region': value = c.region; break;
-                  case 'Capital': value = c.capital?.[0] || '—'; break;
-                  case 'Timezones': value = c.timezones?.join(', ') || '—'; break;
-                  default: value = '—';
-                }
-                return <td key={c.cca3}>{value}</td>;
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div class="toolbar">
+      <span id="countryCountBadge" class="badge">0 countries</span>
+      <button id="darkModeBtn" class="icon-btn"><i class="fas fa-moon"></i></button>
+      <button id="favFilterBtn" class="icon-btn"><i class="fas fa-heart"></i></button>
     </div>
-  );
-};
-
-const SearchBar = ({ value, onChange, placeholder }) => {
-  return (
-    <input
-      type="text"
-      className="search-input"
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  );
-};
-
-const FilterPanel = ({ regions, selectedRegion, onRegionChange, sortBy, onSortChange }) => {
-  return (
-    <div className="filter-panel">
-      <select value={selectedRegion} onChange={(e) => onRegionChange(e.target.value)}>
-        <option value="all">All Regions</option>
-        {regions.map(r => <option key={r} value={r}>{r}</option>)}
+  </div>
+  <div class="container filter-bar">
+    <div class="filter-group">
+      <label><i class="fas fa-filter"></i> Region</label>
+      <select id="regionSelect"><option value="all">All</option></select>
+    </div>
+    <div class="filter-group">
+      <label><i class="fas fa-chart-line"></i> Min Population</label>
+      <input type="range" id="popRange" min="0" max="1400000000" value="0" step="5000000">
+      <span id="popValue">0M</span>
+    </div>
+    <div class="filter-group">
+      <label><i class="fas fa-sort"></i> Sort by</label>
+      <select id="sortSelect">
+        <option value="name">Name A-Z</option>
+        <option value="population">Population ↓</option>
+        <option value="area">Area ↓</option>
       </select>
-      <select value={sortBy} onChange={(e) => onSortChange(e.target.value)}>
-        <option value="name">Sort by Name</option>
-        <option value="population">Sort by Population (desc)</option>
-        <option value="area">Sort by Area (desc)</option>
-      </select>
     </div>
-  );
-};
+    <button id="resetFiltersBtn" class="btn-sm"><i class="fas fa-undo-alt"></i> Reset</button>
+  </div>
+</div>
 
-// ------------------------------
-// 3. Main Dashboard Component
-// ------------------------------
-const CountryIntelligenceDashboard = () => {
-  // State
-  const [countries, setCountries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
-  const [currentPage, setCurrentPage] = useState(1);
+<main class="container">
+  <!-- stats cards -->
+  <div class="stats-row">
+    <div class="stat-card"><i class="fas fa-flag-checkered"></i> <span id="totalCountries">0</span> Nations</div>
+    <div class="stat-card"><i class="fas fa-users"></i> Total population: <span id="totalPopulation">0</span>B</div>
+    <div class="stat-card"><i class="fas fa-map"></i> Largest region: <span id="largestRegion">—</span></div>
+  </div>
+
+  <!-- charts -->
+  <div class="charts-grid">
+    <div class="chart-box">
+      <canvas id="populationChart" width="400" height="250" style="max-width:100%"></canvas>
+    </div>
+    <div class="chart-box">
+      <canvas id="regionChart" width="400" height="250" style="max-width:100%"></canvas>
+    </div>
+  </div>
+
+  <!-- comparison drawer (always visible top) -->
+  <div class="comparison-section" id="compareSection">
+    <h3><i class="fas fa-chart-line"></i> Compare countries (max 4)</h3>
+    <div id="compareTableContainer">Select countries to compare side‑by‑side.</div>
+  </div>
+
+  <!-- AI insight generator -->
+  <div style="background: var(--accent-soft); border-radius: 28px; padding: 1rem; margin: 1rem 0; text-align: center;">
+    <button id="aiInsightBtn" class="btn-sm" style="background: var(--accent); color:white;"><i class="fas fa-robot"></i> Generate AI insight</button>
+    <div id="aiMessage" style="margin-top: 0.8rem; font-style: italic; font-size:0.9rem;"></div>
+  </div>
+
+  <!-- countries grid -->
+  <div id="countriesGrid" class="country-grid"></div>
+
+  <!-- pagination -->
+  <div id="paginationControls" class="pagination"></div>
+</main>
+
+<footer>
+  <p>🌍 Real-time data from REST Countries API · Favorites & Compare saved locally · 250+ nations</p>
+  <p>⭐ Advanced dashboard: fuzzy search, population filter, sort, pagination, charts, AI mock insights</p>
+</footer>
+
+<script>
+  // ---------- GLOBAL STATE ----------
+  let allCountries = [];
+  let filteredCountries = [];
+  let favorites = new Set();       // store cca3 codes
+  let compareList = [];            // store country objects
+  let currentPage = 1;
   const itemsPerPage = 12;
+  let showOnlyFavorites = false;
+  let popChart = null, regionChart = null;
 
-  // Favorites (localStorage)
-  const [favorites, setFavorites] = useLocalStorage('country_favorites', []);
+  // DOM elements
+  const gridContainer = document.getElementById('countriesGrid');
+  const paginationDiv = document.getElementById('paginationControls');
+  const searchInput = document.getElementById('searchInput');
+  const regionSelect = document.getElementById('regionSelect');
+  const popRange = document.getElementById('popRange');
+  const popValueSpan = document.getElementById('popValue');
+  const sortSelect = document.getElementById('sortSelect');
+  const resetBtn = document.getElementById('resetFiltersBtn');
+  const darkBtn = document.getElementById('darkModeBtn');
+  const favFilterBtn = document.getElementById('favFilterBtn');
+  const countryCountBadge = document.getElementById('countryCountBadge');
+  const totalCountriesSpan = document.getElementById('totalCountries');
+  const totalPopulationSpan = document.getElementById('totalPopulation');
+  const largestRegionSpan = document.getElementById('largestRegion');
+  const aiInsightBtn = document.getElementById('aiInsightBtn');
+  const aiMessageDiv = document.getElementById('aiMessage');
 
-  // Comparison (max 4)
-  const [compareList, setCompareList] = useLocalStorage('country_compare', []);
+  // ---- helper: load storage ----
+  function loadStorage() {
+    const storedFav = localStorage.getItem('ci_favs');
+    if (storedFav) favorites = new Set(JSON.parse(storedFav));
+    const storedCompare = localStorage.getItem('ci_compare');
+    if (storedCompare) compareList = JSON.parse(storedCompare);
+    renderCompareTable();
+  }
 
-  // Derived: unique regions
-  const regions = useMemo(() => {
-    return [...new Set(countries.map(c => c.region).filter(Boolean))];
-  }, [countries]);
+  function saveFavs() { localStorage.setItem('ci_favs', JSON.stringify([...favorites])); }
+  function saveCompare() { localStorage.setItem('ci_compare', JSON.stringify(compareList)); }
 
-  // Debounced search
-  const debouncedSearch = useDebounce(searchTerm, 300);
-
-  // Fetch countries
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,flags,population,region,area,capital,timezones,cca3');
-        setCountries(response.data);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load countries. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCountries();
-  }, []);
-
-  // Filtering, sorting, pagination logic
-  const processedCountries = useMemo(() => {
-    let result = [...countries];
-
-    // Filter by region
-    if (selectedRegion !== 'all') {
-      result = result.filter(c => c.region === selectedRegion);
-    }
-
-    // Filter by search term (case-insensitive)
-    if (debouncedSearch) {
-      const term = debouncedSearch.toLowerCase();
-      result = result.filter(c => c.name.common.toLowerCase().includes(term));
-    }
-
-    // Sort
-    if (sortBy === 'population') {
-      result.sort((a, b) => (b.population || 0) - (a.population || 0));
-    } else if (sortBy === 'area') {
-      result.sort((a, b) => (b.area || 0) - (a.area || 0));
-    } else {
-      result.sort((a, b) => a.name.common.localeCompare(b.name.common));
-    }
-
-    return result;
-  }, [countries, selectedRegion, debouncedSearch, sortBy]);
-
-  // Pagination
-  const totalPages = Math.ceil(processedCountries.length / itemsPerPage);
-  const paginatedCountries = processedCountries.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedRegion, debouncedSearch, sortBy]);
-
-  // Favorites helpers
-  const toggleFavorite = (cca3) => {
-    setFavorites(prev =>
-      prev.includes(cca3) ? prev.filter(id => id !== cca3) : [...prev, cca3]
-    );
-  };
-
-  // Comparison helpers
-  const addToCompare = (country) => {
+  // ---- compare logic ----
+  function addToCompare(country) {
     if (compareList.some(c => c.cca3 === country.cca3)) return;
-    if (compareList.length >= 4) {
-      alert('Maximum 4 countries can be compared.');
+    if (compareList.length >= 4) { alert('Maximum 4 countries for comparison'); return; }
+    compareList.push(country);
+    saveCompare();
+    renderCompareTable();
+    renderCountries();
+  }
+  function removeFromCompare(cca3) {
+    compareList = compareList.filter(c => c.cca3 !== cca3);
+    saveCompare();
+    renderCompareTable();
+    renderCountries();
+  }
+  function renderCompareTable() {
+    const container = document.getElementById('compareTableContainer');
+    if (compareList.length === 0) {
+      container.innerHTML = '<p>➕ Click "Compare" on any country card (max 4). Data persists.</p>';
       return;
     }
-    setCompareList([...compareList, country]);
-  };
-  const removeFromCompare = (cca3) => {
-    setCompareList(compareList.filter(c => c.cca3 !== cca3));
-  };
-
-  // ------------------------------
-  // 4. Data Visualization (Charts)
-  // ------------------------------
-  const top10Population = useMemo(() => {
-    return [...countries]
-      .sort((a, b) => (b.population || 0) - (a.population || 0))
-      .slice(0, 10);
-  }, [countries]);
-
-  const populationChartData = {
-    labels: top10Population.map(c => c.name.common),
-    datasets: [
-      {
-        label: 'Population (millions)',
-        data: top10Population.map(c => ((c.population || 0) / 1e6).toFixed(2)),
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderRadius: 8,
-      },
-    ],
-  };
-
-  const regionDistribution = useMemo(() => {
-    const counts = {};
-    countries.forEach(c => {
-      const region = c.region || 'Unknown';
-      counts[region] = (counts[region] || 0) + 1;
+    let html = '<div class="compare-table"><table><thead><tr><th>Metric</th>';
+    compareList.forEach(c => {
+      html += `<th><img src="${c.flags.png}" width="30" style="border-radius:4px"> ${c.name.common}<br>
+               <button class="btn-sm" onclick="window.removeFromCompare('${c.cca3}')">Remove</button></th>`;
     });
-    return {
-      labels: Object.keys(counts),
-      datasets: [{ data: Object.values(counts), backgroundColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'] }],
-    };
-  }, [countries]);
+    html += '</tr></thead><tbody>';
+    const metrics = ['Population', 'Area (km²)', 'Region', 'Capital', 'Timezones'];
+    metrics.forEach(metric => {
+      html += '<tr><td><strong>' + metric + '</strong></td>';
+      compareList.forEach(c => {
+        let val = '';
+        if (metric === 'Population') val = c.population?.toLocaleString() || 'N/A';
+        else if (metric === 'Area (km²)') val = c.area?.toLocaleString() || 'N/A';
+        else if (metric === 'Region') val = c.region || '-';
+        else if (metric === 'Capital') val = c.capital?.[0] || '-';
+        else if (metric === 'Timezones') val = c.timezones?.join(', ') || '-';
+        html += `<td>${val}</td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+  }
 
-  // ------------------------------
-  // 5. WOW Feature: AI‑powered insight (mock + real OpenAI optional)
-  // ------------------------------
-  const [aiInsight, setAiInsight] = useState('');
-  const generateInsight = () => {
-    // Simulated AI insight based on current comparison list
+  // ---- favorites ----
+  function toggleFavorite(cca3) {
+    if (favorites.has(cca3)) favorites.delete(cca3);
+    else favorites.add(cca3);
+    saveFavs();
+    renderCountries();
+  }
+
+  // ---- fetch data ----
+  async function fetchAllCountries() {
+    try {
+      const res = await fetch('https://restcountries.com/v3.1/all?fields=name,flags,population,region,area,capital,timezones,cca3');
+      const data = await res.json();
+      allCountries = data.sort((a,b) => a.name.common.localeCompare(b.name.common));
+      updateStatsAndFilters();
+      applyFiltersAndRender();
+      renderCharts();
+    } catch (err) {
+      gridContainer.innerHTML = '<div class="error">⚠️ Failed to load data. Refresh or try later.</div>';
+    }
+  }
+
+  function updateStatsAndFilters() {
+    totalCountriesSpan.innerText = allCountries.length;
+    countryCountBadge.innerText = `${allCountries.length} countries`;
+    const totalPop = allCountries.reduce((sum, c) => sum + (c.population || 0), 0);
+    totalPopulationSpan.innerText = (totalPop / 1e9).toFixed(2);
+    // largest region
+    const regionCount = {};
+    allCountries.forEach(c => { if(c.region) regionCount[c.region] = (regionCount[c.region]||0)+1; });
+    let maxRegion = '—', maxVal = 0;
+    for(let [reg, cnt] of Object.entries(regionCount)) if(cnt > maxVal) { maxVal = cnt; maxRegion = reg; }
+    largestRegionSpan.innerText = maxRegion;
+    // populate region dropdown
+    const regions = [...new Set(allCountries.map(c => c.region).filter(r=>r))];
+    regionSelect.innerHTML = '<option value="all">All</option>' + regions.map(r => `<option value="${r}">${r}</option>`).join('');
+  }
+
+  // ---- filtering + sorting + search (with fuzzy) ----
+  function fuzzyMatch(text, query) {
+    if (!query) return true;
+    return text.toLowerCase().includes(query.toLowerCase());
+  }
+
+  function applyFiltersAndRender() {
+    let result = [...allCountries];
+    const searchTerm = searchInput.value;
+    if (searchTerm) {
+      result = result.filter(c => fuzzyMatch(c.name.common, searchTerm) || fuzzyMatch(c.name.official || '', searchTerm));
+    }
+    const region = regionSelect.value;
+    if (region !== 'all') result = result.filter(c => c.region === region);
+    const minPop = parseInt(popRange.value);
+    if (minPop > 0) result = result.filter(c => (c.population || 0) >= minPop);
+    if (showOnlyFavorites) result = result.filter(c => favorites.has(c.cca3));
+    const sortBy = sortSelect.value;
+    if (sortBy === 'population') result.sort((a,b) => (b.population||0) - (a.population||0));
+    else if (sortBy === 'area') result.sort((a,b) => (b.area||0) - (a.area||0));
+    else result.sort((a,b) => a.name.common.localeCompare(b.name.common));
+    filteredCountries = result;
+    currentPage = 1;
+    renderCountries();
+    renderPagination();
+  }
+
+  function renderCountries() {
+    const start = (currentPage-1)*itemsPerPage;
+    const pageItems = filteredCountries.slice(start, start+itemsPerPage);
+    if (pageItems.length === 0) {
+      gridContainer.innerHTML = '<div style="text-align:center; padding:3rem;">✨ No countries match filters ✨</div>';
+      return;
+    }
+    gridContainer.innerHTML = pageItems.map(c => {
+      const isFav = favorites.has(c.cca3);
+      const inCompare = compareList.some(comp => comp.cca3 === c.cca3);
+      return `
+        <div class="country-card">
+          <img class="flag-img" src="${c.flags.png}" alt="${c.name.common}" loading="lazy">
+          <div class="card-body">
+            <div class="card-title">
+              ${c.name.common}
+              <i class="fas fa-heart ${isFav ? 'fav-active' : ''}" style="cursor:pointer" onclick="window.toggleFavorite('${c.cca3}')"></i>
+            </div>
+            <div class="card-meta"><i class="fas fa-users"></i> ${c.population?.toLocaleString() || 'N/A'}</div>
+            <div class="card-meta"><i class="fas fa-map-marker-alt"></i> ${c.region || '-'} | ${c.area?.toLocaleString() || '0'} km²</div>
+            <div class="card-actions">
+              <button class="btn-sm" onclick="window.addToCompare(${JSON.stringify(c).replace(/"/g, '&quot;')})" ${inCompare ? 'disabled style="opacity:0.5"' : ''}>
+                <i class="fas fa-chart-line"></i> Compare
+              </button>
+              <button class="btn-sm" onclick="alert('Capital: ${c.capital?.[0] || 'unknown'}\\nTimezones: ${c.timezones?.join(', ') || '-'}')">
+                <i class="fas fa-info-circle"></i> Quick Info
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderPagination() {
+    const total = Math.ceil(filteredCountries.length / itemsPerPage);
+    if (total <= 1) { paginationDiv.innerHTML = ''; return; }
+    let btns = '';
+    for (let i=1; i<=total; i++) {
+      btns += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+    }
+    paginationDiv.innerHTML = btns;
+    document.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        currentPage = parseInt(btn.dataset.page);
+        renderCountries();
+        renderPagination();
+      });
+    });
+  }
+
+  // ---- charts ----
+  function renderCharts() {
+    const top10 = [...allCountries].sort((a,b)=> (b.population||0)-(a.population||0)).slice(0,10);
+    const ctxPop = document.getElementById('populationChart').getContext('2d');
+    const ctxReg = document.getElementById('regionChart').getContext('2d');
+    if (popChart) popChart.destroy();
+    if (regionChart) regionChart.destroy();
+    popChart = new Chart(ctxPop, {
+      type: 'bar',
+      data: {
+        labels: top10.map(c=>c.name.common),
+        datasets: [{ label: 'Population (millions)', data: top10.map(c=> ((c.population||0)/1e6).toFixed(1)), backgroundColor: '#3b82f6', borderRadius: 8 }]
+      },
+      options: { responsive: true, maintainAspectRatio: true }
+    });
+    const regionCounts = {};
+    allCountries.forEach(c => { if(c.region) regionCounts[c.region] = (regionCounts[c.region]||0)+1; });
+    regionChart = new Chart(ctxReg, {
+      type: 'pie',
+      data: { labels: Object.keys(regionCounts), datasets: [{ data: Object.values(regionCounts), backgroundColor: ['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6'] }] },
+      options: { responsive: true }
+    });
+  }
+
+  // --- AI mock insight (wow) ---
+  function generateAIInsight() {
     if (compareList.length < 2) {
-      setAiInsight('Select at least 2 countries to receive an intelligent comparison.');
+      aiMessageDiv.innerText = '🤖 Please add at least 2 countries to compare for an AI-powered insight.';
       return;
     }
     const [c1, c2] = compareList;
-    const popDiff = ((c1.population - c2.population) / 1e6).toFixed(1);
-    const areaDiff = ((c1.area - c2.area) / 1e3).toFixed(1);
-    const insight = `🌍 AI Insight: ${c1.name.common} has ${Math.abs(popDiff)}M ${popDiff > 0 ? 'more' : 'fewer'} people than ${c2.name.common}. 
-    Its land area is ${areaDiff}k km² ${areaDiff > 0 ? 'larger' : 'smaller'}. 
-    ${c1.region === c2.region ? `Both are in ${c1.region}.` : `They belong to different regions (${c1.region} vs ${c2.region}).`}`;
-    setAiInsight(insight);
-    // In a real app, call OpenAI API here:
-    // const response = await axios.post('/api/openai', { countries: compareList });
-  };
+    const popDiff = ((c1.population - c2.population)/1e6).toFixed(1);
+    const areaDiff = ((c1.area - c2.area)/1e3).toFixed(1);
+    const insight = `✨ AI Insight: ${c1.name.common} has ${Math.abs(popDiff)}M ${popDiff>0 ? 'more' : 'fewer'} people than ${c2.name.common}. 
+    Land area is ${areaDiff}k km² ${areaDiff>0 ? 'larger' : 'smaller'}. ${c1.region===c2.region ? `Both in ${c1.region}.` : `Different regions: ${c1.region} vs ${c2.region}.`} 
+    Recommendation: ${c1.population > c2.population ? c1.name.common : c2.name.common} dominates in population.`;
+    aiMessageDiv.innerText = insight;
+  }
 
-  // ------------------------------
-  // 6. Render
-  // ------------------------------
-  if (loading) return <div className="loader">Loading intelligence...</div>;
-  if (error) return <div className="error">{error}</div>;
+  // ---- event binding & debounce ----
+  function debounce(fn, delay) {
+    let timer;
+    return function(...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+  const debouncedFilter = debounce(() => applyFiltersAndRender(), 300);
+  searchInput.addEventListener('input', debouncedFilter);
+  regionSelect.addEventListener('change', () => applyFiltersAndRender());
+  popRange.addEventListener('input', (e) => {
+    popValueSpan.innerText = (parseInt(e.target.value)/1e6).toFixed(0) + 'M';
+    applyFiltersAndRender();
+  });
+  sortSelect.addEventListener('change', () => applyFiltersAndRender());
+  resetBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    regionSelect.value = 'all';
+    popRange.value = 0;
+    popValueSpan.innerText = '0M';
+    sortSelect.value = 'name';
+    showOnlyFavorites = false;
+    favFilterBtn.style.color = '';
+    applyFiltersAndRender();
+  });
+  favFilterBtn.addEventListener('click', () => {
+    showOnlyFavorites = !showOnlyFavorites;
+    favFilterBtn.style.color = showOnlyFavorites ? '#f59e0b' : '';
+    applyFiltersAndRender();
+  });
+  darkBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('ci_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  });
+  aiInsightBtn.addEventListener('click', generateAIInsight);
 
-  return (
-    <div className="dashboard">
-      <header className="header">
-        <h1>📊 Country Intelligence Dashboard</h1>
-        <p>Compare, analyze, and discover insights from 250+ nations</p>
-      </header>
+  // expose global functions for inline
+  window.toggleFavorite = toggleFavorite;
+  window.addToCompare = addToCompare;
+  window.removeFromCompare = removeFromCompare;
 
-      <div className="controls">
-        <SearchBar value={searchTerm} onChange={setSearchTerm} placeholder="Search country..." />
-        <FilterPanel
-          regions={regions}
-          selectedRegion={selectedRegion}
-          onRegionChange={setSelectedRegion}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-        />
-      </div>
-
-      {/* Charts Section */}
-      <div className="charts-row">
-        <div className="chart-card"><Bar data={populationChartData} options={{ responsive: true }} /></div>
-        <div className="chart-card"><Pie data={regionDistribution} options={{ responsive: true }} /></div>
-      </div>
-
-      {/* AI Insight (Wow Feature) */}
-      <div className="ai-insight">
-        <button onClick={generateInsight}>🤖 Generate AI Country Insight</button>
-        {aiInsight && <p className="insight-text">{aiInsight}</p>}
-      </div>
-
-      {/* Comparison Table */}
-      <ComparisonTable selectedCountries={compareList} onRemove={removeFromCompare} />
-
-      {/* Countries Grid */}
-      <div className="countries-grid">
-        {paginatedCountries.map(country => (
-          <CountryCard
-            key={country.cca3}
-            country={country}
-            isFavorite={favorites.includes(country.cca3)}
-            onToggleFavorite={toggleFavorite}
-            onCompareToggle={addToCompare}
-            isSelected={compareList.some(c => c.cca3 === country.cca3)}
-          />
-        ))}
-      </div>
-
-      {/* Pagination */}
-      <div className="pagination">
-        <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>◀ Prev</button>
-        <span>Page {currentPage} of {totalPages}</span>
-        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>Next ▶</button>
-      </div>
-
-      <footer>
-        <p>Data from REST Countries · Favorites & comparisons saved locally · Built with React + Chart.js</p>
-      </footer>
-    </div>
-  );
-};
-
-export default CountryIntelligenceDashboard;
+  // init theme
+  if (localStorage.getItem('ci_theme') === 'dark') document.body.classList.add('dark');
+  loadStorage();
+  fetchAllCountries();
+</script>
+</body>
+</html>
