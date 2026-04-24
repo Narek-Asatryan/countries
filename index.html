@@ -3,443 +3,955 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meridian OS — Global Intelligence Platform</title>
+    <title>Meridian OS | Global Strategic Intelligence</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
+        /* ========================================
+        1. DESIGN SYSTEM & VARIABLES
+        ========================================
+        */
         :root {
-            /* Palette */
-            --ink: #08090d;
-            --ink-2: #111218;
-            --ink-3: #1b1d26;
+            /* Core Palette - Deep Intelligence Theme */
+            --ink: #050608;
+            --ink-2: #0d0f14;
+            --ink-3: #161922;
+            --ink-4: #1f232d;
+            
             --gold: #d4af37;
-            --gold-muted: #a68a2d;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --gold-dim: #8a6d1a;
+            
             --jade: #4ade80;
             --coral: #fb7185;
             --sky: #60a5fa;
+            --violet: #a78bfa;
+            
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
-            --border: rgba(255,255,255,0.08);
+            --text-muted: #475569;
             
-            /* Shapes */
+            --border: rgba(255, 255, 255, 0.06);
+            --border-bright: rgba(255, 255, 255, 0.12);
+            
+            --radius-xl: 24px;
             --radius-lg: 16px;
             --radius-md: 10px;
+            --radius-sm: 6px;
+
+            --font-main: 'DM Sans', sans-serif;
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'DM Sans', sans-serif; 
-            background: var(--ink); 
-            color: var(--text-main); 
-            overflow: hidden; /* Desktop app feel */
+        /* ========================================
+        2. BASE RESET & SCROLLBAR
+        ========================================
+        */
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        
+        body {
+            font-family: var(--font-main);
+            background: var(--ink);
+            color: var(--text-main);
             height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Layout */
-        .app-container {
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--ink); }
+        ::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+        /* ========================================
+        3. APP SHELL LAYOUT
+        ========================================
+        */
+        .app-shell {
             display: grid;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 280px 1fr;
             height: 100vh;
+            width: 100vw;
         }
 
-        /* Sidebar */
+        /* ========================================
+        4. SIDEBAR (NAVIGATION)
+        ========================================
+        */
         aside {
             background: var(--ink-2);
             border-right: 1px solid var(--border);
-            padding: 2rem 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            padding: 2rem 1.2rem;
+            z-index: 100;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: var(--gold);
+            gap: 15px;
+            padding-left: 0.5rem;
+            margin-bottom: 3rem;
+            text-decoration: none;
         }
 
-        .nav-group { display: flex; flex-direction: column; gap: 8px; }
-        .nav-item {
-            padding: 12px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            font-weight: 500;
+        .logo-glyph {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            color: var(--ink);
+            box-shadow: 0 0 20px var(--gold-glow);
         }
-        .nav-item:hover, .nav-item.active {
-            background: var(--ink-3);
+
+        .brand-text {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.3rem;
+            letter-spacing: -0.5px;
             color: var(--text-main);
         }
-        .nav-item.active { border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; }
 
-        /* Main Area */
+        .nav-section { margin-bottom: 2rem; }
+        .nav-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            padding-left: 0.8rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--ink-3);
+            color: var(--text-main);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: var(--gold);
+            color: var(--ink);
+            font-weight: 700;
+            box-shadow: 0 4px 15px var(--gold-glow);
+        }
+
+        .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+
+        .system-status {
+            margin-top: auto;
+            background: var(--ink-3);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--jade);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 10px var(--jade);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* ========================================
+        5. MAIN CONTENT AREA
+        ========================================
+        */
         main {
             overflow-y: auto;
+            height: 100vh;
+            background: radial-gradient(circle at top right, #11141d, var(--ink));
             position: relative;
-            background: radial-gradient(circle at top right, #1a1c24, transparent);
         }
 
         header {
             position: sticky;
             top: 0;
-            background: rgba(8, 9, 13, 0.8);
-            backdrop-filter: blur(12px);
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
+            height: 80px;
+            background: rgba(5, 6, 8, 0.8);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            z-index: 90;
         }
 
-        .search-bar {
+        .search-container {
+            position: relative;
+            width: 450px;
+        }
+
+        .search-input {
+            width: 100%;
             background: var(--ink-3);
             border: 1px solid var(--border);
+            padding: 12px 20px 12px 50px;
             border-radius: 99px;
-            padding: 10px 20px;
-            width: 400px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .search-bar input {
-            background: transparent;
-            border: none;
             color: white;
-            outline: none;
-            width: 100%;
-            font-family: inherit;
+            font-family: var(--font-main);
+            transition: var(--transition);
         }
 
-        /* Views */
-        .view { padding: 2rem; animation: slideUp 0.4s ease-out; }
-        .hidden { display: none; }
+        .search-input:focus {
+            border-color: var(--gold);
+            background: var(--ink-4);
+            box-shadow: 0 0 0 4px var(--gold-glow);
+        }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* ========================================
+        6. VIEW SYSTEM (SPA)
+        ========================================
+        */
+        .view {
+            padding: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .view.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Dashboard Components */
-        .stats-grid {
+        /* ========================================
+        7. DASHBOARD GRID & CARDS
+        ========================================
+        */
+        .dashboard-header {
+            margin-bottom: 3rem;
+        }
+
+        .kpi-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
             margin-bottom: 3rem;
         }
 
-        .stat-card {
+        .kpi-card {
             background: var(--ink-2);
             padding: 1.5rem;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
         }
 
-        .stat-label { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-family: 'Syne', sans-serif; font-size: 1.8rem; margin-top: 5px; }
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 3px;
+            background: var(--accent, var(--gold));
+        }
 
-        .section-title { font-family: 'Syne', sans-serif; margin-bottom: 1.5rem; font-size: 1.5rem; }
+        .kpi-val {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+            margin-top: 0.5rem;
+        }
 
         .country-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            gap: 2rem;
         }
 
         .card {
             background: var(--ink-2);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
+            border-radius: var(--radius-xl);
             border: 1px solid var(--border);
+            overflow: hidden;
             cursor: pointer;
             transition: var(--transition);
         }
 
         .card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-10px);
             border-color: var(--gold);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+            box-shadow: var(--shadow-lg);
         }
 
-        .card-img { height: 160px; background-size: cover; background-position: center; position: relative; }
-        .card-tag {
-            position: absolute; top: 12px; left: 12px;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-            padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;
+        .card-banner {
+            height: 160px;
+            background: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .card-content { padding: 1.2rem; }
-        .card-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 8px; }
-        .card-meta { display: flex; justify-content: space-between; color: var(--text-dim); font-size: 0.85rem; }
+        .card-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
 
-        /* Detail Page Components */
-        .back-btn {
+        .card:hover .card-banner img {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .card-content { padding: 1.5rem; }
+        
+        .region-tag {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .card-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* ========================================
+        8. DETAIL VIEW (INTEL REPORT)
+        ========================================
+        */
+        .intel-hero {
+            height: 400px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            padding: 4rem;
+        }
+
+        .intel-hero img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.4);
+        }
+
+        .hero-data { position: relative; z-index: 5; }
+        .hero-name { font-family: var(--font-display); font-size: 5rem; line-height: 1; margin-bottom: 1rem; }
+
+        .report-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2.5rem;
+        }
+
+        .intel-box {
+            background: var(--ink-2);
+            padding: 2.5rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 2rem;
+        }
+
+        .data-pill {
+            background: var(--ink-3);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        /* ========================================
+        9. DATA TABLES & RISK
+        ========================================
+        */
+        .intel-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .intel-table th {
+            text-align: left;
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--border-bright);
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .intel-table td {
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .risk-indicator {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        /* ========================================
+        10. GEO-QUIZ INTERFACE
+        ========================================
+        */
+        .quiz-container {
+            background: var(--ink-2);
+            padding: 4rem;
+            border-radius: var(--radius-xl);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 40px var(--gold-glow);
+        }
+
+        .quiz-option {
             background: var(--ink-3);
             border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 10px 18px;
-            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            margin-bottom: 2rem;
+            transition: var(--transition);
             font-weight: 600;
         }
 
-        .hero-banner {
-            height: 350px;
-            border-radius: 24px;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: flex-end;
-            padding: 3rem;
-            margin-bottom: 2rem;
-            position: relative;
+        .quiz-option:hover {
+            border-color: var(--gold);
+            background: var(--ink-4);
         }
 
-        .hero-banner::after {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(8,9,13,0.9), transparent);
-            border-radius: 24px;
-        }
-
-        .hero-text { position: relative; z-index: 2; }
-        .hero-title { font-family: 'Syne', sans-serif; font-size: 3.5rem; line-height: 1; }
-
-        .report-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-        }
-
-        .report-card {
-            background: var(--ink-2);
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-        }
-
-        .ai-insight {
-            background: linear-gradient(135deg, #1e1b4b, #1e293b);
-            border: 1px solid var(--sky);
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-        }
-
-        .ai-badge {
-            background: var(--sky);
-            color: #000;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            display: inline-block;
-        }
+        /* ========================================
+        11. UTILITIES
+        ========================================
+        */
+        .text-gold { color: var(--gold); }
+        .text-jade { color: var(--jade); }
+        .text-coral { color: var(--coral); }
+        .hidden { display: none !important; }
 
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="app-shell">
+    
     <aside>
-        <div class="brand">
-            <span>✧</span> MERIDIAN OS
-        </div>
-        
-        <nav class="nav-group">
-            <div class="nav-item active" onclick="showDashboard()">⊞ Dashboard</div>
-            <div class="nav-item">🌍 Global Map</div>
-            <div class="nav-item">🛡️ Risk Assessment</div>
-            <div class="nav-item">📊 Macro Data</div>
-        </nav>
+        <a href="#" class="brand" onclick="switchView('dashboard')">
+            <div class="logo-glyph">M</div>
+            <div class="brand-text">MERIDIAN OS</div>
+        </a>
 
-        <div style="margin-top: auto;" class="nav-item">⚙️ Settings</div>
+        <div class="nav-section">
+            <div class="nav-label">Core Systems</div>
+            <nav class="nav-group">
+                <div class="nav-item active" onclick="switchView('dashboard', this)">
+                    <span class="nav-icon">⊞</span> Dashboard
+                </div>
+                <div class="nav-item" onclick="switchView('risk-view', this)">
+                    <span class="nav-icon">🛡️</span> Risk Matrix
+                </div>
+                <div class="nav-item" onclick="switchView('macro-view', this)">
+                    <span class="nav-icon">📊 Macro Data</span>
+                </div>
+            </nav>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Analysis Tools</div>
+            <nav class="nav-group">
+                <div class="nav-item" onclick="switchView('map-view', this)">
+                    <span class="nav-icon">🌍</span> Global Viz
+                </div>
+                <div class="nav-item" onclick="switchView('quiz-view', this)">
+                    <span class="nav-icon">🧩</span> Geo-Quiz
+                </div>
+            </nav>
+        </div>
+
+        <div class="system-status">
+            <div class="status-dot"></div>
+            <span style="font-size: 0.8rem; font-weight: 600;">Neural Link: Active</span>
+            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px;">
+                Satellite Data Latency: 14ms
+            </div>
+        </div>
     </aside>
 
     <main>
         <header>
-            <div class="search-bar">
-                <span>🔍</span>
-                <input type="text" id="searchInput" placeholder="Search countries, regions, or metrics..." onkeyup="filterCountries()">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="mainSearch" placeholder="Filter global intelligence database..." onkeyup="handleGlobalSearch()">
             </div>
-            <div style="display: flex; gap: 15px;">
-                <button style="background: var(--gold); border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer;">Export PDF</button>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button style="background: var(--ink-3); border: 1px solid var(--border); color: white; padding: 10px 20px; border-radius: var(--radius-md); cursor: pointer;">
+                    AI Insights: ON
+                </button>
+                <div style="background: var(--ink-3); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold);">
+                    <span id="digitalClock">00:00:00 UTC</span>
+                </div>
             </div>
         </header>
 
-        <section id="dashboard" class="view">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Global Stability Index</div>
-                    <div class="stat-value" style="color: var(--jade);">78.2%</div>
+        <section id="dashboard" class="view active">
+            <div class="dashboard-header">
+                <h1 style="font-family: var(--font-display); font-size: 3rem; margin-bottom: 0.5rem;">Global Pulse</h1>
+                <p style="color: var(--text-dim)">Aggregated intelligence across 195 sovereign entities.</p>
+            </div>
+
+            <div class="kpi-row">
+                <div class="kpi-card" style="--accent: var(--sky)">
+                    <div class="nav-label">Tracked Nations</div>
+                    <div class="kpi-val">195</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Market Volatility</div>
-                    <div class="stat-value" style="color: var(--coral);">Low</div>
+                <div class="kpi-card" style="--accent: var(--jade)">
+                    <div class="nav-label">Global GDP Est.</div>
+                    <div class="kpi-val">$105.4T</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Trackers</div>
-                    <div class="stat-value">1,240</div>
+                <div class="kpi-card" style="--accent: var(--coral)">
+                    <div class="nav-label">Risk Redzones</div>
+                    <div class="kpi-val">14</div>
+                </div>
+                <div class="kpi-card" style="--accent: var(--violet)">
+                    <div class="nav-label">Active Treaties</div>
+                    <div class="kpi-val">2,410</div>
                 </div>
             </div>
 
-            <h2 class="section-title">Nations of Interest</h2>
             <div class="country-grid" id="countryGrid">
                 </div>
         </section>
 
-        <section id="detailPage" class="view hidden">
-            <button class="back-btn" onclick="showDashboard()">← Back to Overview</button>
-            
-            <div id="countryDetails">
+        <section id="risk-view" class="view">
+            <h1 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 2rem;">Security & Stability Matrix</h1>
+            <div class="intel-box">
+                <table class="intel-table">
+                    <thead>
+                        <tr>
+                            <th>Nation</th>
+                            <th>Geopolitical Risk</th>
+                            <th>Economic Stability</th>
+                            <th>Threat Level</th>
+                        </tr>
+                    </thead>
+                    <tbody id="riskTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="macro-view" class="view">
+            <h1 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 2rem;">Sovereign Financials</h1>
+            <div class="intel-box">
+                <table class="intel-table">
+                    <thead>
+                        <tr>
+                            <th>Nation</th>
+                            <th>Nominal GDP</th>
+                            <th>Population</th>
+                            <th>Debt-to-GDP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="macroTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="intel-report" class="view">
+            <button class="nav-item" style="margin-bottom: 2rem; width: fit-content;" onclick="switchView('dashboard')">
+                ← Return to Dashboard
+            </button>
+            <div id="intelReportContent">
                 </div>
         </section>
+
+        <section id="quiz-view" class="view">
+            <div class="quiz-container">
+                <h1 style="font-family: var(--font-display); color: var(--gold);">Meridian Geo-Quiz</h1>
+                <p id="quizQuestion" style="font-size: 1.5rem; margin: 2rem 0;">Loading intelligence check...</p>
+                <div id="quizOptions"></div>
+            </div>
+        </section>
+
     </main>
 </div>
 
 <script>
-    // THE DATA ENGINE
-    const countryData = [
-        {
-            id: "usa",
-            name: "United States",
-            region: "North America",
-            gdp: "$23.3T",
-            pop: "331.4M",
-            risk: "Stable",
-            currency: "USD",
-            flag: "https://images.unsplash.com/photo-1508433957232-3107f5ed2035?auto=format&fit=crop&q=80&w=1000",
-            analysis: "Economic indicators suggest continued resilience in the service sector. High interest rates are cooling the housing market, but labor demand remains structurally high."
-        },
-        {
-            id: "japan",
-            name: "Japan",
-            region: "East Asia",
-            gdp: "$4.9T",
-            pop: "125.8M",
-            risk: "Low",
-            currency: "Yen",
-            flag: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=1000",
-            analysis: "A pivot toward automation is offsetting demographic challenges. The Yen remains a primary carry-trade currency despite slight shifts in central bank policy."
-        },
-        {
-            id: "germany",
-            name: "Germany",
-            region: "Europe",
-            gdp: "$4.2T",
-            pop: "83.2M",
-            risk: "Stable",
-            currency: "Euro",
-            flag: "https://images.unsplash.com/photo-1467043153537-a4fba2cd39ef?auto=format&fit=crop&q=80&w=1000",
-            analysis: "Industrial output is recovering as energy prices stabilize. Germany's focus on green hydrogen positions it as a future leader in sustainable manufacturing."
-        },
-        {
-            id: "singapore",
-            name: "Singapore",
-            region: "Southeast Asia",
-            gdp: "$396B",
-            pop: "5.7M",
-            risk: "Minimum",
-            currency: "SGD",
-            flag: "https://images.unsplash.com/photo-1525625293386-3fb0ad7c1fe6?auto=format&fit=crop&q=80&w=1000",
-            analysis: "Consistently ranked as the world's most business-friendly environment. Financial services and biotech sectors are showing 4.2% year-over-year expansion."
-        }
+    // A sample of the 195-country dataset to keep this code functional and clean.
+    // In a real production build, this would be an external JSON file.
+    const database = [
+        { id: "us", name: "United States", region: "North America", gdp: "23.32T", pop: "331M", risk: "Low", debt: "128%", capital: "Washington D.C.", analysis: "The US maintains its status as the world's primary reserve currency issuer. Intelligence suggests a shift toward domestic manufacturing and green energy infrastructure to counteract industrial competition." },
+        { id: "cn", name: "China", region: "East Asia", gdp: "17.73T", pop: "1.41B", risk: "Medium", debt: "77%", capital: "Beijing", analysis: "Transitioning from investment-led growth to consumption. Strategic focus on the 'Belt and Road' initiative continues to reshape trade routes in the Global South." },
+        { id: "jp", name: "Japan", region: "East Asia", gdp: "4.94T", pop: "125M", risk: "Low", debt: "263%", capital: "Tokyo", analysis: "Leading the global experiment in managing a hyper-aged population. Significant investment in robotics and medical automation to preserve industrial output." },
+        { id: "de", name: "Germany", region: "Europe", gdp: "4.22T", pop: "83M", risk: "Low", debt: "69%", capital: "Berlin", analysis: "Navigating an energy paradigm shift. Modernizing the automotive industrial complex toward electric mobility to maintain European market leadership." },
+        { id: "in", name: "India", region: "South Asia", gdp: "3.17T", pop: "1.40B", risk: "Medium", debt: "89%", capital: "New Delhi", analysis: "Rapidly digitizing economy with a massive youth demographic dividend. Emerging as a primary alternative for global supply chain diversification." },
+        { id: "gb", name: "United Kingdom", region: "Europe", gdp: "3.18T", pop: "67M", risk: "Low", debt: "103%", capital: "London", analysis: "Post-Brexit repositioning as 'Global Britain'. Leveraging strengths in fintech, defense intelligence, and higher education." },
+        { id: "fr", name: "France", region: "Europe", gdp: "2.95T", pop: "67M", risk: "Low", debt: "112%", capital: "Paris", analysis: "Aggressive push for European strategic autonomy. Investing heavily in nuclear energy sovereignty and high-speed rail networks." },
+        { id: "br", name: "Brazil", region: "South America", gdp: "1.60T", pop: "214M", risk: "Medium", debt: "80%", capital: "Brasilia", analysis: "Agricultural superpower with a growing renewable energy sector. Balancing environmental protection with aggressive mining and export goals." },
+        { id: "ca", name: "Canada", region: "North America", gdp: "1.99T", pop: "38M", risk: "Low", debt: "117%", capital: "Ottawa", analysis: "Resource-rich economy with a high focus on immigration to fuel workforce growth. Pivot toward critical mineral extraction for battery tech." },
+        { id: "it", name: "Italy", region: "Europe", gdp: "2.10T", pop: "59M", risk: "Medium", debt: "150%", capital: "Rome", analysis: "Focus on luxury manufacturing and high-tech agricultural tech. Managing structural debt through European Union recovery funds." },
+        { id: "kr", name: "South Korea", region: "East Asia", gdp: "1.81T", pop: "51M", risk: "Low", debt: "51%", capital: "Seoul", analysis: "The 'Semiconductor Fortress'. Extreme R&D spending to maintain a 10-year lead in memory chips and display technology." },
+        { id: "ru", name: "Russia", region: "Eurasia", gdp: "1.77T", pop: "144M", risk: "High", debt: "18%", capital: "Moscow", analysis: "Resource-intensive economy currently undergoing a structural pivot toward Asian markets due to Western decoupling." },
+        { id: "au", name: "Australia", region: "Oceania", gdp: "1.54T", pop: "25M", risk: "Low", debt: "57%", capital: "Canberra", analysis: "Critical strategic partner in the Indo-Pacific. Expanding iron ore and LNG exports while pivoting toward solar-to-hydrogen energy." },
+        { id: "mx", name: "Mexico", region: "North America", gdp: "1.29T", pop: "128M", risk: "Medium", debt: "56%", capital: "Mexico City", analysis: "Beneficiary of near-shoring trends. Strengthening manufacturing links with the USMCA zone while battling internal security challenges." },
+        { id: "id", name: "Indonesia", region: "Southeast Asia", gdp: "1.18T", pop: "273M", risk: "Medium", debt: "41%", capital: "Jakarta", analysis: "Nickel mining powerhouse. Strategy of 'Downstreaming' to ensure value-added battery manufacturing occurs domestically." },
+        { id: "sa", name: "Saudi Arabia", region: "Middle East", gdp: "833B", pop: "35M", risk: "Medium", debt: "30%", capital: "Riyadh", analysis: "Executing Vision 2030 to decouple the economy from oil. Massive sovereign wealth fund investments in global tech and tourism." },
+        { id: "tr", name: "Turkey", region: "Middle East", gdp: "815B", pop: "84M", risk: "High", debt: "37%", capital: "Ankara", analysis: "Strategic pivot point between East and West. Growing defense industry and logistics hub capabilities." },
+        { id: "ch", name: "Switzerland", region: "Europe", gdp: "812B", pop: "8.6M", risk: "Low", debt: "42%", capital: "Bern", analysis: "Global hub for finance and pharmaceutical R&D. Maintaining strict neutrality while deepening tech integration with EU markets." },
+        { id: "se", name: "Sweden", region: "Europe", gdp: "627B", pop: "10M", risk: "Low", debt: "39%", capital: "Stockholm", analysis: "Pioneer in fossil-free steel and circular economy models. Strong emphasis on digital security and defense integration." },
+        { id: "sg", name: "Singapore", region: "Southeast Asia", gdp: "396B", pop: "5.7M", risk: "Low", debt: "130%", capital: "Singapore", analysis: "The 'Intelligent Island'. Focused on becoming the world's primary digital asset regulator and green finance hub." },
+        { id: "ae", name: "United Arab Emirates", region: "Middle East", gdp: "415B", pop: "9.8M", risk: "Low", debt: "38%", capital: "Abu Dhabi", analysis: "Diversifying into AI, space exploration, and renewable energy. A primary node for global aviation and shipping." },
+        { id: "za", name: "South Africa", region: "Africa", gdp: "419B", pop: "59M", risk: "Medium", debt: "70%", capital: "Pretoria", analysis: "Key entry point for African investment. Balancing infrastructure modernization with significant socioeconomic restructuring." },
+        { id: "no", name: "Norway", region: "Europe", gdp: "482B", pop: "5.4M", risk: "Low", debt: "41%", capital: "Oslo", analysis: "World leader in EV adoption and sovereign wealth management. Transitioning offshore expertise from oil to wind energy." },
+        { id: "vn", name: "Vietnam", region: "Southeast Asia", gdp: "366B", pop: "97M", risk: "Medium", debt: "39%", capital: "Hanoi", analysis: "The rising star of global manufacturing. Capturing high-tech assembly lines moving away from traditional hubs." },
+        { id: "eg", name: "Egypt", region: "Africa", gdp: "404B", pop: "102M", risk: "High", debt: "92%", capital: "Cairo", analysis: "Controlling the Suez Canal artery. Massive infrastructure investments to accommodate a rapidly growing population." },
+        { id: "ng", name: "Nigeria", region: "Africa", gdp: "440B", pop: "206M", risk: "High", debt: "35%", capital: "Abuja", analysis: "Africa's largest economy. Leveraging a massive fintech sector and oil reserves to power the continent's digital transition." },
+        { id: "ar", name: "Argentina", region: "South America", gdp: "487B", pop: "45M", risk: "High", debt: "102%", capital: "Buenos Aires", analysis: "Rich in lithium and agricultural land. Struggling with structural inflation while attempting to reform monetary frameworks." },
+        { id: "cl", name: "Chile", region: "South America", gdp: "317B", pop: "19M", risk: "Low", debt: "36%", capital: "Santiago", analysis: "The 'Copper King'. Pivoting to lithium extraction to fuel the global green revolution while maintaining fiscal discipline." },
+        { id: "pl", name: "Poland", region: "Europe", gdp: "674B", pop: "38M", risk: "Low", debt: "54%", capital: "Warsaw", analysis: "Central Europe's industrial engine. Expanding military capabilities and tech service exports at a record pace." },
+        { id: "nl", name: "Netherlands", region: "Europe", gdp: "1.01T", pop: "17M", risk: "Low", debt: "52%", capital: "Amsterdam", analysis: "Gateway to Europe. Dominating the world's most advanced lithography machine (ASML) market for semiconductor production." },
+        { id: "pk", name: "Pakistan", region: "South Asia", gdp: "347B", pop: "225M", risk: "High", debt: "78%", capital: "Islamabad", analysis: "Strategic trade corridor. Balancing regional security concerns with large-scale industrial zone development." },
+        { id: "be", name: "Belgium", region: "Europe", gdp: "599B", pop: "11.5M", risk: "Low", debt: "108%", capital: "Brussels", analysis: "The political heart of the EU. Strategic focus on biopharmaceuticals and chemical manufacturing." },
+        { id: "at", name: "Austria", region: "Europe", gdp: "477B", pop: "8.9M", risk: "Low", debt: "83%", capital: "Vienna", analysis: "Specialized in high-tech machinery and sustainable tourism. A neutral diplomatic hub for international intelligence." },
+        { id: "pt", name: "Portugal", region: "Europe", gdp: "250B", pop: "10.3M", risk: "Low", debt: "125%", capital: "Lisbon", analysis: "Emerging tech hub for remote workers. Investing in deep-sea renewable energy and blue economy projects." },
+        { id: "ie", name: "Ireland", region: "Europe", gdp: "498B", pop: "5M", risk: "Low", debt: "55%", capital: "Dublin", analysis: "Global corporate hub. Leveraging a highly educated workforce to dominate the software and pharmaceutical export markets." },
+        { id: "nz", name: "New Zealand", region: "Oceania", gdp: "249B", pop: "5.1M", risk: "Low", debt: "34%", capital: "Wellington", analysis: "Pioneer in agricultural tech and environmental governance. Strategically isolated with high food security." },
+        { id: "fi", name: "Finland", region: "Europe", gdp: "299B", pop: "5.5M", risk: "Low", debt: "70%", capital: "Helsinki", analysis: "The 'World's Happiest Nation' with the highest digital literacy. Frontrunner in 6G development and cybersecurity." },
+        { id: "dk", name: "Denmark", region: "Europe", gdp: "397B", pop: "5.8M", risk: "Low", debt: "36%", capital: "Copenhagen", analysis: "Global leader in wind power (Vestas) and healthcare (Novo Nordisk). A model for the high-efficiency welfare state." },
+        { id: "gr", name: "Greece", region: "Europe", gdp: "216B", pop: "10.7M", risk: "Medium", debt: "193%", capital: "Athens", analysis: "Undergoing a digital transformation. Leveraging shipping dominance and massive solar potential for a sustainable recovery." },
+        { id: "il", name: "Israel", region: "Middle East", gdp: "481B", pop: "9.3M", risk: "Medium", debt: "70%", capital: "Jerusalem", analysis: "The 'Startup Nation'. Highest density of tech companies outside Silicon Valley, focused on cyber defense and agritech." },
+        { id: "pe", name: "Peru", region: "South America", gdp: "226B", pop: "33M", risk: "Medium", debt: "34%", capital: "Lima", analysis: "Leading exporter of minerals. Navigating internal political challenges while expanding trade links with Asian markets." },
+        { id: "co", name: "Colombia", region: "South America", gdp: "314B", pop: "50M", risk: "Medium", debt: "62%", capital: "Bogota", analysis: "Expanding energy portfolio into wind and green hydrogen while modernization the coffee and floral export sectors." },
+        { id: "my", name: "Malaysia", region: "Southeast Asia", gdp: "372B", pop: "32M", risk: "Low", debt: "63%", capital: "Kuala Lumpur", analysis: "A critical node in the semiconductor backend ecosystem. Shifting toward high-value electrical engineering manufacturing." },
+        { id: "th", name: "Thailand", region: "Southeast Asia", gdp: "505B", pop: "69M", risk: "Medium", debt: "59%", capital: "Bangkok", analysis: "Automotive hub of Southeast Asia. Transitioning existing internal combustion factories to EV production lines." }
     ];
 
-    // INITIALIZE DASHBOARD
-    function renderGrid(data) {
+    // 
+    // ========================================
+    // 13. UI CONTROLLER & ROUTING
+    // ========================================
+    //
+
+    function switchView(viewId, element) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(viewId);
+        if (target) target.classList.add('active');
+
+        if (element) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Scroll main to top
+        document.querySelector('main').scrollTop = 0;
+    }
+
+    //
+    // ========================================
+    // 14. DATA RENDERERS
+    // ========================================
+    //
+
+    function renderDashboard(dataList) {
         const grid = document.getElementById('countryGrid');
-        grid.innerHTML = data.map(country => `
-            <div class="card" onclick="openCountry('${country.id}')">
-                <div class="card-img" style="background-image: url('${country.flag}')">
-                    <span class="card-tag">${country.region}</span>
+        grid.innerHTML = dataList.map(c => `
+            <div class="card" onclick="openIntelReport('${c.id}')">
+                <div class="card-banner">
+                    <img src="https://flagcdn.com/w640/${c.id}.png" alt="${c.name}">
                 </div>
                 <div class="card-content">
-                    <h3 class="card-title">${country.name}</h3>
-                    <div class="card-meta">
-                        <span>GDP: ${country.gdp}</span>
-                        <span style="color: var(--jade)">${country.risk}</span>
+                    <div class="region-tag">${c.region}</div>
+                    <h3 class="card-title">${c.name}</h3>
+                    <div class="card-stats">
+                        <span>GDP: ${c.gdp}</span>
+                        <span style="color: ${getRiskColor(c.risk)}; font-weight:700;">${c.risk}</span>
                     </div>
                 </div>
             </div>
         `).join('');
     }
 
-    // SEARCH FILTER
-    function filterCountries() {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = countryData.filter(c => 
+    function renderTables() {
+        const riskTable = document.getElementById('riskTableBody');
+        riskTable.innerHTML = database.map(c => `
+            <tr>
+                <td style="font-weight:700;">${c.name}</td>
+                <td>${c.region}</td>
+                <td><div style="width:100px; height:6px; background:#222; border-radius:10px;"><div style="width:${Math.floor(Math.random()*40)+60}%; height:100%; background:var(--gold); border-radius:10px;"></div></div></td>
+                <td><span class="risk-badge" style="background:${getRiskColor(c.risk)}; color:#000; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:800;">${c.risk}</span></td>
+            </tr>
+        `).join('');
+
+        const macroTable = document.getElementById('macroTableBody');
+        macroTable.innerHTML = database.map(c => `
+            <tr>
+                <td style="font-weight:700;">${c.name}</td>
+                <td class="text-jade">${c.gdp}</td>
+                <td>${c.pop}</td>
+                <td class="text-coral">${c.debt}</td>
+            </tr>
+        `).join('');
+    }
+
+    function handleGlobalSearch() {
+        const query = document.getElementById('mainSearch').value.toLowerCase();
+        const filtered = database.filter(c => 
             c.name.toLowerCase().includes(query) || 
             c.region.toLowerCase().includes(query)
         );
-        renderGrid(filtered);
+        renderDashboard(filtered);
     }
 
-    // NAVIGATION LOGIC
-    function showDashboard() {
-        document.getElementById('dashboard').classList.remove('hidden');
-        document.getElementById('detailPage').classList.add('hidden');
+    function getRiskColor(risk) {
+        if (risk === "Low") return "var(--jade)";
+        if (risk === "Medium") return "var(--gold)";
+        return "var(--coral)";
     }
 
-    function openCountry(id) {
-        const country = countryData.find(c => c.id === id);
-        const container = document.getElementById('countryDetails');
+    //
+    // ========================================
+    // 15. DYNAMIC INTEL REPORTS (DETAIL ENGINE)
+    // ========================================
+    //
 
-        container.innerHTML = `
-            <div class="hero-banner" style="background-image: url('${country.flag}')">
-                <div class="hero-text">
-                    <div style="color: var(--gold); font-weight: 700; letter-spacing: 2px;">STRATEGIC INTELLIGENCE</div>
-                    <h1 class="hero-title">${country.name}</h1>
+    function openIntelReport(id) {
+        const c = database.find(x => x.id === id);
+        const reportArea = document.getElementById('intelReportContent');
+        
+        reportArea.innerHTML = `
+            <div class="intel-hero">
+                <img src="https://flagcdn.com/w1280/${c.id}.png">
+                <div class="hero-data">
+                    <div class="region-tag" style="font-size:1rem;">Strategic Dossier</div>
+                    <h1 class="hero-name">${c.name}</h1>
+                    <div style="display:flex; gap:2rem;">
+                        <div class="data-pill">
+                            <span class="nav-label">Sovereign Capital</span>
+                            <span style="font-size:1.2rem; font-weight:700;">${c.capital}</span>
+                        </div>
+                        <div class="data-pill">
+                            <span class="nav-label">Risk Profile</span>
+                            <span style="font-size:1.2rem; font-weight:700; color:${getRiskColor(c.risk)}">${c.risk} Intelligence</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="report-grid">
-                <div class="report-card">
-                    <h2 class="section-title">Macroeconomic Breakdown</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div>
-                            <div class="stat-label">Currency</div>
-                            <div class="stat-value" style="font-size: 1.2rem;">${country.currency}</div>
-                        </div>
-                        <div>
-                            <div class="stat-label">Population</div>
-                            <div class="stat-value" style="font-size: 1.2rem;">${country.pop}</div>
-                        </div>
-                        <div style="grid-column: span 2; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
-                            <p style="color: var(--text-dim); line-height: 1.8;">${country.analysis}</p>
+            <div class="report-layout">
+                <div>
+                    <div class="intel-box">
+                        <h2 style="font-family:var(--font-display); margin-bottom:1.5rem;">Strategic Analysis</h2>
+                        <p style="color:var(--text-dim); line-height:1.8; font-size:1.1rem;">${c.analysis}</p>
+                    </div>
+
+                    <div class="intel-box">
+                        <h2 style="font-family:var(--font-display);">Economic Trajectory</h2>
+                        <div class="chart-container">
+                            <canvas id="countryChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <div class="ai-insight">
-                    <span class="ai-badge">CORE AI PREDICTION</span>
-                    <h4 style="margin-bottom: 10px;">Investment Outlook</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-dim); line-height: 1.6;">
-                        Based on current fiscal flows, ${country.name} shows a 68% probability of credit rating upgrades within the next 12 months. Recommendation: <strong>Neutral / Accumulate.</strong>
-                    </p>
+                <div>
+                    <div class="intel-box" style="border-color:var(--gold);">
+                        <h3 style="margin-bottom:1.5rem;">Vitals</h3>
+                        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                            <div>
+                                <div class="nav-label">Nominal GDP</div>
+                                <div style="font-size:1.5rem; font-weight:800;">${c.gdp}</div>
+                            </div>
+                            <div>
+                                <div class="nav-label">Total Population</div>
+                                <div style="font-size:1.5rem; font-weight:800;">${c.pop}</div>
+                            </div>
+                            <div>
+                                <div class="nav-label">Debt-to-GDP</div>
+                                <div style="font-size:1.5rem; font-weight:800; color:var(--coral);">${c.debt}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="intel-box" style="background:var(--gold); color:var(--ink);">
+                        <h3 style="margin-bottom:1rem;">AI Prediction</h3>
+                        <p style="font-size:0.9rem; font-weight:600;">System predicts a 4.2% growth in the tech sector for ${c.name} over the next 12 cycles based on current trade flows.</p>
+                    </div>
                 </div>
             </div>
         `;
 
-        document.getElementById('dashboard').classList.add('hidden');
-        document.getElementById('detailPage').classList.remove('hidden');
-        document.querySelector('main').scrollTop = 0;
+        switchView('intel-report');
+        initCountryChart(c);
     }
 
-    // START
-    renderGrid(countryData);
+    function initCountryChart(country) {
+        const ctx = document.getElementById('countryChart').getContext('2d');
+        
+        // Random trajectory data for demo
+        const dataPoints = Array.from({length: 12}, () => Math.floor(Math.random() * 50) + 50);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Stability Index',
+                    data: dataPoints,
+                    borderColor: '#d4af37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+    }
+
+    //
+    // ========================================
+    // 16. GEO-QUIZ ENGINE
+    // ========================================
+    //
+
+    let currentQuestion = {};
+
+    function startQuiz() {
+        const randomCountry = database[Math.floor(Math.random() * database.length)];
+        const questionType = Math.random() > 0.5 ? 'capital' : 'region';
+        
+        if (questionType === 'capital') {
+            currentQuestion = {
+                q: `What is the strategic capital of ${randomCountry.name}?`,
+                a: randomCountry.capital,
+                options: shuffle([randomCountry.capital, "Geneva", "Singapore", "New York"])
+            };
+        } else {
+            currentQuestion = {
+                q: `In which geopolitical region is ${randomCountry.name} located?`,
+                a: randomCountry.region,
+                options: shuffle([randomCountry.region, "Middle East", "Scandinavia", "Balkans"])
+            };
+        }
+
+        document.getElementById('quizQuestion').innerText = currentQuestion.q;
+        document.getElementById('quizOptions').innerHTML = currentQuestion.options.map(opt => `
+            <div class="quiz-option" onclick="checkAnswer('${opt}')">${opt}</div>
+        `).join('');
+    }
+
+    function checkAnswer(selected) {
+        if (selected === currentQuestion.a) {
+            alert("INTELLIGENCE VERIFIED. ACCESS GRANTED.");
+        } else {
+            alert("ACCESS DENIED. INCORRECT DATA.");
+        }
+        startQuiz();
+    }
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    //
+    // ========================================
+    // 17. INITIALIZATION
+    // ========================================
+    //
+
+    function init() {
+        renderDashboard(database);
+        renderTables();
+        startQuiz();
+
+        // Clock Update
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('digitalClock').innerText = now.toUTCString().split(' ')[4] + " UTC";
+        }, 1000);
+    }
+
+    window.onload = init;
+
 </script>
 
 </body>
