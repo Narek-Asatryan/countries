@@ -792,4 +792,354 @@
               <p><i class="fas fa-city"></i> <strong>Capital City:</strong> ${country.capital?.[0] || 'N/A'}</p>
               <p><i class="fas fa-road"></i> <strong>Driving Side:</strong> ${country.car?.side === 'right' ? 'Right-hand traffic 🚗' : 'Left-hand traffic 🚙'}</p>
               <p><i class="fas fa-flag-checkered"></i> <strong>Independent:</strong> ${country.independent ? 'Yes ✅' : 'No ❌'}</p>
-              <p><i class="fas fa-university
+              <p><i class="fas fa-university"></i> <strong>UN Member:</strong> ${country.unMember ? 'Yes ✅' : 'No ❌'}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-grid">
+          <div class="info-card">
+            <h3><i class="fas fa-language"></i> Languages Spoken</h3>
+            <ul style="margin-top: 0.5rem; list-style: none;">
+              ${Object.values(country.languages || {}).map(lang => `<li><i class="fas fa-comment-dots"></i> ${lang}</li>`).join('') || '<li>Multiple languages spoken</li>'}
+            </ul>
+          </div>
+          <div class="info-card">
+            <h3><i class="fas fa-money-bill-wave"></i> Currencies</h3>
+            <ul style="margin-top: 0.5rem; list-style: none;">
+              ${Object.entries(country.currencies || {}).map(([code, curr]) => `<li><i class="fas fa-coins"></i> ${curr.name} (${curr.symbol || code})</li>`).join('') || '<li>Various currencies used</li>'}
+            </ul>
+          </div>
+          <div class="info-card">
+            <h3><i class="fas fa-clock"></i> Time Zones</h3>
+            <ul style="margin-top: 0.5rem; list-style: none;">
+              ${country.timezones?.map(tz => `<li><i class="fas fa-clock"></i> ${tz}</li>`).join('') || '<li>Multiple time zones</li>'}
+            </ul>
+          </div>
+          <div class="info-card">
+            <h3><i class="fas fa-phone-alt"></i> Contact Info</h3>
+            <p><strong>Calling Code:</strong> ${country.idd?.root || '+'}${country.idd?.suffixes?.[0] || ''}</p>
+            <p><strong>Internet TLD:</strong> ${country.tld?.join(', ') || 'N/A'}</p>
+            <p><strong>Start of Week:</strong> ${country.startOfWeek || 'Monday'}</p>
+          </div>
+        </div>
+        
+        <div class="fun-fact">
+          <i class="fas fa-lightbulb"></i> <strong>🌟 Fun Fact About ${country.name.common}:</strong><br>
+          ${funFacts[Math.floor(Math.random() * funFacts.length)]}
+        </div>
+        
+        <div class="quiz-section">
+          <h3><i class="fas fa-gamepad"></i> Mini Quiz: ${country.name.common}</h3>
+          <p>Test your knowledge about this fascinating country!</p>
+          <button class="back-btn" onclick="startCountryQuiz('${country.cca3}')" style="margin-top: 1rem; background: white; color: var(--primary);">
+            <i class="fas fa-play"></i> Take Quiz Now
+          </button>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-history"></i> Historical Timeline</h3>
+          <div class="timeline">
+            ${timeline.map(t => `
+              <div class="timeline-item">
+                <div class="timeline-year">📅 ${t.year}</div>
+                <div>${t.event}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-chart-line"></i> Geographic Statistics</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+            <div><strong>🌊 Land Borders:</strong> ${country.borders?.length || 0} countries</div>
+            <div><strong>🗺️ Subregion:</strong> ${country.subregion || 'N/A'}</div>
+            <div><strong>🏔️ Landlocked:</strong> ${country.landlocked ? 'Yes' : 'No'}</div>
+            <div><strong>📍 Coordinates:</strong> Global position</div>
+          </div>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+          <button class="back-btn" onclick="toggleFavoriteFromDetail('${country.cca3}')">
+            <i class="fas fa-heart"></i> ${favorites.includes(country.cca3) ? 'Remove from Favorites' : 'Save to Favorites'}
+          </button>
+          <button class="back-btn" style="background: var(--secondary);" onclick="window.open('https://en.wikipedia.org/wiki/${encodeURIComponent(country.name.common)}', '_blank')">
+            <i class="fab fa-wikipedia-w"></i> Wikipedia
+          </button>
+          <button class="back-btn" style="background: var(--accent);" onclick="window.open('https://www.google.com/maps/search/${encodeURIComponent(country.name.common)}', '_blank')">
+            <i class="fas fa-map-marked-alt"></i> Google Maps
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('app').innerHTML = html;
+  }
+  
+  function toggleFavoriteFromDetail(cca3) {
+    toggleFavorite(cca3);
+    showCountryDetail(cca3);
+  }
+  
+  function startCountryQuiz(cca3) {
+    const country = allCountries.find(c => c.cca3 === cca3);
+    if (!country) return;
+    
+    const questions = [
+      { q: `What is the capital of ${country.name.common}?`, a: country.capital?.[0] || 'Unknown' },
+      { q: `Which region does ${country.name.common} belong to?`, a: country.region || 'Unknown' },
+      { q: `What is the approximate population of ${country.name.common}?`, a: `${Math.round((country.population || 0) / 1000000)} million` }
+    ];
+    
+    let score = 0;
+    for (let q of questions) {
+      const answer = prompt(q.q);
+      if (answer && answer.toLowerCase().includes(q.a.toLowerCase())) {
+        alert('✅ Correct!');
+        score++;
+      } else {
+        alert(`❌ Wrong! The correct answer is: ${q.a}`);
+      }
+    }
+    alert(`🎉 You scored ${score}/${questions.length} on ${country.name.common}!`);
+    showCountryDetail(cca3);
+  }
+  
+  // ============================================
+  // QUIZ ARENA
+  // ============================================
+  function showQuiz() {
+    currentView = 'quiz';
+    updateActiveNav('Quiz Arena');
+    
+    const shuffled = [...allCountries].sort(() => 0.5 - Math.random());
+    quizQuestions = shuffled.slice(0, 10).map(c => ({
+      country: c,
+      question: `What is the capital of ${c.name.common}?`,
+      answer: c.capital?.[0] || 'Unknown'
+    }));
+    currentQuizIndex = 0;
+    quizScore = 0;
+    renderQuizQuestion();
+  }
+  
+  function renderQuizQuestion() {
+    if (currentQuizIndex >= quizQuestions.length) {
+      if (quizScore > quizHighScore) {
+        quizHighScore = quizScore;
+        localStorage.setItem('quizHighScore', quizHighScore);
+        showToast(`🏆 New High Score: ${quizScore}!`);
+      }
+      quizAttempts.push({ score: quizScore, date: new Date().toLocaleDateString(), total: quizQuestions.length });
+      localStorage.setItem('quizAttempts', JSON.stringify(quizAttempts.slice(-5)));
+      
+      const html = `
+        <div class="hero">
+          <h1><i class="fas fa-trophy"></i> Quiz Complete!</h1>
+          <p>You scored ${quizScore} out of ${quizQuestions.length}</p>
+        </div>
+        <div class="detail-page" style="text-align: center;">
+          <i class="fas fa-star" style="font-size: 4rem; color: var(--accent);"></i>
+          <h2 style="margin: 1rem 0;">${quizScore >= 8 ? '🏆 Excellent Geographer!' : quizScore >= 6 ? '👍 Good Job!' : '📚 Keep Learning!'}</h2>
+          <p>You answered ${quizScore} questions correctly.</p>
+          <p style="margin-top: 0.5rem;">Highest Score: ${quizHighScore}/${quizQuestions.length}</p>
+          <div style="margin-top: 2rem;">
+            <button class="back-btn" onclick="showQuiz()">Play Again</button>
+            <button class="back-btn" style="background: var(--secondary);" onclick="showDashboard()">Back to Dashboard</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('app').innerHTML = html;
+      return;
+    }
+    
+    const q = quizQuestions[currentQuizIndex];
+    const options = [
+      q.answer,
+      allCountries[Math.floor(Math.random() * allCountries.length)]?.capital?.[0] || 'Major City',
+      allCountries[Math.floor(Math.random() * allCountries.length)]?.capital?.[0] || 'Capital',
+      allCountries[Math.floor(Math.random() * allCountries.length)]?.capital?.[0] || 'Metropolis'
+    ].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4);
+    if (!options.includes(q.answer)) options[0] = q.answer;
+    options.sort(() => Math.random() - 0.5);
+    
+    const html = `
+      <div class="hero">
+        <h1><i class="fas fa-gamepad"></i> Country Quiz Arena</h1>
+        <p>Question ${currentQuizIndex + 1} of ${quizQuestions.length}</p>
+      </div>
+      <div class="detail-page" style="text-align: center;">
+        <div style="margin-bottom: 2rem;">
+          <img src="${q.country.flags?.png || ''}" style="width: 200px; border-radius: 16px; box-shadow: var(--shadow-lg);" onerror="this.style.display='none'">
+        </div>
+        <h2>${q.question}</h2>
+        <div class="info-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 2rem;">
+          ${options.map(opt => `
+            <button class="back-btn" style="background: var(--bg-tertiary); color: var(--text-primary); justify-content: center;" onclick="checkQuizAnswer('${opt.replace(/'/g, "\\'")}')">
+              ${opt}
+            </button>
+          `).join('')}
+        </div>
+        <p style="margin-top: 2rem;">Current Score: ${quizScore}/${quizQuestions.length}</p>
+      </div>
+    `;
+    document.getElementById('app').innerHTML = html;
+  }
+  
+  function checkQuizAnswer(selected) {
+    const q = quizQuestions[currentQuizIndex];
+    if (selected.toLowerCase() === q.answer.toLowerCase()) {
+      quizScore++;
+      showToast('✅ Correct!');
+    } else {
+      showToast(`❌ Wrong! Answer: ${q.answer}`);
+    }
+    currentQuizIndex++;
+    renderQuizQuestion();
+  }
+  
+  // ============================================
+  // ANALYTICS PAGE
+  // ============================================
+  function showAnalytics() {
+    currentView = 'analytics';
+    updateActiveNav('Analytics');
+    
+    const top10Pop = [...allCountries].sort((a,b) => (b.population||0) - (a.population||0)).slice(0,10);
+    const top10Area = [...allCountries].sort((a,b) => (b.area||0) - (a.area||0)).slice(0,10);
+    const regionCounts = {};
+    allCountries.forEach(c => { if(c.region) regionCounts[c.region] = (regionCounts[c.region]||0)+1; });
+    
+    const html = `
+      <div class="hero">
+        <h1><i class="fas fa-chart-line"></i> Global Analytics</h1>
+        <p>Statistical insights from ${allCountries.length} countries</p>
+      </div>
+      
+      <div class="detail-page">
+        <h2><i class="fas fa-chart-bar"></i> Top 10 Most Populous Countries</h2>
+        <div class="countries-grid" style="grid-template-columns: 1fr; margin-top: 1rem;">
+          ${top10Pop.map((c, i) => `
+            <div class="stat-card" style="display: flex; justify-content: space-between; align-items: center;">
+              <span><strong>${i+1}.</strong> ${c.name.common}</span>
+              <span><strong>${c.population?.toLocaleString()}</strong> people</span>
+            </div>
+          `).join('')}
+        </div>
+        
+        <h2 style="margin-top: 2rem;"><i class="fas fa-draw-polygon"></i> Top 10 Largest Countries by Area</h2>
+        <div class="countries-grid" style="grid-template-columns: 1fr; margin-top: 1rem;">
+          ${top10Area.map((c, i) => `
+            <div class="stat-card" style="display: flex; justify-content: space-between; align-items: center;">
+              <span><strong>${i+1}.</strong> ${c.name.common}</span>
+              <span><strong>${c.area?.toLocaleString()} km²</strong></span>
+            </div>
+          `).join('')}
+        </div>
+        
+        <h2 style="margin-top: 2rem;"><i class="fas fa-chart-pie"></i> Regional Distribution</h2>
+        <div class="info-grid">
+          ${Object.entries(regionCounts).map(([region, count]) => `
+            <div class="stat-card">
+              <div class="stat-value">${count}</div>
+              <div>${region}</div>
+              <small>countries</small>
+            </div>
+          `).join('')}
+        </div>
+        
+        <h2 style="margin-top: 2rem;"><i class="fas fa-heart"></i> Your Statistics</h2>
+        <div class="info-grid">
+          <div class="stat-card">
+            <div class="stat-value">${favorites.length}</div>
+            <div>Favorite Countries</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${quizHighScore}</div>
+            <div>Quiz High Score</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${quizAttempts.length}</div>
+            <div>Quiz Attempts</div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('app').innerHTML = html;
+  }
+  
+  // ============================================
+  // LEADERBOARD
+  // ============================================
+  function showLeaderboard() {
+    currentView = 'leaderboard';
+    updateActiveNav('Leaderboard');
+    
+    const sortedAttempts = [...quizAttempts].sort((a,b) => b.score - a.score).slice(0,10);
+    
+    const html = `
+      <div class="hero">
+        <h1><i class="fas fa-trophy"></i> Quiz Leaderboard</h1>
+        <p>Top scores from geography enthusiasts</p>
+      </div>
+      <div class="detail-page">
+        <h2>🏆 High Scores</h2>
+        <div class="countries-grid" style="grid-template-columns: 1fr;">
+          ${sortedAttempts.length === 0 ? '<p>No quiz attempts yet. Play the quiz to appear on leaderboard!</p>' : 
+            sortedAttempts.map((attempt, i) => `
+              <div class="stat-card" style="display: flex; justify-content: space-between; align-items: center;">
+                <span><strong>#${i+1}</strong> Score: ${attempt.score}/${attempt.total}</span>
+                <span>📅 ${attempt.date}</span>
+              </div>
+            `).join('')
+          }
+        </div>
+        <button class="back-btn" onclick="showQuiz()" style="margin-top: 2rem;">Play Quiz Now</button>
+      </div>
+    `;
+    
+    document.getElementById('app').innerHTML = html;
+  }
+  
+  // ============================================
+  // UTILITY FUNCTIONS
+  // ============================================
+  function updateActiveNav(pageName) {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.textContent.includes(pageName)) btn.classList.add('active');
+    });
+  }
+  
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  }
+  
+  // Load theme preference
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+  }
+  
+  // Expose global functions
+  window.showDashboard = showDashboard;
+  window.showFavorites = showFavorites;
+  window.showQuiz = showQuiz;
+  window.showAnalytics = showAnalytics;
+  window.showLeaderboard = showLeaderboard;
+  window.showCountryDetail = showCountryDetail;
+  window.toggleFavorite = toggleFavorite;
+  window.toggleFavoriteFromDetail = toggleFavoriteFromDetail;
+  window.startCountryQuiz = startCountryQuiz;
+  window.goToPage = goToPage;
+  window.handleSearch = handleSearch;
+  window.checkQuizAnswer = checkQuizAnswer;
+  window.toggleTheme = toggleTheme;
+  window.loadMockData = loadMockData;
+  
+  // Start the app
+  fetchAllCountries();
+</script>
+</body>
+</html>
