@@ -157,7 +157,6 @@
             padding: 0 3rem; z-index: 90; 
         }
 
-        /* Menu Toggle Button (Hidden on PC) */
         .menu-toggle {
             display: none;
             background: var(--ink-3);
@@ -214,40 +213,38 @@
         .chart-container { height: 300px; margin-top: 2rem; }
 
         /* ========================================
-        9. MOBILE OVERRIDES (STRICT)
+        9. DATA TABLES
+        ========================================
+        */
+        .intel-table { width: 100%; border-collapse: collapse; }
+        .intel-table th { text-align: left; padding: 1.2rem; border-bottom: 1px solid var(--border-bright); color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; }
+        .intel-table td { padding: 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+
+        /* ========================================
+        10. MOBILE OVERRIDES (STRICT)
         ========================================
         */
         @media (max-width: 850px) {
             .app-shell { grid-template-columns: 1fr; }
-            
-            /* Hide Sidebar completely and make it a drawer */
             aside {
                 position: fixed;
-                left: -280px; /* Hidden state */
+                left: -280px;
                 top: 0;
                 bottom: 0;
                 width: 280px;
                 box-shadow: 20px 0 50px rgba(0,0,0,0.8);
             }
-
-            /* State when menu is open */
             .sidebar-active aside { left: 0; }
-
-            /* Show Hamburger on mobile */
             .menu-toggle { display: block; }
-
             header { padding: 0 1rem; gap: 10px; }
             .search-container { width: 100%; }
             .search-input { padding: 10px 15px 10px 40px; font-size: 0.8rem; }
-            header > div:last-child { display: none; } /* Hide clock */
-
+            header > div:last-child { display: none; }
             .view { padding: 1.5rem; }
-            .kpi-row { grid-template-columns: 1fr 1fr; }
+            .kpi-row { grid-template-columns: 1fr 1fr; gap: 1rem; }
             .hero-name { font-size: 2.5rem; }
             .intel-hero { height: 280px; padding: 1.5rem; }
             .report-layout { grid-template-columns: 1fr; }
-            
-            /* Overlay when menu is open */
             .overlay {
                 display: none;
                 position: fixed;
@@ -302,12 +299,10 @@
     <main>
         <header>
             <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-            
             <div class="search-container">
                 <span class="search-icon">🔍</span>
                 <input type="text" class="search-input" id="mainSearch" placeholder="Search Database..." onkeyup="handleGlobalSearch()">
             </div>
-            
             <div>
                 <div style="background: var(--ink-3); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold);">
                     <span id="digitalClock">00:00:00 UTC</span>
@@ -317,17 +312,17 @@
 
         <section id="dashboard" class="view active">
             <div class="kpi-row">
-                <div class="kpi-card" style="--accent: var(--sky)"><div class="nav-label">Nations</div><div class="kpi-val">195</div></div>
+                <div class="kpi-card" style="--accent: var(--sky)"><div class="nav-label">Active Database</div><div class="kpi-val" id="countDisplay">--</div></div>
                 <div class="kpi-card" style="--accent: var(--jade)"><div class="nav-label">Global GDP</div><div class="kpi-val">$105.4T</div></div>
                 <div class="kpi-card" style="--accent: var(--coral)"><div class="nav-label">Risk Zones</div><div class="kpi-val">14</div></div>
-                <div class="kpi-card" style="--accent: var(--violet)"><div class="nav-label">Satellites</div><div class="kpi-val">2.4k</div></div>
+                <div class="kpi-card" style="--accent: var(--violet)"><div class="nav-label">Signal Relay</div><div class="kpi-val">Active</div></div>
             </div>
             <div class="country-grid" id="countryGrid"></div>
         </section>
 
         <section id="risk-view" class="view">
             <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;">Stability Matrix</h1>
-            <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>Stability</th><th>Rating</th></tr></thead><tbody id="riskTableBody"></tbody></table></div>
+            <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>Stability Index</th><th>Rating</th></tr></thead><tbody id="riskTableBody"></tbody></table></div>
         </section>
 
         <section id="macro-view" class="view">
@@ -347,12 +342,11 @@
                 <div id="quizOptions"></div>
             </div>
         </section>
-
     </main>
 </div>
 
 <script>
-    // 195-NATION CORE DATABASE
+    // EXPANDED 30-NATION CORE DATABASE
     const database = [
         { id: "us", name: "United States", region: "N. America", gdp: "23.3T", pop: "331M", risk: "Low", debt: "128%", capital: "Washington D.C.", analysis: "Leading superpower focuses on domestic semiconductor growth and AI infrastructure." },
         { id: "cn", name: "China", region: "E. Asia", gdp: "17.7T", pop: "1.4B", risk: "Medium", debt: "77%", capital: "Beijing", analysis: "World's factory floor transitioning to high-end aerospace and green energy dominance." },
@@ -362,28 +356,35 @@
         { id: "gb", name: "UK", region: "Europe", gdp: "3.1T", pop: "67M", risk: "Low", debt: "103%", capital: "London", analysis: "Leveraging London's financial status to lead the global Fintech regulation era." },
         { id: "fr", name: "France", region: "Europe", gdp: "2.9T", pop: "67M", risk: "Low", debt: "112%", capital: "Paris", analysis: "Leading the push for energy independence through extensive nuclear modernization." },
         { id: "br", name: "Brazil", region: "S. America", gdp: "1.6T", pop: "214M", risk: "Medium", debt: "80%", capital: "Brasilia", analysis: "Global agricultural leader with expanding renewable fuel and iron ore export goals." },
-        { id: "ca", name: "Canada", region: "N. America", gdp: "1.9T", pop: "38M", risk: "Low", debt: "117%", capital: "Ottawa", analysis: "Resource-rich hub focused on attracting high-skill tech immigration to boost R&D." },
+        { id: "ca", name: "Canada", region: "N. America", gdp: "1.9T", pop: "38M", risk: "Low", debt: "117%", capital: "Ottawa", analysis: "Resource-rich hub focused on attracting high-skill tech immigration." },
         { id: "it", name: "Italy", region: "Europe", gdp: "2.1T", pop: "59M", risk: "Medium", debt: "150%", capital: "Rome", analysis: "High-value precision manufacturing and luxury exports remain economic backbones." },
         { id: "kr", name: "South Korea", region: "E. Asia", gdp: "1.8T", pop: "51M", risk: "Low", debt: "51%", capital: "Seoul", analysis: "World-leading chipmaker expanding into defense technology and cultural exports." },
-        { id: "au", name: "Australia", region: "Oceania", gdp: "1.5T", pop: "25M", risk: "Low", debt: "57%", capital: "Canberra", analysis: "Critical strategic partner for Indo-Pacific minerals and renewable energy transition." },
-        { id: "ru", name: "Russia", region: "Eurasia", gdp: "1.7T", pop: "144M", risk: "High", debt: "18%", capital: "Moscow", analysis: "Energy-heavy economy currently undergoing major structural trade realignment." },
+        { id: "au", name: "Australia", region: "Oceania", gdp: "1.5T", pop: "25M", risk: "Low", debt: "57%", capital: "Canberra", analysis: "Critical strategic partner for Indo-Pacific minerals and renewable energy." },
+        { id: "ru", name: "Russia", region: "Eurasia", gdp: "1.7T", pop: "144M", risk: "High", debt: "18%", capital: "Moscow", analysis: "Energy-heavy economy undergoing major structural trade realignment." },
         { id: "mx", name: "Mexico", region: "N. America", gdp: "1.2T", pop: "128M", risk: "Medium", debt: "56%", capital: "Mexico City", analysis: "Prime beneficiary of near-shoring trends for North American supply chains." },
-        { id: "id", name: "Indonesia", region: "SE Asia", gdp: "1.1T", pop: "273M", risk: "Medium", debt: "41%", capital: "Jakarta", analysis: "Leveraging world-class nickel reserves to build a domestic EV battery hub." },
-        { id: "sa", name: "Saudi Arabia", region: "Middle East", gdp: "833B", pop: "35M", risk: "Medium", debt: "30%", capital: "Riyadh", analysis: "Executing Vision 2030 to diversify into tech, logistics, and global tourism." },
-        { id: "tr", name: "Turkey", region: "Eurasia", gdp: "815B", pop: "84M", risk: "High", debt: "37%", capital: "Ankara", analysis: "Geostrategic bridge expanding domestic defense industry and shipping nodes." }
+        { id: "id", name: "Indonesia", region: "SE Asia", gdp: "1.1T", pop: "273M", risk: "Medium", debt: "41%", capital: "Jakarta", analysis: "Leveraging nickel reserves to build a domestic EV battery hub." },
+        { id: "sa", name: "Saudi Arabia", region: "Middle East", gdp: "833B", pop: "35M", risk: "Medium", debt: "30%", capital: "Riyadh", analysis: "Executing Vision 2030 to diversify into tech, logistics, and tourism." },
+        { id: "tr", name: "Turkey", region: "Eurasia", gdp: "815B", pop: "84M", risk: "High", debt: "37%", capital: "Ankara", analysis: "Geostrategic bridge expanding domestic defense and shipping nodes." },
+        { id: "nl", name: "Netherlands", region: "Europe", gdp: "1.0T", pop: "17M", risk: "Low", debt: "52%", capital: "Amsterdam", analysis: "Critical maritime node and leader in lithography equipment via ASML." },
+        { id: "ch", name: "Switzerland", region: "Europe", gdp: "812B", pop: "8.7M", risk: "Low", debt: "42%", capital: "Bern", analysis: "Global wealth management and pharmaceutical innovation leader." },
+        { id: "pl", name: "Poland", region: "Europe", gdp: "674B", pop: "38M", risk: "Low", debt: "53%", capital: "Warsaw", analysis: "Emerging European tech hub with rapid defense modernization programs." },
+        { id: "se", name: "Sweden", region: "Europe", gdp: "627B", pop: "10M", risk: "Low", debt: "39%", capital: "Stockholm", analysis: "Leading the world in fossil-free steel production and green industrial tech." },
+        { id: "sg", name: "Singapore", region: "SE Asia", gdp: "396B", pop: "5.6M", risk: "Low", debt: "160%", capital: "Singapore", analysis: "Key global financial and trading hub with top-tier digital infrastructure." },
+        { id: "no", name: "Norway", region: "Europe", gdp: "482B", pop: "5.4M", risk: "Low", debt: "41%", capital: "Oslo", analysis: "Energy powerhouse managing the world's largest sovereign wealth fund." },
+        { id: "ae", name: "UAE", region: "Middle East", gdp: "415B", pop: "9.9M", risk: "Low", debt: "38%", capital: "Abu Dhabi", analysis: "Diversifying rapidly into space tech, AI, and global aviation logistics." },
+        { id: "vn", name: "Vietnam", region: "SE Asia", gdp: "366B", pop: "98M", risk: "Medium", debt: "39%", capital: "Hanoi", analysis: "High-growth manufacturing hub attracting global electronics giants." },
+        { id: "eg", name: "Egypt", region: "Africa", gdp: "404B", pop: "104M", risk: "High", debt: "93%", capital: "Cairo", analysis: "Critical Suez Canal controller modernizing its administrative infrastructure." },
+        { id: "ng", name: "Nigeria", region: "Africa", gdp: "440B", pop: "211M", risk: "High", debt: "37%", capital: "Abuja", analysis: "Largest African economy with a booming fintech and creative sector." },
+        { id: "za", name: "South Africa", region: "Africa", gdp: "419B", pop: "60M", risk: "Medium", debt: "69%", capital: "Pretoria", analysis: "Mining and financial core of the continent transitioning energy grids." },
+        { id: "ar", name: "Argentina", region: "S. America", gdp: "487B", pop: "45M", risk: "High", debt: "80%", capital: "Buenos Aires", analysis: "Rich in lithium and agricultural assets, currently restructuring fiscal policy." },
+        { id: "il", name: "Israel", region: "Middle East", gdp: "481B", pop: "9.3M", risk: "Medium", debt: "68%", capital: "Jerusalem", analysis: "High-tech military and cybersecurity leader with a strong R&D focus." }
     ];
 
-    // MOBILE TOGGLE LOGIC
-    function toggleMenu() {
-        document.getElementById('appBody').classList.toggle('sidebar-active');
-    }
+    function toggleMenu() { document.getElementById('appBody').classList.toggle('sidebar-active'); }
 
-    // NAV ENGINE (Ensures menu closes on mobile click)
     function handleNav(viewId, element) {
         switchView(viewId, element);
-        if (window.innerWidth <= 850) {
-            toggleMenu();
-        }
+        if (window.innerWidth <= 850) toggleMenu();
     }
 
     function switchView(viewId, element) {
@@ -398,6 +399,7 @@
     }
 
     function renderDashboard(list) {
+        document.getElementById('countDisplay').innerText = list.length;
         document.getElementById('countryGrid').innerHTML = list.map(c => `
             <div class="card" onclick="openIntelReport('${c.id}')">
                 <div class="card-banner"><img src="https://flagcdn.com/w640/${c.id}.png"></div>
@@ -452,19 +454,18 @@
         switchView('intel-report');
         setTimeout(() => {
             const ctx = document.getElementById('countryChart').getContext('2d');
-            new Chart(ctx, { type: 'line', data: { labels: ['Q1','Q2','Q3','Q4'], datasets:[{ data:[12, 19, 14, 25], borderColor:'#d4af37', tension:0.4 }] }, options: { plugins: { legend: { display:false } } } });
+            new Chart(ctx, { type: 'line', data: { labels: ['Q1','Q2','Q3','Q4'], datasets:[{ data:[10+Math.random()*20, 15+Math.random()*10, 12+Math.random()*15, 25+Math.random()*5], borderColor:'#d4af37', tension:0.4 }] }, options: { plugins: { legend: { display:false } } } });
         }, 100);
     }
 
     function startQuiz() {
         const c = database[Math.floor(Math.random()*database.length)];
         document.getElementById('quizQuestion').innerText = `What is the capital of ${c.name}?`;
-        document.getElementById('quizOptions').innerHTML = [c.capital, "Geneva", "Singapore", "Berlin"].sort(()=>Math.random()-0.5).map(o => `
+        document.getElementById('quizOptions').innerHTML = [c.capital, "London", "Brussels", "Singapore"].sort(()=>Math.random()-0.5).map(o => `
             <button class="nav-item" style="width:100%; justify-content:center; margin-bottom:10px;" onclick="alert('${o === c.capital ? 'ACCESS GRANTED' : 'ACCESS DENIED'}')">${o}</button>
         `).join('');
     }
 
-    // INITIALIZE
     window.onload = () => {
         renderDashboard(database);
         renderTables();
