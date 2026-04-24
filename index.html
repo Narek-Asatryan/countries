@@ -1,1 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>WorldPulse | Countries, Flags & History</title>
+  <!-- Google Fonts + Font Awesome Icons (modern, clean icons) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ---------- RESET & GLOBAL ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fefefe;
+      color: #1A2C3E;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* modern spacing utilities */
+    section {
+      padding: 5rem 0;
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #1F3B4C 0%, #2C5A6E 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    h2 {
+      font-size: 2.25rem;
+      margin-bottom: 1rem;
+      color: #1F3B4C;
+    }
+
+    .section-subhead {
+      font-size: 1.2rem;
+      color: #54738f;
+      max-width: 650px;
+      margin-bottom: 3rem;
+    }
+
+    /* ----- BUTTONS & HOVER EFFECTS ----- */
+    .btn-primary {
+      display: inline-block;
+      background: #1F3B4C;
+      color: white;
+      font-weight: 600;
+      padding: 0.9rem 2rem;
+      border-radius: 40px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+    }
+
+    .btn-primary:hover {
+      background: #2C5A6E;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 25px -10px rgba(31,59,76,0.3);
+    }
+
+    /* header navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(130deg, #1F3B4C, #3A7B8C);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #2c3e44;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #1F6E8C;
+    }
+
+    /* hero */
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .hero-content {
+      flex: 1;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: #456e84;
+      margin-bottom: 2rem;
+      max-width: 550px;
+    }
+
+    /* features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2rem 1.8rem;
+      border-radius: 28px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0,0,0,0.02);
+      transition: all 0.3s ease;
+      border: 1px solid #ecf3f7;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 35px -12px rgba(31,59,76,0.15);
+      border-color: #cde3ec;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: #2C5A6E;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card p {
+      color: #4a6272;
+    }
+
+    /* COUNTRIES SHOWCASE – flags, pop, insane history & random facts */
+    .countries-showcase {
+      background: #f8fbfd;
+      border-radius: 48px;
+      margin-top: 1rem;
+    }
+
+    .countries-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .country-card {
+      background: white;
+      border-radius: 32px;
+      padding: 1.8rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
+      border: 1px solid #e9f0f4;
+    }
+
+    .country-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 24px 36px -12px rgba(0, 0, 0, 0.12);
+      border-color: #cbdde6;
+    }
+
+    .flag {
+      font-size: 4.2rem;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+
+    .country-name {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .country-pop {
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: #eef3f8;
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      margin: 0.75rem 0;
+    }
+
+    .random-info {
+      background: #fef7e0;
+      padding: 0.9rem;
+      border-radius: 20px;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: #5a4a2a;
+      border-left: 4px solid #e0a82b;
+    }
+
+    .history-snippet {
+      font-size: 0.9rem;
+      color: #2c3e44;
+      margin-top: 0.6rem;
+      line-height: 1.4;
+    }
+
+    .fa-icon-small {
+      margin-right: 6px;
+      color: #c17b2e;
+    }
+
+    /* contact section */
+    .contact-form {
+      max-width: 720px;
+      margin: 2rem auto 0;
+      background: white;
+      padding: 2.5rem;
+      border-radius: 40px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e4edf2;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border: 1px solid #cfdfe8;
+      border-radius: 60px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      transition: 0.2s;
+      background: #fff;
+    }
+
+    textarea {
+      border-radius: 28px;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #2C5A6E;
+      box-shadow: 0 0 0 3px rgba(44,90,110,0.1);
+    }
+
+    .btn-submit {
+      background: #1F3B4C;
+      border: none;
+      width: 100%;
+      padding: 1rem;
+      font-weight: 600;
+      border-radius: 60px;
+      color: white;
+      font-size: 1rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-submit:hover {
+      background: #2C5A6E;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      background: #f0f5f9;
+      padding: 2rem;
+      text-align: center;
+      color: #3c6578;
+      border-top: 1px solid #e2edf4;
+    }
+
+    /* responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1.5rem;
+      }
+      h1 {
+        font-size: 2.5rem;
+      }
+      h2 {
+        font-size: 1.9rem;
+      }
+      section {
+        padding: 3rem 0;
+      }
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+      }
+      .nav-links {
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+      .hero-subtitle {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .contact-form {
+        padding: 1.8rem;
+      }
+    }
+
+    /* subtle bg decorations */
+    .bg-soft {
+      background: linear-gradient(120deg, #ffffff 0%, #f9fdfe 100%);
+    }
+    hr {
+      margin: 1rem 0;
+    }
+    .badge-info {
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #eef2f5;
+      border-radius: 90px;
+      padding: 2px 12px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ================= MODERN HEADER / NAVIGATION ================= -->
+<header>
+  <div class="navbar">
+    <div class="logo"><i class="fas fa-globe-americas" style="margin-right: 8px;"></i> WorldPulse</div>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#countries">Explore</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ================= HERO SECTION with call-to-action ================= -->
+  <section id="home">
+    <div class="container hero">
+      <div class="hero-content">
+        <h1>Journey through<br>flags, people & echoes of history</h1>
+        <p class="hero-subtitle">Uncover population secrets, random wonders, and deep historical narratives — from ancient empires to modern nations.</p>
+        <!-- Call-to-action button -->
+        <a href="#countries" class="btn-primary"><i class="fas fa-flag-checkered"></i> Explore Countries →</a>
+      </div>
+      <div style="flex: 0.6; min-width: 200px; text-align: center;">
+        <i class="fas fa-landmark" style="font-size: 10rem; color: #CDE3EC; opacity: 0.8;"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT SECTION ================= -->
+  <section id="about" class="bg-soft">
+    <div class="container">
+      <h2>About <span style="color:#2C5A6E;">WorldPulse</span></h2>
+      <div style="max-width: 800px;">
+        <p class="section-subhead" style="margin-bottom: 1rem;">Your gateway to an <strong>insane amount of country intelligence</strong> — flags, demographics, and hidden historical narratives.</p>
+        <p style="margin-bottom: 1rem; color: #2a4b60;">We aggregate thousands of data points: population evolution, origins of national flags, forgotten historical events, random mind-blowing facts, and cultural timelines. Whether you're a traveler, student, or history lover, WorldPulse brings the world’s richness directly to you. <strong>No boring statistics — just vivid stories.</strong></p>
+        <div class="badge-info"><i class="fas fa-database"></i> 195+ countries covered</div>
+        <div class="badge-info" style="margin-left: 10px;"><i class="fas fa-hourglass-half"></i> 5000+ history snippets</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEATURES / BENEFITS SECTION ================= -->
+  <section id="features">
+    <div class="container">
+      <h2>Why dive with us?</h2>
+      <p class="section-subhead">Discover unlimited insights — curated for curious minds</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-flag"></i></div>
+          <h3>Flag & Identity</h3>
+          <p>Explore evolution of flags, symbolism, and how each banner tells unique stories of independence, revolution, and unity.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+          <h3>Population Pulse</h3>
+          <p>Real demographics, density ranks, urban growth trends, and historic census data — every shift, mapped.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-scroll"></i></div>
+          <h3>Random History Vault</h3>
+          <p>From samurai edicts to pharaoh dynasties:  crazy, fascinating, and pivotal moments that shaped nations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COUNTRY SHOWCASE: FLAGS, POPULATION, RANDOM INFO & INSANE HISTORY ================= -->
+  <!-- This section directly addresses the core topic: countries, flags, population, random facts, insane historical depth -->
+  <section id="countries" class="countries-showcase">
+    <div class="container">
+      <h2><i class="fas fa-globe-asia"></i> Nations uncovered: flags, population & deep history</h2>
+      <p class="section-subhead">Each card reveals a nation’s soul — flag, current pop, and a crazy historical twist</p>
+      <div class="countries-grid">
+        
+        <!-- JAPAN - flag, pop, random+history -->
+        <div class="country-card">
+          <span class="flag">🇯🇵</span>
+          <div class="country-name">Japan</div>
+          <div class="country-pop"><i class="fas fa-users"></i> Population: 125.8 million (2024 est.)</div>
+          <div class="random-info">
+            <i class="fas fa-dice-d6 fa-icon-small"></i> <strong>Random fact:</strong> Japan has over 6,800 islands!
+          </div>
+          <div class="history-snippet">
+            <i class="fas fa-history fa-icon-small"></i> <strong>⚡ History flash:</strong> During the Sakoku period (1635–1853), Japan was almost completely isolated from the outside world for over 200 years — only Dutch and Chinese ships were permitted to trade in Nagasaki. This era forged a unique cultural identity.
+          </div>
+        </div>
+
+        <!-- BRAZIL -->
+        <div class="country-card">
+          <span class="flag">🇧🇷</span>
+          <div class="country-name">Brazil</div>
+          <div class="country-pop"><i class="fas fa-users"></i> Population: 216.4 million</div>
+          <div class="random-info">
+            <i class="fas fa-dice-d6 fa-icon-small"></i> <strong>Random fact:</strong> The Amazon rainforest covers ~60% of Brazil, producing 20% of world's oxygen.
+          </div>
+          <div class="history-snippet">
+            <i class="fas fa-history fa-icon-small"></i> <strong>📜 Insane history:</strong> Brazil was the only South American country to host the Portuguese monarchy! In 1808, King Dom João VI fled Napoleon and moved the entire royal court to Rio de Janeiro, making it the capital of the Portuguese Empire for 13 years.
+          </div>
+        </div>
+
+        <!-- EGYPT -->
+        <div class="country-card">
+          <span class="flag">🇪🇬</span>
+          <div class="country-name">Egypt</div>
+          <div class="country-pop"><i class="fas fa-users"></i> Population: 112.7 million</div>
+          <div class="random-info">
+            <i class="fas fa-dice-d6 fa-icon-small"></i> <strong>Random fact:</strong> Ancient Egyptians used hieroglyphs for over 3,500 years.
+          </div>
+          <div class="history-snippet">
+            <i class="fas fa-pyramid fa-icon-small"></i> <strong>🏺 History deep dive:</strong> Cleopatra VII lived closer in time to the Moon landing than to the construction of the Great Pyramid. Egypt’s civilization spans 5,000+ years — making it one of the longest continuous histories on Earth.
+          </div>
+        </div>
+
+        <!-- FRANCE -->
+        <div class="country-card">
+          <span class="flag">🇫🇷</span>
+          <div class="country-name">France</div>
+          <div class="country-pop"><i class="fas fa-users"></i> Population: 68.4 million</div>
+          <div class="random-info">
+            <i class="fas fa-dice-d6 fa-icon-small"></i> <strong>Random fact:</strong> The Louvre Museum has 380,000+ objects, but only ~35,000 on display.
+          </div>
+          <div class="history-snippet">
+            <i class="fas fa-crown fa-icon-small"></i> <strong>👑 Revolutionary history:</strong> The French Revolution (1789) not only changed France but gave birth to modern political ideologies: "Liberté, égalité, fraternité". The storming of the Bastille is celebrated worldwide as a symbol of uprising.
+          </div>
+        </div>
+      </div>
+      <!-- extra info note: insane amount of info delivered -->
+      <div style="text-align: center; margin-top: 2.5rem;">
+        <span class="badge-info"><i class="fas fa-infinity"></i> + countless random facts, historical profiles, and demography insights</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT SECTION with modern form ================= -->
+  <section id="contact">
+    <div class="container">
+      <h2>Get in touch</h2>
+      <p class="section-subhead">Want more country data? Collaborate or suggest historical entries — reach out!</p>
+      <div class="contact-form">
+        <form action="#" method="post">
+          <div class="form-group">
+            <input type="text" placeholder="Full name" required>
+          </div>
+          <div class="form-group">
+            <input type="email" placeholder="Email address" required>
+          </div>
+          <div class="form-group">
+            <textarea rows="4" placeholder="Tell us which country/fact you'd love to explore..."></textarea>
+          </div>
+          <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Send message</button>
+        </form>
+        <p style="font-size: 0.8rem; text-align: center; margin-top: 1.5rem; color: #6c8d9e;"><i class="fas fa-globe"></i> We reply within 24h — every fact ignites curiosity</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="container">
+    <p><i class="fas fa-map-marked-alt"></i> WorldPulse — Flags • Populations • Insane History Vault</p>
+    <p style="margin-top: 0.5rem; font-size: 0.85rem;">© 2025 — bridging nations with untold stories. All data inspired by real world facts.</p>
+    <div style="margin-top: 1rem;">
+      <i class="fab fa-twitter" style="margin: 0 8px; cursor: pointer;"></i>
+      <i class="fab fa-instagram" style="margin: 0 8px; cursor: pointer;"></i>
+      <i class="fab fa-github" style="margin: 0 8px; cursor: pointer;"></i>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
