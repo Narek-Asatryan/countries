@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>WorldPulse | Countries, Flags & History</title>
-  <!-- Google Fonts + Font Awesome Icons (modern, clean icons) -->
+  <title>Country Intelligence Dashboard | Compare, Filter, Analyze</title>
+  <!-- Google Fonts + Font Awesome 6 + Chart.js -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    /* ---------- RESET & GLOBAL ---------- */
     * {
       margin: 0;
       padding: 0;
@@ -17,531 +17,664 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #fefefe;
-      color: #1A2C3E;
-      line-height: 1.5;
-      scroll-behavior: smooth;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    /* Light mode (default) */
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --border-light: #e2e8f0;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --transition: all 0.2s ease;
+    }
+
+    body.dark {
+      --bg-primary: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-card: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --border-light: #334155;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
     }
 
     .container {
-      max-width: 1280px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 1.5rem;
     }
 
-    /* modern spacing utilities */
-    section {
-      padding: 5rem 0;
+    /* header & toolbar */
+    .app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
     }
 
-    /* Typography */
-    h1, h2, h3 {
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    h1 {
-      font-size: 3.5rem;
-      line-height: 1.2;
-      margin-bottom: 1.25rem;
-      background: linear-gradient(135deg, #1F3B4C 0%, #2C5A6E 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    h2 {
-      font-size: 2.25rem;
-      margin-bottom: 1rem;
-      color: #1F3B4C;
-    }
-
-    .section-subhead {
-      font-size: 1.2rem;
-      color: #54738f;
-      max-width: 650px;
-      margin-bottom: 3rem;
-    }
-
-    /* ----- BUTTONS & HOVER EFFECTS ----- */
-    .btn-primary {
-      display: inline-block;
-      background: #1F3B4C;
-      color: white;
-      font-weight: 600;
-      padding: 0.9rem 2rem;
-      border-radius: 40px;
-      text-decoration: none;
-      transition: all 0.25s ease;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.05);
-    }
-
-    .btn-primary:hover {
-      background: #2C5A6E;
-      transform: translateY(-3px);
-      box-shadow: 0 15px 25px -10px rgba(31,59,76,0.3);
-    }
-
-    /* header navbar */
-    .navbar {
+    .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.5rem 2rem;
-      max-width: 1400px;
-      margin: 0 auto;
       flex-wrap: wrap;
+      padding: 1rem 0;
+      gap: 1rem;
     }
 
     .logo {
-      font-size: 1.7rem;
+      font-size: 1.6rem;
       font-weight: 700;
-      background: linear-gradient(130deg, #1F3B4C, #3A7B8C);
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
-      letter-spacing: -0.5px;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: #2c3e44;
-      font-weight: 500;
-      transition: 0.2s;
-    }
-
-    .nav-links a:hover {
-      color: #1F6E8C;
-    }
-
-    /* hero */
-    .hero {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2rem;
-    }
-
-    .hero-content {
+    .search-bar {
       flex: 1;
+      max-width: 320px;
+      position: relative;
     }
 
-    .hero-subtitle {
-      font-size: 1.25rem;
-      color: #456e84;
-      margin-bottom: 2rem;
-      max-width: 550px;
-    }
-
-    /* features grid */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 1rem;
-    }
-
-    .feature-card {
-      background: white;
-      padding: 2rem 1.8rem;
-      border-radius: 28px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0,0,0,0.02);
-      transition: all 0.3s ease;
-      border: 1px solid #ecf3f7;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 35px -12px rgba(31,59,76,0.15);
-      border-color: #cde3ec;
-    }
-
-    .feature-icon {
-      font-size: 2.5rem;
-      color: #2C5A6E;
-      margin-bottom: 1.25rem;
-    }
-
-    .feature-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .feature-card p {
-      color: #4a6272;
-    }
-
-    /* COUNTRIES SHOWCASE – flags, pop, insane history & random facts */
-    .countries-showcase {
-      background: #f8fbfd;
-      border-radius: 48px;
-      margin-top: 1rem;
-    }
-
-    .countries-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 2rem;
-      margin-top: 1rem;
-    }
-
-    .country-card {
-      background: white;
-      border-radius: 32px;
-      padding: 1.8rem;
-      transition: all 0.25s ease;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
-      border: 1px solid #e9f0f4;
-    }
-
-    .country-card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 24px 36px -12px rgba(0, 0, 0, 0.12);
-      border-color: #cbdde6;
-    }
-
-    .flag {
-      font-size: 4.2rem;
-      display: block;
-      margin-bottom: 0.75rem;
-    }
-
-    .country-name {
-      font-size: 1.7rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .country-pop {
-      font-size: 0.9rem;
-      font-weight: 500;
-      background: #eef3f8;
-      display: inline-block;
-      padding: 0.2rem 1rem;
-      border-radius: 30px;
-      margin: 0.75rem 0;
-    }
-
-    .random-info {
-      background: #fef7e0;
-      padding: 0.9rem;
-      border-radius: 20px;
-      margin: 1rem 0;
-      font-size: 0.9rem;
-      color: #5a4a2a;
-      border-left: 4px solid #e0a82b;
-    }
-
-    .history-snippet {
-      font-size: 0.9rem;
-      color: #2c3e44;
-      margin-top: 0.6rem;
-      line-height: 1.4;
-    }
-
-    .fa-icon-small {
-      margin-right: 6px;
-      color: #c17b2e;
-    }
-
-    /* contact section */
-    .contact-form {
-      max-width: 720px;
-      margin: 2rem auto 0;
-      background: white;
-      padding: 2.5rem;
-      border-radius: 40px;
-      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.05);
-      border: 1px solid #e4edf2;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    input, textarea {
+    .search-bar input {
       width: 100%;
-      padding: 1rem 1.2rem;
-      border: 1px solid #cfdfe8;
+      padding: 0.7rem 1rem 0.7rem 2.5rem;
       border-radius: 60px;
-      font-family: 'Inter', sans-serif;
+      border: 1px solid var(--border-light);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .search-bar i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
       font-size: 1rem;
-      transition: 0.2s;
-      background: #fff;
     }
 
-    textarea {
-      border-radius: 28px;
-      resize: vertical;
+    .toolbar {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
     }
 
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #2C5A6E;
-      box-shadow: 0 0 0 3px rgba(44,90,110,0.1);
-    }
-
-    .btn-submit {
-      background: #1F3B4C;
+    .icon-btn {
+      background: none;
       border: none;
-      width: 100%;
-      padding: 1rem;
-      font-weight: 600;
-      border-radius: 60px;
-      color: white;
-      font-size: 1rem;
-      transition: all 0.2s;
+      font-size: 1.3rem;
       cursor: pointer;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      position: relative;
     }
 
-    .btn-submit:hover {
-      background: #2C5A6E;
+    .icon-btn:hover {
+      color: var(--accent);
       transform: translateY(-2px);
     }
 
-    footer {
-      background: #f0f5f9;
-      padding: 2rem;
-      text-align: center;
-      color: #3c6578;
-      border-top: 1px solid #e2edf4;
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border-light);
     }
 
-    /* responsive */
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-primary);
+      padding: 0.3rem 0.8rem;
+      border-radius: 40px;
+      border: 1px solid var(--border-light);
+    }
+
+    .filter-group label {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    select, input[type="range"] {
+      background: var(--bg-surface);
+      border: none;
+      padding: 0.3rem;
+      border-radius: 20px;
+      color: var(--text-primary);
+    }
+
+    .clear-filters {
+      background: none;
+      border: 1px solid var(--border-light);
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+
+    /* country grid */
+    .countries-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.8rem;
+      margin: 2rem 0;
+    }
+
+    .country-card {
+      background: var(--bg-card);
+      border-radius: 24px;
+      padding: 1.2rem;
+      border: 1px solid var(--border-light);
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .country-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+
+    .flag-img {
+      width: 64px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1rem;
+    }
+
+    .country-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: 0.4rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      gap: 0.5rem;
+    }
+
+    .btn-icon {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-light);
+      border-radius: 30px;
+      padding: 0.4rem 0.8rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+
+    .btn-icon:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .fav-active {
+      color: #f59e0b;
+      border-color: #f59e0b;
+    }
+
+    /* pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .page-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* compare drawer */
+    .compare-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border-top: 2px solid var(--accent);
+      padding: 1rem;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 200;
+      box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .compare-drawer.open {
+      transform: translateY(0);
+    }
+
+    .chart-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: var(--bg-surface);
+      padding: 1rem;
+      border-radius: 28px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border-light);
+      margin-top: 2rem;
+    }
+
     @media (max-width: 768px) {
       .container {
-        padding: 0 1.5rem;
+        padding: 0 1rem;
       }
-      h1 {
-        font-size: 2.5rem;
-      }
-      h2 {
-        font-size: 1.9rem;
-      }
-      section {
-        padding: 3rem 0;
-      }
-      .navbar {
+      .filter-row {
         flex-direction: column;
-        gap: 1rem;
-        padding: 1rem 1.5rem;
+        align-items: stretch;
       }
-      .nav-links {
-        gap: 1.2rem;
-        flex-wrap: wrap;
-        justify-content: center;
+      .filter-group {
+        justify-content: space-between;
       }
-      .hero {
-        flex-direction: column;
-        text-align: center;
-      }
-      .hero-subtitle {
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .contact-form {
-        padding: 1.8rem;
-      }
-    }
-
-    /* subtle bg decorations */
-    .bg-soft {
-      background: linear-gradient(120deg, #ffffff 0%, #f9fdfe 100%);
-    }
-    hr {
-      margin: 1rem 0;
-    }
-    .badge-info {
-      font-size: 0.75rem;
-      font-weight: 500;
-      background: #eef2f5;
-      border-radius: 90px;
-      padding: 2px 12px;
-      display: inline-block;
     }
   </style>
 </head>
 <body>
 
-<!-- ================= MODERN HEADER / NAVIGATION ================= -->
-<header>
-  <div class="navbar">
-    <div class="logo"><i class="fas fa-globe-americas" style="margin-right: 8px;"></i> WorldPulse</div>
-    <div class="nav-links">
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#features">Features</a>
-      <a href="#countries">Explore</a>
-      <a href="#contact">Contact</a>
+<div class="app-header">
+  <div class="container">
+    <div class="header-top">
+      <div class="logo"><i class="fas fa-chart-line"></i> Intel·liGence</div>
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search country... (fuzzy)">
+      </div>
+      <div class="toolbar">
+        <button id="darkModeToggle" class="icon-btn"><i class="fas fa-moon"></i></button>
+        <button id="favoritesViewToggle" class="icon-btn"><i class="fas fa-heart"></i></button>
+        <button id="openCompareDrawerBtn" class="icon-btn"><i class="fas fa-chart-simple"></i> <span id="compareCount">0</span></button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-group">
+        <label>Region:</label>
+        <select id="regionFilter">
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Population ≥</label>
+        <input type="range" id="popMin" min="0" max="1400000000" value="0" step="1000000">
+        <span id="popValue">0M</span>
+      </div>
+      <div class="filter-group">
+        <label>Sort by</label>
+        <select id="sortSelect">
+          <option value="name">Name A-Z</option>
+          <option value="population">Population ↓</option>
+          <option value="area">Area ↓</option>
+        </select>
+      </div>
+      <button id="clearFiltersBtn" class="clear-filters"><i class="fas fa-eraser"></i> Reset</button>
     </div>
   </div>
-</header>
+</div>
 
-<main>
-  <!-- ================= HERO SECTION with call-to-action ================= -->
-  <section id="home">
-    <div class="container hero">
-      <div class="hero-content">
-        <h1>Journey through<br>flags, people & echoes of history</h1>
-        <p class="hero-subtitle">Uncover population secrets, random wonders, and deep historical narratives — from ancient empires to modern nations.</p>
-        <!-- Call-to-action button -->
-        <a href="#countries" class="btn-primary"><i class="fas fa-flag-checkered"></i> Explore Countries →</a>
-      </div>
-      <div style="flex: 0.6; min-width: 200px; text-align: center;">
-        <i class="fas fa-landmark" style="font-size: 10rem; color: #CDE3EC; opacity: 0.8;"></i>
-      </div>
-    </div>
-  </section>
+<main class="container">
+  <!-- Chart insight -->
+  <div class="chart-container">
+    <canvas id="populationChart" width="400" height="250" style="max-width:100%; height:auto"></canvas>
+  </div>
 
-  <!-- ================= ABOUT SECTION ================= -->
-  <section id="about" class="bg-soft">
-    <div class="container">
-      <h2>About <span style="color:#2C5A6E;">WorldPulse</span></h2>
-      <div style="max-width: 800px;">
-        <p class="section-subhead" style="margin-bottom: 1rem;">Your gateway to an <strong>insane amount of country intelligence</strong> — flags, demographics, and hidden historical narratives.</p>
-        <p style="margin-bottom: 1rem; color: #2a4b60;">We aggregate thousands of data points: population evolution, origins of national flags, forgotten historical events, random mind-blowing facts, and cultural timelines. Whether you're a traveler, student, or history lover, WorldPulse brings the world’s richness directly to you. <strong>No boring statistics — just vivid stories.</strong></p>
-        <div class="badge-info"><i class="fas fa-database"></i> 195+ countries covered</div>
-        <div class="badge-info" style="margin-left: 10px;"><i class="fas fa-hourglass-half"></i> 5000+ history snippets</div>
-      </div>
-    </div>
-  </section>
+  <!-- country grid -->
+  <div id="countriesGrid" class="countries-grid"></div>
 
-  <!-- ================= FEATURES / BENEFITS SECTION ================= -->
-  <section id="features">
-    <div class="container">
-      <h2>Why dive with us?</h2>
-      <p class="section-subhead">Discover unlimited insights — curated for curious minds</p>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-flag"></i></div>
-          <h3>Flag & Identity</h3>
-          <p>Explore evolution of flags, symbolism, and how each banner tells unique stories of independence, revolution, and unity.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
-          <h3>Population Pulse</h3>
-          <p>Real demographics, density ranks, urban growth trends, and historic census data — every shift, mapped.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-scroll"></i></div>
-          <h3>Random History Vault</h3>
-          <p>From samurai edicts to pharaoh dynasties:  crazy, fascinating, and pivotal moments that shaped nations.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= COUNTRY SHOWCASE: FLAGS, POPULATION, RANDOM INFO & INSANE HISTORY ================= -->
-  <!-- This section directly addresses the core topic: countries, flags, population, random facts, insane historical depth -->
-  <section id="countries" class="countries-showcase">
-    <div class="container">
-      <h2><i class="fas fa-globe-asia"></i> Nations uncovered: flags, population & deep history</h2>
-      <p class="section-subhead">Each card reveals a nation’s soul — flag, current pop, and a crazy historical twist</p>
-      <div class="countries-grid">
-        
-        <!-- JAPAN - flag, pop, random+history -->
-        <div class="country-card">
-          <span class="flag">🇯🇵</span>
-          <div class="country-name">Japan</div>
-          <div class="country-pop"><i class="fas fa-users"></i> Population: 125.8 million (2024 est.)</div>
-          <div class="random-info">
-            <i class="fas fa-dice-d6 fa-icon-small"></i> <strong>Random fact:</strong> Japan has over 6,800 islands!
-          </div>
-          <div class="history-snippet">
-            <i class="fas fa-history fa-icon-small"></i> <strong>⚡ History flash:</strong> During the Sakoku period (1635–1853), Japan was almost completely isolated from the outside world for over 200 years — only Dutch and Chinese ships were permitted to trade in Nagasaki. This era forged a unique cultural identity.
-          </div>
-        </div>
-
-        <!-- BRAZIL -->
-        <div class="country-card">
-          <span class="flag">🇧🇷</span>
-          <div class="country-name">Brazil</div>
-          <div class="country-pop"><i class="fas fa-users"></i> Population: 216.4 million</div>
-          <div class="random-info">
-            <i class="fas fa-dice-d6 fa-icon-small"></i> <strong>Random fact:</strong> The Amazon rainforest covers ~60% of Brazil, producing 20% of world's oxygen.
-          </div>
-          <div class="history-snippet">
-            <i class="fas fa-history fa-icon-small"></i> <strong>📜 Insane history:</strong> Brazil was the only South American country to host the Portuguese monarchy! In 1808, King Dom João VI fled Napoleon and moved the entire royal court to Rio de Janeiro, making it the capital of the Portuguese Empire for 13 years.
-          </div>
-        </div>
-
-        <!-- EGYPT -->
-        <div class="country-card">
-          <span class="flag">🇪🇬</span>
-          <div class="country-name">Egypt</div>
-          <div class="country-pop"><i class="fas fa-users"></i> Population: 112.7 million</div>
-          <div class="random-info">
-            <i class="fas fa-dice-d6 fa-icon-small"></i> <strong>Random fact:</strong> Ancient Egyptians used hieroglyphs for over 3,500 years.
-          </div>
-          <div class="history-snippet">
-            <i class="fas fa-pyramid fa-icon-small"></i> <strong>🏺 History deep dive:</strong> Cleopatra VII lived closer in time to the Moon landing than to the construction of the Great Pyramid. Egypt’s civilization spans 5,000+ years — making it one of the longest continuous histories on Earth.
-          </div>
-        </div>
-
-        <!-- FRANCE -->
-        <div class="country-card">
-          <span class="flag">🇫🇷</span>
-          <div class="country-name">France</div>
-          <div class="country-pop"><i class="fas fa-users"></i> Population: 68.4 million</div>
-          <div class="random-info">
-            <i class="fas fa-dice-d6 fa-icon-small"></i> <strong>Random fact:</strong> The Louvre Museum has 380,000+ objects, but only ~35,000 on display.
-          </div>
-          <div class="history-snippet">
-            <i class="fas fa-crown fa-icon-small"></i> <strong>👑 Revolutionary history:</strong> The French Revolution (1789) not only changed France but gave birth to modern political ideologies: "Liberté, égalité, fraternité". The storming of the Bastille is celebrated worldwide as a symbol of uprising.
-          </div>
-        </div>
-      </div>
-      <!-- extra info note: insane amount of info delivered -->
-      <div style="text-align: center; margin-top: 2.5rem;">
-        <span class="badge-info"><i class="fas fa-infinity"></i> + countless random facts, historical profiles, and demography insights</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= CONTACT SECTION with modern form ================= -->
-  <section id="contact">
-    <div class="container">
-      <h2>Get in touch</h2>
-      <p class="section-subhead">Want more country data? Collaborate or suggest historical entries — reach out!</p>
-      <div class="contact-form">
-        <form action="#" method="post">
-          <div class="form-group">
-            <input type="text" placeholder="Full name" required>
-          </div>
-          <div class="form-group">
-            <input type="email" placeholder="Email address" required>
-          </div>
-          <div class="form-group">
-            <textarea rows="4" placeholder="Tell us which country/fact you'd love to explore..."></textarea>
-          </div>
-          <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Send message</button>
-        </form>
-        <p style="font-size: 0.8rem; text-align: center; margin-top: 1.5rem; color: #6c8d9e;"><i class="fas fa-globe"></i> We reply within 24h — every fact ignites curiosity</p>
-      </div>
-    </div>
-  </section>
+  <!-- pagination -->
+  <div id="paginationControls" class="pagination"></div>
 </main>
 
-<!-- ================= FOOTER ================= -->
-<footer>
-  <div class="container">
-    <p><i class="fas fa-map-marked-alt"></i> WorldPulse — Flags • Populations • Insane History Vault</p>
-    <p style="margin-top: 0.5rem; font-size: 0.85rem;">© 2025 — bridging nations with untold stories. All data inspired by real world facts.</p>
-    <div style="margin-top: 1rem;">
-      <i class="fab fa-twitter" style="margin: 0 8px; cursor: pointer;"></i>
-      <i class="fab fa-instagram" style="margin: 0 8px; cursor: pointer;"></i>
-      <i class="fab fa-github" style="margin: 0 8px; cursor: pointer;"></i>
-    </div>
+<!-- compare drawer -->
+<div id="compareDrawer" class="compare-drawer">
+  <div style="display: flex; justify-content: space-between;">
+    <strong><i class="fas fa-balance-scale"></i> Compare Countries</strong>
+    <button id="closeDrawerBtn" class="icon-btn"><i class="fas fa-times"></i></button>
   </div>
+  <div id="compareTable" style="overflow-x: auto; margin-top: 1rem;"></div>
+</div>
+
+<footer>
+  <p>Country Intelligence Dashboard · Real data from REST Countries · Favorites & compare persist</p>
+  <p style="margin-top:0.5rem">Built with modern frontend patterns — search, filters, charts, comparison system</p>
 </footer>
+
+<script>
+  // ---------- STATE ----------
+  let allCountries = [];
+  let filteredSortedCountries = [];
+  let favorites = new Set();    // store cca3 codes
+  let compareList = [];         // store country objects (max 4)
+  let currentPage = 1;
+  const itemsPerPage = 12;
+  let showOnlyFavorites = false;
+  let chartInstance = null;
+
+  // DOM elements
+  const gridContainer = document.getElementById('countriesGrid');
+  const paginationDiv = document.getElementById('paginationControls');
+  const searchInput = document.getElementById('searchInput');
+  const regionFilter = document.getElementById('regionFilter');
+  const popMinSlider = document.getElementById('popMin');
+  const popValueSpan = document.getElementById('popValue');
+  const sortSelect = document.getElementById('sortSelect');
+  const clearBtn = document.getElementById('clearFiltersBtn');
+  const darkToggle = document.getElementById('darkModeToggle');
+  const favoritesToggle = document.getElementById('favoritesViewToggle');
+  const compareDrawer = document.getElementById('compareDrawer');
+  const openCompareBtn = document.getElementById('openCompareDrawerBtn');
+  const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+  const compareCountSpan = document.getElementById('compareCount');
+
+  // Helper: load favorites + compare from localStorage
+  function loadStorage() {
+    const storedFav = localStorage.getItem('country_favs');
+    if (storedFav) favorites = new Set(JSON.parse(storedFav));
+    const storedCompare = localStorage.getItem('country_compare');
+    if (storedCompare) compareList = JSON.parse(storedCompare);
+    updateCompareUI();
+  }
+
+  function saveFavs() {
+    localStorage.setItem('country_favs', JSON.stringify([...favorites]));
+  }
+  function saveCompare() {
+    localStorage.setItem('country_compare', JSON.stringify(compareList));
+  }
+
+  // Update compare badge & drawer
+  function updateCompareUI() {
+    compareCountSpan.innerText = compareList.length;
+    if (compareList.length >= 2) openCompareBtn.style.color = "var(--accent)";
+    else openCompareBtn.style.color = "";
+    renderCompareTable();
+  }
+
+  function renderCompareTable() {
+    const container = document.getElementById('compareTable');
+    if (compareList.length === 0) {
+      container.innerHTML = '<p class="text-secondary">Select at least 2 countries to compare side-by-side.</p>';
+      return;
+    }
+    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.85rem;"><thead><tr>';
+    html += '<th style="padding:8px;">Metric</th>';
+    compareList.forEach(c => {
+      html += `<th style="padding:8px; border-bottom:1px solid var(--border-light);">
+                <img src="${c.flags?.png || ''}" width="32" style="border-radius:4px"> ${c.name.common}<br>
+                <button class="btn-icon" data-code="${c.cca3}" style="font-size:0.7rem;" onclick="removeFromCompare('${c.cca3}')">Remove</button>
+               </th>`;
+    });
+    html += '</tr></thead><tbody>';
+    const metrics = ['Population', 'Area (km²)', 'Region', 'Capital', 'Timezones'];
+    const getMetric = (c, m) => {
+      if (m === 'Population') return c.population?.toLocaleString() || 'N/A';
+      if (m === 'Area (km²)') return c.area?.toLocaleString() || 'N/A';
+      if (m === 'Region') return c.region || '-';
+      if (m === 'Capital') return c.capital?.[0] || '-';
+      if (m === 'Timezones') return c.timezones?.join(', ') || '-';
+      return '-';
+    };
+    metrics.forEach(metric => {
+      html += `<tr><td style="padding:8px; font-weight:600;">${metric}</td>`;
+      compareList.forEach(c => {
+        html += `<td style="padding:8px;">${getMetric(c, metric)}</td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  window.removeFromCompare = function(cca3) {
+    compareList = compareList.filter(c => c.cca3 !== cca3);
+    saveCompare();
+    updateCompareUI();
+    renderCountries(); // re-render to update compare buttons
+  };
+
+  function addToCompare(country) {
+    if (compareList.some(c => c.cca3 === country.cca3)) {
+      alert('Already in compare list');
+      return;
+    }
+    if (compareList.length >= 4) {
+      alert('Maximum 4 countries for comparison');
+      return;
+    }
+    compareList.push(country);
+    saveCompare();
+    updateCompareUI();
+    renderCountries();
+  }
+
+  // toggle favorite
+  function toggleFavorite(cca3) {
+    if (favorites.has(cca3)) favorites.delete(cca3);
+    else favorites.add(cca3);
+    saveFavs();
+    renderCountries();  // re-render current page
+  }
+
+  // fetch & populate
+  async function fetchCountries() {
+    try {
+      const res = await fetch('https://restcountries.com/v3.1/all?fields=name,flags,population,region,area,capital,timezones,cca3');
+      const data = await res.json();
+      allCountries = data.sort((a,b) => a.name.common.localeCompare(b.name.common));
+      populateRegionFilter();
+      applyFiltersAndRender();
+      renderTopPopulationChart();
+    } catch (err) {
+      gridContainer.innerHTML = '<p style="color:red;">Failed to load data. Retry later</p>';
+    }
+  }
+
+  function populateRegionFilter() {
+    const regions = [...new Set(allCountries.map(c => c.region).filter(r => r))];
+    regionFilter.innerHTML = '<option value="all">All</option>' + regions.map(r => `<option value="${r}">${r}</option>`).join('');
+  }
+
+  // fuzzy search (basic, but works)
+  function fuzzySearch(text, query) {
+    if (!query) return true;
+    return text.toLowerCase().includes(query.toLowerCase());
+  }
+
+  function applyFiltersAndRender() {
+    let result = [...allCountries];
+    const searchTerm = searchInput.value;
+    if (searchTerm) {
+      result = result.filter(c => fuzzySearch(c.name.common, searchTerm) || fuzzySearch(c.name.official, searchTerm));
+    }
+    const regionVal = regionFilter.value;
+    if (regionVal !== 'all') result = result.filter(c => c.region === regionVal);
+    const minPop = parseInt(popMinSlider.value);
+    if (minPop > 0) result = result.filter(c => (c.population || 0) >= minPop);
+
+    if (showOnlyFavorites) {
+      result = result.filter(c => favorites.has(c.cca3));
+    }
+
+    // sorting
+    const sortBy = sortSelect.value;
+    if (sortBy === 'name') result.sort((a,b) => a.name.common.localeCompare(b.name.common));
+    if (sortBy === 'population') result.sort((a,b) => (b.population || 0) - (a.population || 0));
+    if (sortBy === 'area') result.sort((a,b) => (b.area || 0) - (a.area || 0));
+
+    filteredSortedCountries = result;
+    currentPage = 1;
+    renderCountries();
+    renderPagination();
+  }
+
+  function renderCountries() {
+    const start = (currentPage-1)*itemsPerPage;
+    const pageItems = filteredSortedCountries.slice(start, start+itemsPerPage);
+    if (pageItems.length === 0 && filteredSortedCountries.length === 0) {
+      gridContainer.innerHTML = '<div style="text-align:center; padding:4rem;">No countries match ✨ try different filters</div>';
+      return;
+    }
+    gridContainer.innerHTML = pageItems.map(country => {
+      const isFav = favorites.has(country.cca3);
+      const inCompare = compareList.some(c => c.cca3 === country.cca3);
+      return `
+        <div class="country-card">
+          <img class="flag-img" src="${country.flags?.png || ''}" alt="flag" loading="lazy">
+          <div class="country-name">
+            ${country.name.common}
+            <i class="fas fa-heart ${isFav ? 'fav-active' : ''}" style="cursor:pointer" onclick="toggleFavorite('${country.cca3}')"></i>
+          </div>
+          <div class="meta"><i class="fas fa-users"></i> ${country.population?.toLocaleString() || 'N/A'}</div>
+          <div class="meta"><i class="fas fa-map-marker-alt"></i> ${country.region || '-'} | ${country.area?.toLocaleString() || '?'} km²</div>
+          <div class="card-actions">
+            <button class="btn-icon" onclick="addToCompare(${JSON.stringify(country).replace(/"/g, '&quot;')})" ${inCompare ? 'disabled style="opacity:0.5"' : ''}>
+              <i class="fas fa-chart-line"></i> Compare
+            </button>
+            <button class="btn-icon" onclick="alert('Capital: ${country.capital?.[0] || 'unknown'} \\nTimezone: ${country.timezones?.join(', ')}')">
+              <i class="fas fa-info-circle"></i> Quick
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderPagination() {
+    const totalPages = Math.ceil(filteredSortedCountries.length / itemsPerPage);
+    if (totalPages <= 1) { paginationDiv.innerHTML = ''; return; }
+    let btns = '';
+    for (let i = 1; i <= totalPages; i++) {
+      btns += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+    }
+    paginationDiv.innerHTML = btns;
+    document.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        currentPage = parseInt(btn.dataset.page);
+        renderCountries();
+        renderPagination();
+      });
+    });
+  }
+
+  function renderTopPopulationChart() {
+    const top10 = [...allCountries].sort((a,b) => (b.population||0) - (a.population||0)).slice(0,10);
+    const ctx = document.getElementById('populationChart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: top10.map(c => c.name.common),
+        datasets: [{
+          label: 'Population (millions)',
+          data: top10.map(c => ((c.population||0)/1e6).toFixed(2)),
+          backgroundColor: '#3b82f6',
+          borderRadius: 8,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { position: 'top' } }
+      }
+    });
+  }
+
+  // Event listeners
+  searchInput.addEventListener('input', debounce(applyFiltersAndRender, 300));
+  regionFilter.addEventListener('change', applyFiltersAndRender);
+  popMinSlider.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value);
+    popValueSpan.innerText = (val/1e6).toFixed(0) + 'M';
+    applyFiltersAndRender();
+  });
+  sortSelect.addEventListener('change', applyFiltersAndRender);
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    regionFilter.value = 'all';
+    popMinSlider.value = 0;
+    popValueSpan.innerText = '0M';
+    sortSelect.value = 'name';
+    showOnlyFavorites = false;
+    favoritesToggle.style.opacity = '1';
+    applyFiltersAndRender();
+  });
+  favoritesToggle.addEventListener('click', () => {
+    showOnlyFavorites = !showOnlyFavorites;
+    favoritesToggle.style.color = showOnlyFavorites ? '#f59e0b' : '';
+    applyFiltersAndRender();
+  });
+  darkToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  });
+  openCompareBtn.addEventListener('click', () => compareDrawer.classList.add('open'));
+  closeDrawerBtn.addEventListener('click', () => compareDrawer.classList.remove('open'));
+
+  function debounce(fn, delay) {
+    let timer;
+    return function() {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, arguments), delay);
+    };
+  }
+
+  // init theme
+  if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+  loadStorage();
+  fetchCountries();
+  window.toggleFavorite = toggleFavorite;
+  window.addToCompare = addToCompare;
+</script>
 </body>
 </html>
