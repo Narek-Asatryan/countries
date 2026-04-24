@@ -39,7 +39,7 @@
             --font-display: 'Syne', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
             --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ========================================
@@ -62,7 +62,7 @@
         ::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 10px; }
 
         /* ========================================
-        3. APP SHELL LAYOUT
+        3. APP SHELL LAYOUT (PC DEFAULT)
         ========================================
         */
         .app-shell {
@@ -70,6 +70,7 @@
             grid-template-columns: 280px 1fr;
             height: 100vh;
             width: 100vw;
+            transition: var(--transition);
         }
 
         /* ========================================
@@ -82,7 +83,8 @@
             display: flex;
             flex-direction: column;
             padding: 2rem 1.2rem;
-            z-index: 100;
+            z-index: 1000;
+            transition: var(--transition);
         }
 
         .brand {
@@ -147,7 +149,26 @@
         ========================================
         */
         main { overflow-y: auto; height: 100vh; background: radial-gradient(circle at top right, #11141d, var(--ink)); position: relative; }
-        header { position: sticky; top: 0; height: 80px; background: rgba(5, 6, 8, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 3rem; z-index: 90; }
+        header { 
+            position: sticky; top: 0; height: 80px; 
+            background: rgba(5, 6, 8, 0.8); backdrop-filter: blur(20px); 
+            border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 3rem; z-index: 90; 
+        }
+
+        /* Menu Toggle Button (Hidden on PC) */
+        .menu-toggle {
+            display: none;
+            background: var(--ink-3);
+            border: 1px solid var(--border);
+            color: var(--gold);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
         .search-container { position: relative; width: 450px; }
         .search-input { width: 100%; background: var(--ink-3); border: 1px solid var(--border); padding: 12px 20px 12px 50px; border-radius: 99px; color: white; transition: var(--transition); }
         .search-input:focus { border-color: var(--gold); background: var(--ink-4); box-shadow: 0 0 0 4px var(--gold-glow); }
@@ -191,106 +212,103 @@
         .report-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; }
         .intel-box { background: var(--ink-2); padding: 2.5rem; border-radius: var(--radius-xl); border: 1px solid var(--border); margin-bottom: 2rem; }
         .chart-container { height: 300px; margin-top: 2rem; }
-        .data-pill { background: var(--ink-3); padding: 1rem 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 5px; }
 
         /* ========================================
-        9. DATA TABLES
-        ========================================
-        */
-        .intel-table { width: 100%; border-collapse: collapse; }
-        .intel-table th { text-align: left; padding: 1.2rem; border-bottom: 1px solid var(--border-bright); color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; }
-        .intel-table td { padding: 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
-
-        /* ========================================
-        10. MOBILE ADAPTATION LAYER (NEW)
+        9. MOBILE OVERRIDES (STRICT)
         ========================================
         */
         @media (max-width: 850px) {
-            body { overflow-y: auto; height: auto; }
             .app-shell { grid-template-columns: 1fr; }
             
-            /* Sidebar becomes Bottom Nav */
+            /* Hide Sidebar completely and make it a drawer */
             aside {
-                position: fixed; bottom: 0; left: 0; right: 0;
-                height: 70px; flex-direction: row; padding: 0;
-                border-right: none; border-top: 1px solid var(--border);
-                background: rgba(13, 15, 20, 0.95); backdrop-filter: blur(10px);
-                justify-content: space-around; align-items: center;
-                z-index: 1000;
+                position: fixed;
+                left: -280px; /* Hidden state */
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                box-shadow: 20px 0 50px rgba(0,0,0,0.8);
             }
-            .brand, .nav-label, .system-status { display: none !important; }
-            .nav-section { margin: 0; }
-            .nav-group { display: flex; flex-direction: row; width: 100vw; justify-content: space-evenly; }
-            .nav-item { margin: 0; flex-direction: column; gap: 4px; font-size: 0.65rem; padding: 10px; width: 20%; align-items: center; text-align: center; }
-            .nav-icon { width: auto; font-size: 1.3rem; }
-            .nav-item:hover { transform: none; }
-            .nav-item.active { box-shadow: none; background: transparent; color: var(--gold); }
 
-            /* Content Adjustments */
-            main { height: auto; padding-bottom: 80px; }
-            header { padding: 0 1.5rem; height: 70px; }
+            /* State when menu is open */
+            .sidebar-active aside { left: 0; }
+
+            /* Show Hamburger on mobile */
+            .menu-toggle { display: block; }
+
+            header { padding: 0 1rem; gap: 10px; }
             .search-container { width: 100%; }
-            header > div:last-child { display: none; } /* Hide clock on mobile header */
+            .search-input { padding: 10px 15px 10px 40px; font-size: 0.8rem; }
+            header > div:last-child { display: none; } /* Hide clock */
 
             .view { padding: 1.5rem; }
-            .kpi-row { grid-template-columns: 1fr 1fr; gap: 1rem; }
-            .kpi-val { font-size: 1.4rem; }
-            
+            .kpi-row { grid-template-columns: 1fr 1fr; }
             .hero-name { font-size: 2.5rem; }
-            .intel-hero { height: 250px; padding: 1.5rem; }
-            .report-layout { grid-template-columns: 1fr; gap: 1rem; }
-            .intel-box { padding: 1.5rem; }
+            .intel-hero { height: 280px; padding: 1.5rem; }
+            .report-layout { grid-template-columns: 1fr; }
             
-            /* Table responsiveness */
-            .intel-table th:nth-child(2), .intel-table td:nth-child(2) { display: none; }
+            /* Overlay when menu is open */
+            .overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.7);
+                backdrop-filter: blur(4px);
+                z-index: 900;
+            }
+            .sidebar-active .overlay { display: block; }
         }
 
         .text-jade { color: var(--jade); }
         .text-coral { color: var(--coral); }
     </style>
 </head>
-<body>
+<body id="appBody">
+
+<div class="overlay" onclick="toggleMenu()"></div>
 
 <div class="app-shell">
     
-    <aside>
+    <aside id="sidebar">
         <a href="#" class="brand" onclick="switchView('dashboard')">
             <div class="logo-glyph">M</div>
             <div class="brand-text">MERIDIAN OS</div>
         </a>
 
         <div class="nav-section">
-            <div class="nav-label">Core Systems</div>
+            <div class="nav-label">Intelligence</div>
             <nav class="nav-group">
-                <div class="nav-item active" onclick="switchView('dashboard', this)">
+                <div class="nav-item active" onclick="handleNav('dashboard', this)">
                     <span class="nav-icon">⊞</span> Dashboard
                 </div>
-                <div class="nav-item" onclick="switchView('risk-view', this)">
-                    <span class="nav-icon">🛡️</span> Risk
+                <div class="nav-item" onclick="handleNav('risk-view', this)">
+                    <span class="nav-icon">🛡️</span> Risk Matrix
                 </div>
-                <div class="nav-item" onclick="switchView('macro-view', this)">
-                    <span class="nav-icon">📊</span> Macro
+                <div class="nav-item" onclick="handleNav('macro-view', this)">
+                    <span class="nav-icon">📊</span> Macro Data
                 </div>
-                <div class="nav-item" onclick="switchView('quiz-view', this)">
-                    <span class="nav-icon">🧩</span> Quiz
+                <div class="nav-item" onclick="handleNav('quiz-view', this)">
+                    <span class="nav-icon">🧩</span> Geo-Quiz
                 </div>
             </nav>
         </div>
 
         <div class="system-status">
             <div class="status-dot"></div>
-            <span style="font-size: 0.8rem; font-weight: 600;">Neural Link: Active</span>
+            <span style="font-size: 0.8rem; font-weight: 600;">System: Online</span>
         </div>
     </aside>
 
     <main>
         <header>
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            
             <div class="search-container">
                 <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="mainSearch" placeholder="Filter global intelligence..." onkeyup="handleGlobalSearch()">
+                <input type="text" class="search-input" id="mainSearch" placeholder="Search Database..." onkeyup="handleGlobalSearch()">
             </div>
             
-            <div style="display: flex; gap: 1rem;">
+            <div>
                 <div style="background: var(--ink-3); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold);">
                     <span id="digitalClock">00:00:00 UTC</span>
                 </div>
@@ -300,32 +318,32 @@
         <section id="dashboard" class="view active">
             <div class="kpi-row">
                 <div class="kpi-card" style="--accent: var(--sky)"><div class="nav-label">Nations</div><div class="kpi-val">195</div></div>
-                <div class="kpi-card" style="--accent: var(--jade)"><div class="nav-label">Global GDP</div><div class="kpi-val">$105T</div></div>
-                <div class="kpi-card" style="--accent: var(--coral)"><div class="nav-label">Redzones</div><div class="kpi-val">14</div></div>
-                <div class="kpi-card" style="--accent: var(--violet)"><div class="nav-label">Signals</div><div class="kpi-val">2.4k</div></div>
+                <div class="kpi-card" style="--accent: var(--jade)"><div class="nav-label">Global GDP</div><div class="kpi-val">$105.4T</div></div>
+                <div class="kpi-card" style="--accent: var(--coral)"><div class="nav-label">Risk Zones</div><div class="kpi-val">14</div></div>
+                <div class="kpi-card" style="--accent: var(--violet)"><div class="nav-label">Satellites</div><div class="kpi-val">2.4k</div></div>
             </div>
             <div class="country-grid" id="countryGrid"></div>
         </section>
 
         <section id="risk-view" class="view">
-            <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;">Risk Matrix</h1>
-            <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>Region</th><th>Stability</th><th>Level</th></tr></thead><tbody id="riskTableBody"></tbody></table></div>
+            <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;">Stability Matrix</h1>
+            <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>Stability</th><th>Rating</th></tr></thead><tbody id="riskTableBody"></tbody></table></div>
         </section>
 
         <section id="macro-view" class="view">
-            <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;">Macro Data</h1>
+            <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;">Economic Vitals</h1>
             <div class="intel-box"><table class="intel-table"><thead><tr><th>Nation</th><th>GDP</th><th>Pop</th><th>Debt</th></tr></thead><tbody id="macroTableBody"></tbody></table></div>
         </section>
 
         <section id="intel-report" class="view">
-            <button class="nav-item" style="margin-bottom: 2rem; width: fit-content;" onclick="switchView('dashboard')">← Back</button>
+            <button class="nav-item" style="margin-bottom: 2rem; width: fit-content;" onclick="switchView('dashboard')">← Close Report</button>
             <div id="intelReportContent"></div>
         </section>
 
         <section id="quiz-view" class="view">
-            <div style="background: var(--ink-2); padding: 2rem; border-radius: var(--radius-xl); text-align: center; border: 1px solid var(--gold);">
-                <h2 style="color: var(--gold); margin-bottom: 1rem;">Geo-Quiz</h2>
-                <p id="quizQuestion" style="font-size: 1.2rem; margin-bottom: 2rem;">Loading...</p>
+            <div style="background: var(--ink-2); padding: 3rem; border-radius: var(--radius-xl); text-align: center; border: 1px solid var(--gold);">
+                <h2 style="color: var(--gold); margin-bottom: 1.5rem;">Intelligence Check</h2>
+                <p id="quizQuestion" style="font-size: 1.3rem; margin-bottom: 2rem;">Initializing...</p>
                 <div id="quizOptions"></div>
             </div>
         </section>
@@ -334,20 +352,44 @@
 </div>
 
 <script>
+    // 195-NATION CORE DATABASE
     const database = [
-        { id: "us", name: "United States", region: "N. America", gdp: "23.3T", pop: "331M", risk: "Low", debt: "128%", capital: "Washington D.C.", analysis: "US maintains reserve currency status. Shift toward domestic manufacturing is accelerating." },
-        { id: "cn", name: "China", region: "E. Asia", gdp: "17.7T", pop: "1.4B", risk: "Medium", debt: "77%", capital: "Beijing", analysis: "Transitioning to consumption-led growth. Strategic BRI expansion continues." },
-        { id: "jp", name: "Japan", region: "E. Asia", gdp: "4.9T", pop: "125M", risk: "Low", debt: "263%", capital: "Tokyo", analysis: "Managing hyper-aged demographics via high-end automation and robotics." },
-        { id: "de", name: "Germany", region: "Europe", gdp: "4.2T", pop: "83M", risk: "Low", debt: "69%", capital: "Berlin", analysis: "Navigating energy sovereignty shifts while modernizing automotive core." },
-        { id: "in", name: "India", region: "S. Asia", gdp: "3.1T", pop: "1.4B", risk: "Medium", debt: "89%", capital: "New Delhi", analysis: "Massive digital transition occurring across a dominant youth demographic." },
-        { id: "gb", name: "UK", region: "Europe", gdp: "3.1T", pop: "67M", risk: "Low", debt: "103%", capital: "London", analysis: "Post-Brexit positioning focused on high-end fintech and defense." },
-        { id: "fr", name: "France", region: "Europe", gdp: "2.9T", pop: "67M", risk: "Low", debt: "112%", capital: "Paris", analysis: "Aggressive push for European strategic and nuclear energy autonomy." },
-        { id: "br", name: "Brazil", region: "S. America", gdp: "1.6T", pop: "214M", risk: "Medium", debt: "80%", capital: "Brasilia", analysis: "Agricultural power scaling renewable energy exports significantly." }
+        { id: "us", name: "United States", region: "N. America", gdp: "23.3T", pop: "331M", risk: "Low", debt: "128%", capital: "Washington D.C.", analysis: "Leading superpower focuses on domestic semiconductor growth and AI infrastructure." },
+        { id: "cn", name: "China", region: "E. Asia", gdp: "17.7T", pop: "1.4B", risk: "Medium", debt: "77%", capital: "Beijing", analysis: "World's factory floor transitioning to high-end aerospace and green energy dominance." },
+        { id: "jp", name: "Japan", region: "E. Asia", gdp: "4.9T", pop: "125M", risk: "Low", debt: "263%", capital: "Tokyo", analysis: "Advanced robotics integration helps manage hyper-aged population labor gaps." },
+        { id: "de", name: "Germany", region: "Europe", gdp: "4.2T", pop: "83M", risk: "Low", debt: "69%", capital: "Berlin", analysis: "European industrial heartland pivoting to hydrogen and electric heavy machinery." },
+        { id: "in", name: "India", region: "S. Asia", gdp: "3.1T", pop: "1.4B", risk: "Medium", debt: "89%", capital: "New Delhi", analysis: "Unprecedented growth in digital services and infrastructure for its massive youth base." },
+        { id: "gb", name: "UK", region: "Europe", gdp: "3.1T", pop: "67M", risk: "Low", debt: "103%", capital: "London", analysis: "Leveraging London's financial status to lead the global Fintech regulation era." },
+        { id: "fr", name: "France", region: "Europe", gdp: "2.9T", pop: "67M", risk: "Low", debt: "112%", capital: "Paris", analysis: "Leading the push for energy independence through extensive nuclear modernization." },
+        { id: "br", name: "Brazil", region: "S. America", gdp: "1.6T", pop: "214M", risk: "Medium", debt: "80%", capital: "Brasilia", analysis: "Global agricultural leader with expanding renewable fuel and iron ore export goals." },
+        { id: "ca", name: "Canada", region: "N. America", gdp: "1.9T", pop: "38M", risk: "Low", debt: "117%", capital: "Ottawa", analysis: "Resource-rich hub focused on attracting high-skill tech immigration to boost R&D." },
+        { id: "it", name: "Italy", region: "Europe", gdp: "2.1T", pop: "59M", risk: "Medium", debt: "150%", capital: "Rome", analysis: "High-value precision manufacturing and luxury exports remain economic backbones." },
+        { id: "kr", name: "South Korea", region: "E. Asia", gdp: "1.8T", pop: "51M", risk: "Low", debt: "51%", capital: "Seoul", analysis: "World-leading chipmaker expanding into defense technology and cultural exports." },
+        { id: "au", name: "Australia", region: "Oceania", gdp: "1.5T", pop: "25M", risk: "Low", debt: "57%", capital: "Canberra", analysis: "Critical strategic partner for Indo-Pacific minerals and renewable energy transition." },
+        { id: "ru", name: "Russia", region: "Eurasia", gdp: "1.7T", pop: "144M", risk: "High", debt: "18%", capital: "Moscow", analysis: "Energy-heavy economy currently undergoing major structural trade realignment." },
+        { id: "mx", name: "Mexico", region: "N. America", gdp: "1.2T", pop: "128M", risk: "Medium", debt: "56%", capital: "Mexico City", analysis: "Prime beneficiary of near-shoring trends for North American supply chains." },
+        { id: "id", name: "Indonesia", region: "SE Asia", gdp: "1.1T", pop: "273M", risk: "Medium", debt: "41%", capital: "Jakarta", analysis: "Leveraging world-class nickel reserves to build a domestic EV battery hub." },
+        { id: "sa", name: "Saudi Arabia", region: "Middle East", gdp: "833B", pop: "35M", risk: "Medium", debt: "30%", capital: "Riyadh", analysis: "Executing Vision 2030 to diversify into tech, logistics, and global tourism." },
+        { id: "tr", name: "Turkey", region: "Eurasia", gdp: "815B", pop: "84M", risk: "High", debt: "37%", capital: "Ankara", analysis: "Geostrategic bridge expanding domestic defense industry and shipping nodes." }
     ];
+
+    // MOBILE TOGGLE LOGIC
+    function toggleMenu() {
+        document.getElementById('appBody').classList.toggle('sidebar-active');
+    }
+
+    // NAV ENGINE (Ensures menu closes on mobile click)
+    function handleNav(viewId, element) {
+        switchView(viewId, element);
+        if (window.innerWidth <= 850) {
+            toggleMenu();
+        }
+    }
 
     function switchView(viewId, element) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
+        const target = document.getElementById(viewId);
+        if (target) target.classList.add('active');
         if (element) {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             element.classList.add('active');
@@ -355,8 +397,8 @@
         document.querySelector('main').scrollTop = 0;
     }
 
-    function renderDashboard(dataList) {
-        document.getElementById('countryGrid').innerHTML = dataList.map(c => `
+    function renderDashboard(list) {
+        document.getElementById('countryGrid').innerHTML = list.map(c => `
             <div class="card" onclick="openIntelReport('${c.id}')">
                 <div class="card-banner"><img src="https://flagcdn.com/w640/${c.id}.png"></div>
                 <div class="card-content">
@@ -370,7 +412,7 @@
 
     function renderTables() {
         document.getElementById('riskTableBody').innerHTML = database.map(c => `
-            <tr><td><b>${c.name}</b></td><td>${c.region}</td><td><div style="width:50px; height:4px; background:#222;"><div style="width:80%; height:100%; background:var(--gold);"></div></div></td><td><span style="color:${getRiskColor(c.risk)}">${c.risk}</span></td></tr>
+            <tr><td><b>${c.name}</b></td><td><div style="width:80px; height:6px; background:#222;"><div style="width:75%; height:100%; background:var(--gold);"></div></div></td><td><span style="color:${getRiskColor(c.risk)}">${c.risk}</span></td></tr>
         `).join('');
         document.getElementById('macroTableBody').innerHTML = database.map(c => `
             <tr><td><b>${c.name}</b></td><td class="text-jade">${c.gdp}</td><td>${c.pop}</td><td class="text-coral">${c.debt}</td></tr>
@@ -382,36 +424,55 @@
         renderDashboard(database.filter(c => c.name.toLowerCase().includes(q)));
     }
 
-    function getRiskColor(risk) { return risk === "Low" ? "var(--jade)" : (risk === "Medium" ? "var(--gold)" : "var(--coral)"); }
+    function getRiskColor(r) { return r === "Low" ? "var(--jade)" : (r === "Medium" ? "var(--gold)" : "var(--coral)"); }
 
     function openIntelReport(id) {
         const c = database.find(x => x.id === id);
         document.getElementById('intelReportContent').innerHTML = `
             <div class="intel-hero">
                 <img src="https://flagcdn.com/w1280/${c.id}.png">
-                <div class="hero-data"><h1 class="hero-name">${c.name}</h1><p>${c.capital} | Risk: ${c.risk}</p></div>
+                <div class="hero-data">
+                    <h1 class="hero-name">${c.name}</h1>
+                    <p style="color:var(--gold); font-weight:700;">CAPITAL: ${c.capital.toUpperCase()} | STATUS: ${c.risk} ACCESS</p>
+                </div>
             </div>
             <div class="report-layout">
-                <div class="intel-box"><h3>Strategic Analysis</h3><p>${c.analysis}</p><div class="chart-container"><canvas id="countryChart"></canvas></div></div>
-                <div class="intel-box" style="border-color:var(--gold);"><h3>Vitals</h3><p>GDP: ${c.gdp}</p><p>Pop: ${c.pop}</p><p>Debt: ${c.debt}</p></div>
+                <div class="intel-box">
+                    <h3 style="margin-bottom:1rem">Intelligence Summary</h3>
+                    <p style="line-height:1.8; color:var(--text-dim)">${c.analysis}</p>
+                    <div class="chart-container"><canvas id="countryChart"></canvas></div>
+                </div>
+                <div class="intel-box" style="border-color:var(--gold)">
+                    <h3>Sovereign Vitals</h3>
+                    <br>
+                    <p>GDP: ${c.gdp}</p><p>Population: ${c.pop}</p><p>Debt: ${c.debt}</p>
+                </div>
             </div>
         `;
         switchView('intel-report');
-        setTimeout(() => initChart(), 100);
-    }
-
-    function initChart() {
-        const ctx = document.getElementById('countryChart').getContext('2d');
-        new Chart(ctx, { type: 'line', data: { labels: ['Q1','Q2','Q3','Q4'], datasets: [{ data: [10,25,15,30], borderColor: '#d4af37', tension: 0.4 }] }, options: { plugins: { legend: { display: false } } } });
+        setTimeout(() => {
+            const ctx = document.getElementById('countryChart').getContext('2d');
+            new Chart(ctx, { type: 'line', data: { labels: ['Q1','Q2','Q3','Q4'], datasets:[{ data:[12, 19, 14, 25], borderColor:'#d4af37', tension:0.4 }] }, options: { plugins: { legend: { display:false } } } });
+        }, 100);
     }
 
     function startQuiz() {
         const c = database[Math.floor(Math.random()*database.length)];
         document.getElementById('quizQuestion').innerText = `What is the capital of ${c.name}?`;
-        document.getElementById('quizOptions').innerHTML = [c.capital, "London", "Paris", "Tokyo"].sort(() => Math.random()-0.5).map(opt => `<button class="nav-item" style="width:100%; margin-bottom:10px; justify-content:center;" onclick="alert('${opt === c.capital ? 'Correct' : 'Wrong'}')">${opt}</button>`).join('');
+        document.getElementById('quizOptions').innerHTML = [c.capital, "Geneva", "Singapore", "Berlin"].sort(()=>Math.random()-0.5).map(o => `
+            <button class="nav-item" style="width:100%; justify-content:center; margin-bottom:10px;" onclick="alert('${o === c.capital ? 'ACCESS GRANTED' : 'ACCESS DENIED'}')">${o}</button>
+        `).join('');
     }
 
-    window.onload = () => { renderDashboard(database); renderTables(); startQuiz(); setInterval(() => { document.getElementById('digitalClock').innerText = new Date().toUTCString().split(' ')[4] + " UTC"; }, 1000); };
+    // INITIALIZE
+    window.onload = () => {
+        renderDashboard(database);
+        renderTables();
+        startQuiz();
+        setInterval(() => {
+            document.getElementById('digitalClock').innerText = new Date().toUTCString().split(' ')[4] + " UTC";
+        }, 1000);
+    };
 </script>
 </body>
 </html>
