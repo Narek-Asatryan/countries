@@ -1,0 +1,136 @@
+/* Global styles */
+body {
+  font-family: system-ui, -apple-system, 'Inter', sans-serif;
+  background: #f8fafc;
+  margin: 0;
+  padding: 0;
+}
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+.search-input {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 40px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+}
+.filter-panel {
+  display: flex;
+  gap: 1rem;
+}
+.filter-panel select {
+  padding: 0.75rem;
+  border-radius: 40px;
+  border: 1px solid #cbd5e1;
+  background: white;
+}
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+.country-card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.country-card:hover { transform: translateY(-5px); }
+.flag {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+.card-content { padding: 1rem; }
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem 1rem;
+}
+.card-actions button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.fav.active { color: #f59e0b; }
+.compare.active { color: #3b82f6; }
+.comparison-table {
+  overflow-x: auto;
+  margin: 2rem 0;
+  background: white;
+  border-radius: 24px;
+  padding: 1rem;
+}
+.comparison-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.comparison-table th, .comparison-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+.comparison-table th img {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+.charts-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+.chart-card {
+  flex: 1;
+  min-width: 250px;
+  background: white;
+  padding: 1rem;
+  border-radius: 24px;
+}
+.ai-insight {
+  background: #f1f5f9;
+  border-radius: 24px;
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+.ai-insight button {
+  background: #0f172a;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 40px;
+  cursor: pointer;
+}
+.insight-text {
+  margin-top: 1rem;
+  font-style: italic;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.loader, .error {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+}
