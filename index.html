@@ -62,7 +62,7 @@
         ::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 10px; }
 
         /* ========================================
-        3. APP SHELL LAYOUT (PC DEFAULT)
+        3. APP SHELL LAYOUT
         ========================================
         */
         .app-shell {
@@ -212,16 +212,12 @@
         .intel-box { background: var(--ink-2); padding: 2.5rem; border-radius: var(--radius-xl); border: 1px solid var(--border); margin-bottom: 2rem; }
         .chart-container { height: 300px; margin-top: 2rem; }
 
-        /* ========================================
-        9. DATA TABLES
-        ========================================
-        */
         .intel-table { width: 100%; border-collapse: collapse; }
         .intel-table th { text-align: left; padding: 1.2rem; border-bottom: 1px solid var(--border-bright); color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; }
         .intel-table td { padding: 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
 
         /* ========================================
-        10. MOBILE OVERRIDES (STRICT)
+        9. MOBILE OVERRIDES (STRICT)
         ========================================
         */
         @media (max-width: 850px) {
@@ -312,10 +308,10 @@
 
         <section id="dashboard" class="view active">
             <div class="kpi-row">
-                <div class="kpi-card" style="--accent: var(--sky)"><div class="nav-label">Active Database</div><div class="kpi-val" id="countDisplay">--</div></div>
-                <div class="kpi-card" style="--accent: var(--jade)"><div class="nav-label">Global GDP</div><div class="kpi-val">$105.4T</div></div>
-                <div class="kpi-card" style="--accent: var(--coral)"><div class="nav-label">Risk Zones</div><div class="kpi-val">14</div></div>
-                <div class="kpi-card" style="--accent: var(--violet)"><div class="nav-label">Signal Relay</div><div class="kpi-val">Active</div></div>
+                <div class="kpi-card" style="--accent: var(--sky)"><div class="nav-label">Nations Loaded</div><div class="kpi-val" id="countDisplay">70</div></div>
+                <div class="kpi-card" style="--accent: var(--jade)"><div class="nav-label">Status</div><div class="kpi-val">Ready</div></div>
+                <div class="kpi-card" style="--accent: var(--coral)"><div class="nav-label">Risk Nodes</div><div class="kpi-val">42</div></div>
+                <div class="kpi-card" style="--accent: var(--violet)"><div class="nav-label">System</div><div class="kpi-val">Fast</div></div>
             </div>
             <div class="country-grid" id="countryGrid"></div>
         </section>
@@ -346,8 +342,8 @@
 </div>
 
 <script>
-    // EXPANDED 30-NATION CORE DATABASE
     const database = [
+        // CORE 30
         { id: "us", name: "United States", region: "N. America", gdp: "23.3T", pop: "331M", risk: "Low", debt: "128%", capital: "Washington D.C.", analysis: "Leading superpower focuses on domestic semiconductor growth and AI infrastructure." },
         { id: "cn", name: "China", region: "E. Asia", gdp: "17.7T", pop: "1.4B", risk: "Medium", debt: "77%", capital: "Beijing", analysis: "World's factory floor transitioning to high-end aerospace and green energy dominance." },
         { id: "jp", name: "Japan", region: "E. Asia", gdp: "4.9T", pop: "125M", risk: "Low", debt: "263%", capital: "Tokyo", analysis: "Advanced robotics integration helps manage hyper-aged population labor gaps." },
@@ -377,15 +373,53 @@
         { id: "ng", name: "Nigeria", region: "Africa", gdp: "440B", pop: "211M", risk: "High", debt: "37%", capital: "Abuja", analysis: "Largest African economy with a booming fintech and creative sector." },
         { id: "za", name: "South Africa", region: "Africa", gdp: "419B", pop: "60M", risk: "Medium", debt: "69%", capital: "Pretoria", analysis: "Mining and financial core of the continent transitioning energy grids." },
         { id: "ar", name: "Argentina", region: "S. America", gdp: "487B", pop: "45M", risk: "High", debt: "80%", capital: "Buenos Aires", analysis: "Rich in lithium and agricultural assets, currently restructuring fiscal policy." },
-        { id: "il", name: "Israel", region: "Middle East", gdp: "481B", pop: "9.3M", risk: "Medium", debt: "68%", capital: "Jerusalem", analysis: "High-tech military and cybersecurity leader with a strong R&D focus." }
+        { id: "il", name: "Israel", region: "Middle East", gdp: "481B", pop: "9.3M", risk: "Medium", debt: "68%", capital: "Jerusalem", analysis: "High-tech military and cybersecurity leader with a strong R&D focus." },
+
+        // NEW 40 NATIONS (INCLUDING ARMENIA)
+        { id: "am", name: "Armenia", region: "Caucasus", gdp: "19B", pop: "2.9M", risk: "Medium", debt: "50%", capital: "Yerevan", analysis: "Rapidly growing tech sector and strategic diplomatic positioning in the Caucasus." },
+        { id: "ge", name: "Georgia", region: "Caucasus", gdp: "24B", pop: "3.7M", risk: "Medium", debt: "40%", capital: "Tbilisi", analysis: "Hub for regional logistics and transit with expanding tourism and trade links." },
+        { id: "az", name: "Azerbaijan", region: "Caucasus", gdp: "78B", pop: "10M", risk: "Medium", debt: "20%", capital: "Baku", analysis: "Major oil and gas producer transitioning toward regional logistics leadership." },
+        { id: "gr", name: "Greece", region: "Europe", gdp: "219B", pop: "10M", risk: "Low", debt: "170%", capital: "Athens", analysis: "Maritime giant recovering via tourism and green energy investment." },
+        { id: "pt", name: "Portugal", region: "Europe", gdp: "250B", pop: "10M", risk: "Low", debt: "120%", capital: "Lisbon", analysis: "Digital nomad hub with focus on sustainable tourism and tech services." },
+        { id: "be", name: "Belgium", region: "Europe", gdp: "594B", pop: "11M", risk: "Low", debt: "105%", capital: "Brussels", analysis: "De facto capital of EU; key hub for global chemical and logistics industries." },
+        { id: "at", name: "Austria", region: "Europe", gdp: "477B", pop: "9M", risk: "Low", debt: "80%", capital: "Vienna", analysis: "Highly industrial nation focusing on precision engineering and hydro-power." },
+        { id: "fi", name: "Finland", region: "Europe", gdp: "299B", pop: "5.5M", risk: "Low", debt: "70%", capital: "Helsinki", analysis: "Global leader in education, mobile tech, and arctic logistics." },
+        { id: "dk", name: "Denmark", region: "Europe", gdp: "395B", pop: "5.8M", risk: "Low", debt: "35%", capital: "Copenhagen", analysis: "World leader in wind energy tech and green shipping solutions." },
+        { id: "ie", name: "Ireland", region: "Europe", gdp: "498B", pop: "5M", risk: "Low", debt: "55%", capital: "Dublin", analysis: "Tax-efficient European headquarters for global tech and pharma giants." },
+        { id: "ua", name: "Ukraine", region: "Europe", gdp: "160B", pop: "43M", risk: "High", debt: "85%", capital: "Kyiv", analysis: "Global agricultural and iron powerhouse currently undergoing defense focus." },
+        { id: "th", name: "Thailand", region: "SE Asia", gdp: "505B", pop: "71M", risk: "Medium", debt: "60%", capital: "Bangkok", analysis: "Major hub for automotive assembly and global medical tourism." },
+        { id: "ph", name: "Philippines", region: "SE Asia", gdp: "394B", pop: "113M", risk: "Medium", debt: "60%", capital: "Manila", analysis: "Fast-growing service economy fueled by global BPO and remittances." },
+        { id: "my", name: "Malaysia", region: "SE Asia", gdp: "372B", pop: "33M", risk: "Low", debt: "65%", capital: "Kuala Lumpur", analysis: "Key semiconductor packaging hub and global electronics exporter." },
+        { id: "cl", name: "Chile", region: "S. America", gdp: "317B", pop: "19M", risk: "Low", debt: "37%", capital: "Santiago", analysis: "World leader in copper and lithium exports for global EV markets." },
+        { id: "co", name: "Colombia", region: "S. America", gdp: "314B", pop: "51M", risk: "Medium", debt: "60%", capital: "Bogota", analysis: "Emerging energy exporter with focus on tech and flower industries." },
+        { id: "pe", name: "Peru", region: "S. America", gdp: "223B", pop: "33M", risk: "Medium", debt: "35%", capital: "Lima", analysis: "Mining giant with high focus on silver and gold exports." },
+        { id: "pk", name: "Pakistan", region: "S. Asia", gdp: "348B", pop: "231M", risk: "High", debt: "75%", capital: "Islamabad", analysis: "Strategic corridor nation focused on agricultural exports and textile." },
+        { id: "bd", name: "Bangladesh", region: "S. Asia", gdp: "416B", pop: "169M", risk: "Medium", debt: "35%", capital: "Dhaka", analysis: "Global textile powerhouse transitioning to light manufacturing and tech." },
+        { id: "dz", name: "Algeria", region: "Africa", gdp: "167B", pop: "44M", risk: "Medium", debt: "55%", capital: "Algiers", analysis: "Gas and oil major focusing on diversification into renewables." },
+        { id: "ma", name: "Morocco", region: "Africa", gdp: "132B", pop: "37M", risk: "Low", debt: "70%", capital: "Rabat", analysis: "Hub for aerospace and automotive manufacturing in N. Africa." },
+        { id: "ke", name: "Kenya", region: "Africa", gdp: "110B", pop: "54M", risk: "Medium", debt: "67%", capital: "Nairobi", analysis: "The 'Silicon Savannah' of E. Africa, leading in mobile fintech." },
+        { id: "gh", name: "Ghana", region: "Africa", gdp: "77B", pop: "32M", risk: "Medium", debt: "80%", capital: "Accra", analysis: "Key exporter of gold, cocoa, and growing oil interests." },
+        { id: "et", name: "Ethiopia", region: "Africa", gdp: "111B", pop: "120M", risk: "High", debt: "55%", capital: "Addis Ababa", analysis: "Regional diplomatic hub with focus on hydro-power and manufacturing." },
+        { id: "nz", name: "New Zealand", region: "Oceania", gdp: "249B", pop: "5M", risk: "Low", debt: "50%", capital: "Wellington", analysis: "Leading agricultural and film tourism destination with high stability." },
+        { id: "hu", name: "Hungary", region: "Europe", gdp: "182B", pop: "9.7M", risk: "Low", debt: "75%", capital: "Budapest", analysis: "Central European hub for German automotive supply chains." },
+        { id: "cz", name: "Czechia", region: "Europe", gdp: "282B", pop: "10.7M", risk: "Low", debt: "45%", capital: "Prague", analysis: "High-tech manufacturing core with strong focus on cybersecurity." },
+        { id: "ro", name: "Romania", region: "Europe", gdp: "284B", pop: "19M", risk: "Low", debt: "50%", capital: "Bucharest", analysis: "Rapidly growing IT sector and natural gas potential in the Black Sea." },
+        { id: "kz", name: "Kazakhstan", region: "C. Asia", gdp: "197B", pop: "19M", risk: "Medium", debt: "25%", capital: "Astana", analysis: "Dominant energy and uranium exporter between East and West." },
+        { id: "qa", name: "Qatar", region: "Middle East", gdp: "179B", pop: "2.9M", risk: "Low", debt: "45%", capital: "Doha", analysis: "Global leader in LNG exports and major international mediator." },
+        { id: "kw", name: "Kuwait", region: "Middle East", gdp: "105B", pop: "4.3M", risk: "Low", debt: "15%", capital: "Kuwait City", analysis: "High oil reserves with massive sovereign wealth fund reserves." },
+        { id: "iq", name: "Iraq", region: "Middle East", gdp: "264B", pop: "41M", risk: "High", debt: "60%", capital: "Baghdad", analysis: "Major oil producer currently rebuilding domestic power infrastructure." },
+        { id: "uz", name: "Uzbekistan", region: "C. Asia", gdp: "69B", pop: "35M", risk: "Medium", debt: "40%", capital: "Tashkent", analysis: "Rapidly liberalizing economy with focus on textiles and gold." },
+        { id: "rs", name: "Serbia", region: "Balkans", gdp: "63B", pop: "6.8M", risk: "Medium", debt: "55%", capital: "Belgrade", analysis: "Regional hub for logistics and expanding software development." },
+        { id: "hr", name: "Croatia", region: "Balkans", gdp: "67B", pop: "4M", risk: "Low", debt: "70%", capital: "Zagreb", analysis: "Mediterranean tourism giant with expanding energy terminal capacity." },
+        { id: "bg", name: "Bulgaria", region: "Balkans", gdp: "80B", pop: "6.8M", risk: "Low", debt: "25%", capital: "Sofia", analysis: "Outsourcing hub with growing focus on automotive electronics." },
+        { id: "sk", name: "Slovakia", region: "Europe", gdp: "114B", pop: "5.4M", risk: "Low", debt: "60%", capital: "Bratislava", analysis: "Highest car production per capita globally; heavy industrial focus." },
+        { id: "ee", name: "Estonia", region: "Baltics", gdp: "36B", pop: "1.3M", risk: "Low", debt: "20%", capital: "Tallinn", analysis: "The most digitalized nation on earth; global leader in E-Gov." },
+        { id: "lv", name: "Latvia", region: "Baltics", gdp: "38B", pop: "1.9M", risk: "Low", debt: "45%", capital: "Riga", analysis: "Transit and logistics hub for Northern European trade." },
+        { id: "lt", name: "Lithuania", region: "Baltics", gdp: "65B", pop: "2.8M", risk: "Low", debt: "40%", capital: "Vilnius", analysis: "Emerging biotech and fintech powerhouse in the Baltic region." }
     ];
 
     function toggleMenu() { document.getElementById('appBody').classList.toggle('sidebar-active'); }
-
-    function handleNav(viewId, element) {
-        switchView(viewId, element);
-        if (window.innerWidth <= 850) toggleMenu();
-    }
+    function handleNav(viewId, element) { switchView(viewId, element); if (window.innerWidth <= 850) toggleMenu(); }
 
     function switchView(viewId, element) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -461,7 +495,7 @@
     function startQuiz() {
         const c = database[Math.floor(Math.random()*database.length)];
         document.getElementById('quizQuestion').innerText = `What is the capital of ${c.name}?`;
-        document.getElementById('quizOptions').innerHTML = [c.capital, "London", "Brussels", "Singapore"].sort(()=>Math.random()-0.5).map(o => `
+        document.getElementById('quizOptions').innerHTML = [c.capital, "Yerevan", "Tbilisi", "Baku"].sort(()=>Math.random()-0.5).map(o => `
             <button class="nav-item" style="width:100%; justify-content:center; margin-bottom:10px;" onclick="alert('${o === c.capital ? 'ACCESS GRANTED' : 'ACCESS DENIED'}')">${o}</button>
         `).join('');
     }
