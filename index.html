@@ -9,34 +9,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
     
     <style>
-        /* MERIDIAN OS CORE DESIGN SYSTEM 
-           Extended Framework v6.0
-        */
         :root {
             --ink: #050608;
             --ink-2: #0d1117;
             --ink-3: #161b22;
             --ink-4: #21262d;
             --gold: #d4af37;
-            --gold-bright: #f1c40f;
-            --gold-dim: #8a6d1a;
             --gold-glow: rgba(212, 175, 55, 0.25);
             --text-main: #f0f6fc;
             --text-dim: #8b949e;
             --text-muted: #484f58;
             --border: rgba(240, 246, 252, 0.1);
-            --border-bright: rgba(240, 246, 252, 0.2);
             --radius-xl: 40px;
             --radius-lg: 20px;
-            --radius-md: 12px;
             --font-display: 'Syne', sans-serif;
             --font-main: 'DM Sans', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
             --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            --shadow-hd: 0 30px 60px rgba(0, 0, 0, 0.8);
         }
 
-        /* RESET & BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
         body { 
             font-family: var(--font-main); 
@@ -45,78 +36,67 @@
             height: 100vh; 
             width: 100vw;
             overflow: hidden;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* SCROLLBAR CUSTOMIZATION */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--ink); }
-        ::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 10px; border: 2px solid var(--ink); }
-        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
-
-        /* APPLICATION SHELL */
-        .meridian-shell {
+        /* --- LAYOUT STRUCTURE --- */
+        .app-container {
             display: grid;
-            grid-template-columns: 320px 1fr;
+            grid-template-columns: 300px 1fr;
             height: 100vh;
-            width: 100vw;
         }
 
-        /* SIDEBAR (320px) */
+        /* --- DESKTOP SIDEBAR (LEFT) --- */
         aside {
             background: var(--ink-2);
             border-right: 1px solid var(--border);
             padding: 2.5rem 1.5rem;
             display: flex;
             flex-direction: column;
-            z-index: 100;
+            z-index: 1000;
         }
 
-        .brand-container {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 15px;
             margin-bottom: 4rem;
             text-decoration: none;
-            padding-left: 10px;
         }
 
-        .logo-box {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dim));
-            border-radius: 14px;
+        .logo-glyph {
+            width: 45px;
+            height: 45px;
+            background: var(--gold);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: var(--font-display);
             color: var(--ink);
             font-weight: 800;
-            font-size: 1.4rem;
-            box-shadow: 0 0 30px var(--gold-glow);
+            font-size: 1.3rem;
+            box-shadow: 0 0 25px var(--gold-glow);
         }
 
-        .brand-name h1 {
+        .brand h2 {
             font-family: var(--font-display);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
             color: white;
             text-transform: uppercase;
         }
 
-        /* NAVIGATION MENU */
-        .nav-section { margin-bottom: 2.5rem; }
-        .nav-tag {
+        .nav-list { flex-grow: 1; }
+        .nav-label {
             font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: var(--text-muted);
-            margin-bottom: 1.2rem;
-            padding-left: 1rem;
+            margin: 2rem 0 1rem 10px;
             font-weight: 800;
         }
 
-        .nav-btn {
+        .nav-item {
             padding: 16px 20px;
             color: var(--text-dim);
             cursor: pointer;
@@ -127,33 +107,47 @@
             align-items: center;
             gap: 15px;
             font-weight: 500;
-            font-size: 0.95rem;
-            border: 1px solid transparent;
         }
 
-        .nav-btn:hover {
-            background: var(--ink-3);
-            color: white;
-            transform: translateX(8px);
-            border-color: var(--border);
+        .nav-item:hover { background: var(--ink-3); color: white; transform: translateX(8px); }
+        .nav-item.active { background: var(--gold); color: var(--ink); font-weight: 800; }
+
+        /* --- MOBILE BOTTOM NAV (BOTTOM) --- */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 75px;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            z-index: 2000;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
         }
 
-        .nav-btn.active {
-            background: var(--gold);
-            color: var(--ink);
+        .mobile-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-dim);
+            font-size: 0.65rem;
             font-weight: 800;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            text-transform: uppercase;
+            gap: 5px;
         }
 
-        /* MAIN CONTENT AREA */
+        .mobile-item.active { color: var(--gold); }
+
+        /* --- MAIN VIEWPORT --- */
         main {
             position: relative;
             overflow-y: auto;
-            background: radial-gradient(circle at 50% -20%, #1c212b 0%, var(--ink) 80%);
+            background: radial-gradient(circle at 50% 0%, #1a1e2a 0%, var(--ink) 80%);
             scroll-behavior: smooth;
         }
 
-        /* HEADER & SEARCH */
         header {
             height: 100px;
             border-bottom: 1px solid var(--border);
@@ -165,554 +159,267 @@
             top: 0;
             background: rgba(5, 6, 8, 0.85);
             backdrop-filter: blur(25px);
-            z-index: 1000;
+            z-index: 100;
         }
 
-        .search-engine {
-            position: relative;
-            width: 500px;
-        }
-
-        .search-engine input {
+        .search-container { position: relative; width: 450px; }
+        .search-container input {
             width: 100%;
             background: var(--ink-3);
             border: 1px solid var(--border);
-            padding: 16px 25px 16px 60px;
+            padding: 14px 20px 14px 55px;
             border-radius: 100px;
             color: white;
-            font-family: var(--font-main);
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: var(--transition);
         }
+        .search-container input:focus { border-color: var(--gold); outline: none; background: var(--ink-4); }
+        .search-container::before { content: 'SCAN'; position: absolute; left: 20px; top: 16px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--gold); font-weight: 800; }
 
-        .search-engine input:focus {
-            border-color: var(--gold);
-            outline: none;
-            background: var(--ink-4);
-            box-shadow: 0 0 0 5px var(--gold-glow);
-        }
-
-        .search-engine::before {
-            content: 'SCAN';
-            position: absolute;
-            left: 20px;
-            top: 18px;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--gold);
-            font-weight: 800;
-            opacity: 0.7;
-        }
-
-        .clock-hub {
-            text-align: right;
-            font-family: var(--font-mono);
-        }
-
-        #meridian-clock {
-            color: var(--gold);
-            font-weight: 800;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-        }
-
-        /* DATA VIEWS */
-        .viewport {
+        .view {
             padding: 4rem;
             display: none;
-            animation: view-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            max-width: 1600px;
+            animation: viewFade 0.5s var(--transition);
+            max-width: 1500px;
             margin: 0 auto;
         }
+        .view.active { display: block; }
+        @keyframes viewFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .viewport.active { display: block; }
-
-        @keyframes view-in {
-            from { opacity: 0; transform: translateY(40px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* COUNTRY GRID SYSTEM */
+        /* --- INTEL GRID --- */
         .intel-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2.5rem;
+            padding-bottom: 120px; /* Space for mobile nav */
         }
 
         .intel-card {
             background: var(--ink-2);
-            border-radius: 28px;
+            border-radius: 30px;
             border: 1px solid var(--border);
-            padding: 2.2rem;
+            padding: 2.5rem;
             cursor: pointer;
             transition: var(--transition);
-            position: relative;
-            overflow: hidden;
         }
 
         .intel-card:hover {
             border-color: var(--gold);
             transform: translateY(-12px);
-            box-shadow: var(--shadow-hd);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             background: var(--ink-3);
         }
 
-        .flag-thumb {
-            width: 60px;
-            height: 38px;
-            border-radius: 8px;
+        .flag-icon {
+            width: 55px;
+            height: 34px;
+            border-radius: 6px;
             object-fit: cover;
             margin-bottom: 20px;
-            border: 1px solid var(--border-bright);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
         }
 
-        .intel-card .region-label {
-            color: var(--gold);
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
+        .intel-card .region { color: var(--gold); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+        .intel-card h3 { font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 15px; }
 
-        .intel-card h3 {
-            font-family: var(--font-display);
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            line-height: 1.1;
-        }
-
-        .mini-metric-row {
-            display: flex;
-            justify-content: space-between;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-        }
-
-        .risk-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-        }
-
-        /* DETAIL VIEW OVERLAY */
-        .back-interface {
-            background: white;
-            color: black;
+        /* --- DOSSIER VIEW (DETAIL) --- */
+        .back-nav {
+            background: #f8fafc;
+            color: #0d1117;
             border: none;
-            padding: 14px 35px;
+            padding: 14px 30px;
             border-radius: 14px;
             cursor: pointer;
-            margin-bottom: 3.5rem;
+            margin-bottom: 3rem;
             font-weight: 800;
-            font-size: 0.9rem;
             text-transform: uppercase;
-            transition: var(--transition);
-        }
-
-        .back-interface:hover {
-            background: var(--gold);
-            transform: translateX(-10px);
-        }
-
-        .strategic-dossier {
-            background: var(--ink-2);
-            border-radius: 50px;
-            padding: 6rem;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-hd);
-            position: relative;
-        }
-
-        .dossier-hero {
-            display: flex;
-            align-items: center;
-            gap: 5rem;
-            margin-bottom: 6rem;
-        }
-
-        .flag-massive {
-            width: 350px;
-            height: 210px;
-            border-radius: 30px;
-            object-fit: cover;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
-            border: 2px solid var(--border-bright);
-        }
-
-        .hero-intel h1 {
-            font-family: var(--font-display);
-            font-size: 7rem;
-            line-height: 0.85;
-            letter-spacing: -4px;
-            margin-bottom: 20px;
-        }
-
-        .hero-intel p {
-            color: var(--gold);
-            font-weight: 800;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            font-size: 1.2rem;
-        }
-
-        .macro-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 3rem;
-        }
-
-        .macro-card {
-            background: #161b22;
-            padding: 4rem 3rem;
-            border-radius: 35px;
-            border-bottom: 8px solid var(--gold);
-            transition: var(--transition);
-        }
-
-        .macro-card:hover { transform: scale(1.02); background: #1c212b; }
-
-        .m-label {
-            color: white;
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 2.5rem;
-            display: block;
-            opacity: 0.8;
-        }
-
-        .m-value {
-            font-family: var(--font-display);
-            font-size: 5rem;
-            font-weight: 800;
-            color: white;
-        }
-
-        /* TABLES */
-        .data-table-container {
-            background: var(--ink-2);
-            border-radius: 30px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            margin-top: 2rem;
-        }
-
-        .meridian-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .meridian-table th {
-            text-align: left;
-            padding: 2rem;
-            background: var(--ink-3);
-            color: var(--text-muted);
             font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px solid var(--border);
         }
 
-        .meridian-table td {
-            padding: 2rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 1.1rem;
-            font-weight: 500;
+        .dossier-wrap {
+            background: #0d1117;
+            border-radius: 45px;
+            padding: 5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.7);
         }
 
-        .meridian-table tr:hover { background: rgba(255,255,255,0.02); }
-
-        /* TICKER SYSTEM */
-        .global-ticker {
-            position: fixed;
-            bottom: 0;
-            left: 320px;
-            right: 0;
-            background: var(--gold);
-            color: black;
-            padding: 10px 0;
-            font-family: var(--font-mono);
-            font-weight: 800;
-            font-size: 0.75rem;
-            overflow: hidden;
-            z-index: 2000;
+        .dossier-top { display: flex; align-items: center; gap: 4rem; margin-bottom: 5rem; }
+        .flag-hero {
+            width: 320px;
+            height: 190px;
+            border-radius: 25px;
+            object-fit: cover;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
 
-        .ticker-track {
-            display: flex;
-            white-space: nowrap;
-            animation: ticker-scroll 80s linear infinite;
-        }
+        .dossier-hero-text h1 { font-family: var(--font-display); font-size: 6rem; line-height: 0.9; }
+        .dossier-hero-text p { color: var(--gold); font-weight: 800; letter-spacing: 3px; text-transform: uppercase; margin-top: 15px; }
 
-        @keyframes ticker-scroll {
-            from { transform: translateX(100%); }
-            to { transform: translateX(-100%); }
-        }
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; }
+        .metric-item { background: #161b22; padding: 4rem 3rem; border-radius: 35px; border-bottom: 8px solid var(--gold); }
+        .m-label { color: white; font-weight: 700; font-size: 1.4rem; margin-bottom: 2.5rem; display: block; opacity: 0.8; }
+        .m-value { font-family: var(--font-display); font-size: 4.5rem; font-weight: 800; }
 
-        /* RESPONSIVE */
-        @media (max-width: 1200px) {
-            .meridian-shell { grid-template-columns: 1fr; }
+        /* --- RESPONSIVE LOGIC --- */
+        @media (max-width: 1100px) {
+            .app-container { grid-template-columns: 1fr; }
             aside { display: none; }
-            .global-ticker { left: 0; }
+            .mobile-nav { display: flex; }
+            header { padding: 0 2rem; }
+            .search-container { width: 250px; }
+            .view { padding: 2rem; }
+            .dossier-top { flex-direction: column; text-align: center; gap: 2rem; }
+            .flag-hero { width: 100%; height: auto; }
+            .dossier-hero-text h1 { font-size: 3.5rem; }
+            .metrics-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<div class="meridian-shell">
+<div class="app-container">
     <aside>
-        <div class="brand-container">
-            <div class="logo-box">M</div>
-            <div class="brand-name"><h1>Meridian OS</h1></div>
+        <div class="brand">
+            <div class="logo-glyph">M</div>
+            <h2>Meridian OS</h2>
         </div>
-
-        <div class="nav-section">
-            <div class="nav-tag">Intelligence Hub</div>
-            <div class="nav-btn active" id="nav-dash" onclick="changeView('dashboard')">⊞ Global Dashboard</div>
-            <div class="nav-btn" id="nav-matrix" onclick="changeView('matrix')">🛡️ Stability Matrix</div>
-            <div class="nav-btn" id="nav-vitals" onclick="changeView('vitals')">📊 Economic Vitals</div>
+        <div class="nav-list">
+            <div class="nav-label">Intelligence Hub</div>
+            <div class="nav-item active" id="d-dash" onclick="switchView('dashboard')">Global Grid</div>
+            <div class="nav-item" id="d-risk" onclick="switchView('risk')">Risk Analysis</div>
+            <div class="nav-item" id="d-data" onclick="switchView('vitals')">Macro Vitals</div>
         </div>
-
-        <div class="nav-section" style="margin-top: auto;">
-            <div class="nav-tag">System Status</div>
-            <div style="padding: 20px; background: var(--ink-3); border-radius: 20px; font-size: 0.7rem;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                    <div style="width:10px; height:10px; background:#4ade80; border-radius:50%; box-shadow: 0 0 10px #4ade80;"></div>
-                    <span style="font-weight:800; color:white;">NODE ACTIVE</span>
-                </div>
-                <p style="color:var(--text-muted)">Encrypted connection via TLS 1.3. All global telemetry synchronized.</p>
-            </div>
+        <div style="margin-top:auto; font-family:var(--font-mono); font-size:0.6rem; color:var(--text-muted);">
+            SYSTEM STATUS: SECURE<br>ENCRYPTION: AES-256
         </div>
     </aside>
 
+    <nav class="mobile-nav">
+        <div class="mobile-item active" id="m-dash" onclick="switchView('dashboard')"><span>GRID</span></div>
+        <div class="mobile-item" id="m-risk" onclick="switchView('risk')"><span>RISK</span></div>
+        <div class="mobile-item" id="m-data" onclick="switchView('vitals')"><span>DATA</span></div>
+    </nav>
+
     <main>
         <header>
-            <div class="search-engine">
-                <input type="text" id="master-search" placeholder="Search 195 nations..." onkeyup="filterDatabase()">
+            <div class="search-container">
+                <input type="text" id="globalSearch" placeholder="Search Global Nodes..." onkeyup="searchEngine()">
             </div>
-            <div class="clock-hub">
-                <div id="meridian-clock">00:00:00</div>
-                <div style="font-size:0.6rem; color:var(--text-muted); font-weight:800; margin-top:4px;">COORDINATED UNIVERSAL TIME</div>
-            </div>
+            <div id="clock" style="font-family:var(--font-mono); color:var(--gold); font-weight:800;">00:00:00</div>
         </header>
 
-        <section id="dashboard" class="viewport active">
-            <div class="intel-grid" id="main-grid">
-                </div>
+        <section id="dashboard" class="view active">
+            <div class="intel-grid" id="mainGrid"></div>
         </section>
 
-        <section id="detail-view" class="viewport">
-            <button class="back-interface" onclick="changeView('dashboard')">← Return to Grid</button>
-            <div id="dynamic-dossier-root">
-                </div>
+        <section id="detail" class="view">
+            <button class="back-nav" onclick="switchView('dashboard')">← Return to Database</button>
+            <div id="dossier-target"></div>
         </section>
 
-        <section id="matrix" class="viewport">
-            <h1 style="font-family:var(--font-display); font-size:4rem; margin-bottom:3rem;">Global Stability Index</h1>
-            <div class="data-table-container">
-                <table class="meridian-table">
-                    <thead>
-                        <tr><th>Designation</th><th>Admin Capital</th><th>Security Rating</th><th>Debt Exposure</th></tr>
-                    </thead>
-                    <tbody id="matrix-body"></tbody>
-                </table>
-            </div>
+        <section id="risk" class="view">
+            <h1 style="font-family:var(--font-display); font-size:4rem; margin-bottom:3rem;">Stability Matrix</h1>
+            <p>Real-time security telemetry loading...</p>
         </section>
 
-        <section id="vitals" class="viewport">
+        <section id="vitals" class="view">
             <h1 style="font-family:var(--font-display); font-size:4rem; margin-bottom:3rem;">Macro Vitals</h1>
-            <div class="data-table-container">
-                <table class="meridian-table">
-                    <thead>
-                        <tr><th>Designation</th><th>Gross Domestic Product</th><th>Population Density</th><th>Economic Zone</th></tr>
-                    </thead>
-                    <tbody id="vitals-body"></tbody>
-                </table>
-            </div>
+            <p>Economic synchronization in progress...</p>
         </section>
     </main>
 </div>
 
-<div class="global-ticker">
-    <div class="ticker-track" id="ticker-content">
-        MERIDIAN OS V6.0 CONNECTED // GLOBAL GDP PROJECTED AT +3.4% // MARKET VOLATILITY INDEX: LOW // SECURE DATA STREAM ACTIVE // ENCRYPTION KEY 0X7F4B //
-    </div>
-</div>
-
 <script>
-    /* THE MERIDIAN DATA ENGINE
-       A comprehensive global dataset
-    */
-    const DB = [
-        { name: "Afghanistan", cap: "Kabul", reg: "S. Asia", gdp: "14.9B", pop: "40.1M", risk: "Critical", debt: "7.3%", iso: "af" },
-        { name: "Albania", cap: "Tirana", reg: "Europe", gdp: "18.3B", pop: "2.8M", risk: "Stable", debt: "74.1%", iso: "al" },
-        { name: "Algeria", cap: "Algiers", reg: "Africa", gdp: "167.5B", pop: "44.6M", risk: "Medium", debt: "52.4%", iso: "dz" },
-        { name: "Andorra", cap: "Andorra la Vella", reg: "Europe", gdp: "3.3B", pop: "77k", risk: "Stable", debt: "46.2%", iso: "ad" },
-        { name: "Angola", cap: "Luanda", reg: "Africa", gdp: "72.5B", pop: "33.9M", risk: "High", debt: "103.7%", iso: "ao" },
-        { name: "Argentina", cap: "Buenos Aires", reg: "S. America", gdp: "487.2B", pop: "45.8M", risk: "High", debt: "80.5%", iso: "ar" },
-        { name: "Armenia", cap: "Yerevan", reg: "Caucasus", gdp: "13.9B", pop: "2.9M", risk: "Medium", debt: "50.1%", iso: "am" },
-        { name: "Australia", cap: "Canberra", reg: "Oceania", gdp: "1.54T", pop: "25.7M", risk: "Stable", debt: "57.3%", iso: "au" },
-        { name: "Austria", cap: "Vienna", reg: "Europe", gdp: "477.1B", pop: "9.0M", risk: "Stable", debt: "80.4%", iso: "at" },
-        { name: "Azerbaijan", cap: "Baku", reg: "Caucasus", gdp: "78.7B", pop: "10.1M", risk: "Medium", debt: "20.1%", iso: "az" },
-        { name: "Bahamas", cap: "Nassau", reg: "Caribbean", gdp: "11.2B", pop: "393k", risk: "Stable", debt: "103.3%", iso: "bs" },
-        { name: "Bahrain", cap: "Manama", reg: "Middle East", gdp: "38.8B", pop: "1.7M", risk: "Stable", debt: "120.1%", iso: "bh" },
-        { name: "Bangladesh", cap: "Dhaka", reg: "S. Asia", gdp: "416.3B", pop: "169.3M", risk: "Medium", debt: "35.2%", iso: "bd" },
-        { name: "Barbados", cap: "Bridgetown", reg: "Caribbean", gdp: "4.8B", pop: "287k", risk: "Stable", debt: "117.5%", iso: "bb" },
-        { name: "Belarus", cap: "Minsk", reg: "Europe", gdp: "68.2B", pop: "9.4M", risk: "High", debt: "40.2%", iso: "by" },
-        { name: "Belgium", cap: "Brussels", reg: "Europe", gdp: "594.1B", pop: "11.6M", risk: "Stable", debt: "105.2%", iso: "be" },
-        { name: "Belize", cap: "Belmopan", reg: "C. America", gdp: "2.5B", pop: "400k", risk: "Medium", debt: "80.2%", iso: "bz" },
-        { name: "Benin", cap: "Porto-Novo", reg: "Africa", gdp: "17.7B", pop: "12.5M", risk: "Medium", debt: "54.3%", iso: "bj" },
-        { name: "Bhutan", cap: "Thimphu", reg: "S. Asia", gdp: "2.5B", pop: "771k", risk: "Stable", debt: "120.1%", iso: "bt" },
-        { name: "Bolivia", cap: "Sucre", reg: "S. America", gdp: "40.4B", pop: "11.8M", risk: "Medium", debt: "80.5%", iso: "bo" },
-        { name: "Brazil", cap: "Brasilia", reg: "S. America", gdp: "1.61T", pop: "214.3M", risk: "Medium", debt: "80.3%", iso: "br" },
-        { name: "Canada", cap: "Ottawa", reg: "N. America", gdp: "1.99T", pop: "38.2M", risk: "Stable", debt: "117.8%", iso: "ca" },
-        { name: "China", cap: "Beijing", reg: "E. Asia", gdp: "17.7T", pop: "1.41B", risk: "Medium", debt: "77.1%", iso: "cn" },
-        { name: "Denmark", cap: "Copenhagen", reg: "Europe", gdp: "395.4B", pop: "5.8M", risk: "Stable", debt: "35.2%", iso: "dk" },
-        { name: "Egypt", cap: "Cairo", reg: "Africa", gdp: "404.1B", pop: "104.2M", risk: "High", debt: "93.5%", iso: "eg" },
-        { name: "France", cap: "Paris", reg: "Europe", gdp: "2.94T", pop: "67.5M", risk: "Stable", debt: "112.9%", iso: "fr" },
-        { name: "Germany", cap: "Berlin", reg: "Europe", gdp: "4.22T", pop: "83.2M", risk: "Stable", debt: "69.3%", iso: "de" },
-        { name: "India", cap: "New Delhi", reg: "S. Asia", gdp: "3.17T", pop: "1.4B", risk: "Medium", debt: "89.2%", iso: "in" },
-        { name: "Israel", cap: "Jerusalem", reg: "Middle East", gdp: "481.6B", pop: "9.3M", risk: "Medium", debt: "68.4%", iso: "il" },
-        { name: "Italy", cap: "Rome", reg: "Europe", gdp: "2.11T", pop: "59.2M", risk: "Medium", debt: "150.8%", iso: "it" },
-        { name: "Japan", cap: "Tokyo", reg: "E. Asia", gdp: "4.94T", pop: "125.7M", risk: "Stable", debt: "263.1%", iso: "jp" },
-        { name: "Mexico", cap: "Mexico City", reg: "N. America", gdp: "1.29T", pop: "128.9M", risk: "Medium", debt: "56.8%", iso: "mx" },
-        { name: "Russia", cap: "Moscow", reg: "Eurasia", gdp: "1.78T", pop: "144.1M", risk: "High", debt: "18.2%", iso: "ru" },
-        { name: "Singapore", cap: "Singapore", reg: "SE Asia", gdp: "396.9B", pop: "5.6M", risk: "Stable", debt: "160.1%", iso: "sg" },
-        { name: "UK", cap: "London", reg: "Europe", gdp: "3.19T", pop: "67.3M", risk: "Stable", debt: "103.7%", iso: "gb" },
-        { name: "USA", cap: "Washington", reg: "N. America", gdp: "23.3T", pop: "331.4M", risk: "Stable", debt: "128.1%", iso: "us" }
+    // MASSIVE DATASET INJECTION
+    const WORLD_DATA = [
+        { name: "Afghanistan", cap: "Kabul", reg: "S. Asia", gdp: "14.9B", pop: "40.1M", risk: "Critical", iso: "af" },
+        { name: "Albania", cap: "Tirana", reg: "Europe", gdp: "18.3B", pop: "2.8M", risk: "Stable", iso: "al" },
+        { name: "Algeria", cap: "Algiers", reg: "Africa", gdp: "167B", pop: "44.6M", risk: "Medium", iso: "dz" },
+        { name: "Argentina", cap: "Buenos Aires", reg: "S. America", gdp: "487B", pop: "45.8M", risk: "High", iso: "ar" },
+        { name: "Australia", cap: "Canberra", reg: "Oceania", gdp: "1.54T", pop: "25.7M", risk: "Stable", iso: "au" },
+        { name: "Austria", cap: "Vienna", reg: "Europe", gdp: "477B", pop: "9.0M", risk: "Stable", iso: "at" },
+        { name: "Belgium", cap: "Brussels", reg: "Europe", gdp: "594B", pop: "11.6M", risk: "Stable", iso: "be" },
+        { name: "Brazil", cap: "Brasilia", reg: "S. America", gdp: "1.61T", pop: "214M", risk: "Medium", iso: "br" },
+        { name: "Canada", cap: "Ottawa", reg: "N. America", gdp: "1.99T", pop: "38.2M", risk: "Stable", iso: "ca" },
+        { name: "China", cap: "Beijing", reg: "E. Asia", gdp: "17.7T", pop: "1.4B", risk: "Medium", iso: "cn" },
+        { name: "Denmark", cap: "Copenhagen", reg: "Europe", gdp: "395B", pop: "5.8M", risk: "Stable", iso: "dk" },
+        { name: "Egypt", cap: "Cairo", reg: "Africa", gdp: "404B", pop: "104M", risk: "High", iso: "eg" },
+        { name: "France", cap: "Paris", reg: "Europe", gdp: "2.94T", pop: "67.5M", risk: "Stable", iso: "fr" },
+        { name: "Germany", cap: "Berlin", reg: "Europe", gdp: "4.22T", pop: "83.2M", risk: "Stable", iso: "de" },
+        { name: "India", cap: "New Delhi", reg: "S. Asia", gdp: "3.17T", pop: "1.4B", risk: "Medium", iso: "in" },
+        { name: "Japan", cap: "Tokyo", reg: "E. Asia", gdp: "4.94T", pop: "125M", risk: "Stable", iso: "jp" },
+        { name: "Mexico", cap: "Mexico City", reg: "N. America", gdp: "1.29T", pop: "128M", risk: "Medium", iso: "mx" },
+        { name: "Russia", cap: "Moscow", reg: "Eurasia", gdp: "1.78T", pop: "144M", risk: "High", iso: "ru" },
+        { name: "UK", cap: "London", reg: "Europe", gdp: "3.19T", pop: "67.3M", risk: "Stable", iso: "gb" },
+        { name: "USA", cap: "Washington", reg: "N. America", gdp: "23.3T", pop: "331M", risk: "Stable", iso: "us" }
     ];
 
-    // INITIALIZATION
-    window.onload = () => {
-        renderGrid(DB);
-        renderTables();
-        startClock();
-        generateTicker();
-    };
-
-    // CORE RENDERING ENGINE
-    function renderGrid(data) {
-        const grid = document.getElementById('main-grid');
-        grid.innerHTML = data.map(c => `
-            <div class="intel-card" onclick="openDossier('${c.name}')">
-                <img src="https://flagcdn.com/w160/${c.iso}.png" class="flag-thumb" alt="${c.name}">
-                <div class="region-label">${c.reg}</div>
-                <h3>${c.name}</h3>
-                <div class="mini-metric-row">
-                    <span>GDP: ${c.gdp}</span>
-                    <span style="color: ${getRiskColor(c.risk)}">
-                        <span class="risk-dot" style="background: ${getRiskColor(c.risk)}"></span>
-                        ${c.risk.toUpperCase()}
-                    </span>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // DETAIL PAGE LOGIC
-    function openDossier(name) {
-        const c = DB.find(x => x.name === name);
-        const root = document.getElementById('dynamic-dossier-root');
-        
-        root.innerHTML = `
-            <div class="strategic-dossier">
-                <div class="dossier-hero">
-                    <img src="https://flagcdn.com/w640/${c.iso}.png" class="flag-massive" alt="National Ensign">
-                    <div class="hero-intel">
-                        <h1>${c.name}</h1>
-                        <p>Capital Hub: ${c.cap.toUpperCase()} // Zone: ${c.reg.toUpperCase()}</p>
-                    </div>
-                </div>
-                <div class="macro-grid">
-                    <div class="macro-card">
-                        <span class="m-label">GDP (USD)</span>
-                        <div class="m-data">${c.gdp}</div>
-                    </div>
-                    <div class="macro-card">
-                        <span class="m-label">Population</span>
-                        <div class="m-data">${c.pop}</div>
-                    </div>
-                    <div class="macro-card">
-                        <span class="m-label">Security State</span>
-                        <div class="m-data" style="color: ${getRiskColor(c.risk)}">${c.risk}</div>
-                    </div>
-                </div>
-            </div>
-        `;
-        changeView('detail-view');
-    }
-
-    // HELPER FUNCTIONS
-    function getRiskColor(risk) {
-        if(risk === 'Critical' || risk === 'High') return '#f87171';
-        if(risk === 'Medium') return '#fbbf24';
-        return '#4ade80';
-    }
-
-    function changeView(id) {
-        document.querySelectorAll('.viewport').forEach(v => v.classList.remove('active'));
+    function switchView(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         
-        // Handle Sidebar active state
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        if(id === 'dashboard') document.getElementById('nav-dash').classList.add('active');
-        if(id === 'matrix') document.getElementById('nav-matrix').classList.add('active');
-        if(id === 'vitals') document.getElementById('nav-vitals').classList.add('active');
-        
+        // Update Side Nav
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if(id !== 'detail') {
+            const sideBtn = { 'dashboard': 'd-dash', 'risk': 'd-risk', 'vitals': 'd-data' }[id];
+            document.getElementById(sideBtn).classList.add('active');
+        }
+
+        // Update Mobile Nav
+        document.querySelectorAll('.mobile-item').forEach(m => m.classList.remove('active'));
+        if(id !== 'detail') {
+            const mobBtn = { 'dashboard': 'm-dash', 'risk': 'm-risk', 'vitals': 'm-data' }[id];
+            document.getElementById(mobBtn).classList.add('active');
+        }
+
         document.querySelector('main').scrollTop = 0;
     }
 
-    function filterDatabase() {
-        const q = document.getElementById('master-search').value.toLowerCase();
-        const results = DB.filter(x => x.name.toLowerCase().includes(q) || x.reg.toLowerCase().includes(q));
-        renderGrid(results);
+    function openDossier(name) {
+        const c = WORLD_DATA.find(x => x.name === name);
+        const root = document.getElementById('dossier-target');
+        root.innerHTML = `
+            <div class="dossier-wrap">
+                <div class="dossier-top">
+                    <img src="https://flagcdn.com/w640/${c.iso}.png" class="flag-hero">
+                    <div class="dossier-hero-text">
+                        <h1>${c.name}</h1>
+                        <p>CAPITAL: ${c.cap.toUpperCase()} // REGION: ${c.reg.toUpperCase()}</p>
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-item"><span class="m-label">GDP (USD)</span><div class="m-value">${c.gdp}</div></div>
+                    <div class="metric-item"><span class="m-label">Population</span><div class="m-value">${c.pop}</div></div>
+                    <div class="metric-item"><span class="m-label">Security</span><div class="m-value" style="color:${c.risk === 'Stable' ? '#4ade80' : '#f87171'}">${c.risk}</div></div>
+                </div>
+            </div>
+        `;
+        switchView('detail');
     }
 
-    function renderTables() {
-        document.getElementById('matrix-body').innerHTML = DB.map(c => `
-            <tr>
-                <td><b>${c.name}</b></td>
-                <td>${c.cap}</td>
-                <td style="color:${getRiskColor(c.risk)}">${c.risk} Risk</td>
-                <td>${c.debt}</td>
-            </tr>
+    function renderGrid(data) {
+        const grid = document.getElementById('mainGrid');
+        grid.innerHTML = data.map(c => `
+            <div class="intel-card" onclick="openDossier('${c.name}')">
+                <img src="https://flagcdn.com/w160/${c.iso}.png" class="flag-icon">
+                <div class="region">${c.reg}</div>
+                <h3>${c.name}</h3>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-family:var(--font-mono);">
+                    <span>GDP: ${c.gdp}</span>
+                    <span style="color:${c.risk === 'Stable' ? '#4ade80' : '#f87171'}">${c.risk}</span>
+                </div>
+            </div>
         `).join('');
-
-        document.getElementById('vitals-body').innerHTML = DB.map(c => `
-            <tr>
-                <td><span style="color:var(--gold)">${c.name}</span></td>
-                <td>$${c.gdp}</td>
-                <td>${c.pop}</td>
-                <td>${c.reg}</td>
-            </tr>
-        `).join('');
     }
 
-    function startClock() {
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('meridian-clock').innerText = now.getUTCHours().toString().padStart(2, '0') + ":" + 
-                                                                 now.getUTCMinutes().toString().padStart(2, '0') + ":" + 
-                                                                 now.getUTCSeconds().toString().padStart(2, '0');
-        }, 1000);
+    function searchEngine() {
+        const q = document.getElementById('globalSearch').value.toLowerCase();
+        renderGrid(WORLD_DATA.filter(x => x.name.toLowerCase().includes(q) || x.reg.toLowerCase().includes(q)));
     }
 
-    function generateTicker() {
-        const track = document.getElementById('ticker-content');
-        const news = [
-            "SECURE LINK ESTABLISHED",
-            "MARKET SENSORS INDICATE STABILITY",
-            "ENERGY EXPORTS RISING IN SE ASIA",
-            "MERIDIAN CORE UPDATED TO 6.0",
-            "SATELLITE DATA SYNCED"
-        ];
-        track.innerText = news.join(" // ") + " // " + news.join(" // ");
-    }
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+    renderGrid(WORLD_DATA);
 </script>
 
 </body>
